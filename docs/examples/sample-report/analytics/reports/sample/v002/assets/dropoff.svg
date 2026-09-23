@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Какая доля игроков уходит в каждые 30 с активного времени">
+<line class="grid zero" x1="45" x2="706" y1="238" y2="238"/>
+<text class="ax" x="37" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="45" x2="706" y1="194.4" y2="194.4"/>
+<text class="ax" x="37" y="198.4" text-anchor="end">2,5%</text>
+<line class="grid" x1="45" x2="706" y1="150.8" y2="150.8"/>
+<text class="ax" x="37" y="154.8" text-anchor="end">5,0%</text>
+<line class="grid" x1="45" x2="706" y1="107.2" y2="107.2"/>
+<text class="ax" x="37" y="111.2" text-anchor="end">7,5%</text>
+<line class="grid" x1="45" x2="706" y1="63.6" y2="63.6"/>
+<text class="ax" x="37" y="67.6" text-anchor="end">10,0%</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">12,5%</text>
+<g class="hv"><title>0:30: 11,3%</title><rect class="hit" x="45" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M49.6 238V43.6A3 3 0 0 1 52.6 40.6H70.4A3 3 0 0 1 73.4 43.6V238Z"/>
+</g>
+<g class="hv"><title>1:00: 9,0%</title><rect class="hit" x="78" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M82.7 238V83.3A3 3 0 0 1 85.7 80.3H103.5A3 3 0 0 1 106.5 83.3V238Z"/>
+</g>
+<g class="hv"><title>1:30: 6,4%</title><rect class="hit" x="111.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M115.7 238V128.8A3 3 0 0 1 118.7 125.8H136.5A3 3 0 0 1 139.5 128.8V238Z"/>
+</g>
+<g class="hv"><title>2:00: 5,6%</title><rect class="hit" x="144.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M148.8 238V142.9A3 3 0 0 1 151.8 139.9H169.6A3 3 0 0 1 172.6 142.9V238Z"/>
+</g>
+<g class="hv"><title>2:30: 6,0%</title><rect class="hit" x="177.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M181.8 238V137.1A3 3 0 0 1 184.8 134.1H202.6A3 3 0 0 1 205.6 137.1V238Z"/>
+</g>
+<g class="hv"><title>3:00: 4,2%</title><rect class="hit" x="210.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M214.9 238V167.3A3 3 0 0 1 217.9 164.3H235.7A3 3 0 0 1 238.7 167.3V238Z"/>
+</g>
+<g class="hv"><title>3:30: 5,1%</title><rect class="hit" x="243.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M247.9 238V151.2A3 3 0 0 1 250.9 148.2H268.7A3 3 0 0 1 271.7 151.2V238Z"/>
+</g>
+<g class="hv"><title>4:00: 3,1%</title><rect class="hit" x="276.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M281 238V186.9A3 3 0 0 1 284 183.9H301.8A3 3 0 0 1 304.8 186.9V238Z"/>
+</g>
+<g class="hv"><title>4:30: 4,8%</title><rect class="hit" x="309.4" y="20" width="33" height="218"/>
+<path class="mk s1" d="M314 238V157.3A3 3 0 0 1 317 154.3H334.8A3 3 0 0 1 337.8 157.3V238Z"/>
+</g>
+<g class="hv"><title>5:00: 7,6%</title><rect class="hit" x="342.4" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M347.1 238V109.1A3 3 0 0 1 350.1 106.1H367.9A3 3 0 0 1 370.9 109.1V238Z"/>
+</g>
+<g class="hv"><title>5:30: 3,6%</title><rect class="hit" x="375.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M380.1 238V177.6A3 3 0 0 1 383.1 174.6H400.9A3 3 0 0 1 403.9 177.6V238Z"/>
+</g>
+<g class="hv"><title>6:00: 4,7%</title><rect class="hit" x="408.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M413.2 238V158.7A3 3 0 0 1 416.2 155.7H434A3 3 0 0 1 437 158.7V238Z"/>
+</g>
+<g class="hv"><title>6:30: 3,0%</title><rect class="hit" x="441.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M446.2 238V189.2A3 3 0 0 1 449.2 186.2H467A3 3 0 0 1 470 189.2V238Z"/>
+</g>
+<g class="hv"><title>7:00: 3,1%</title><rect class="hit" x="474.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M479.3 238V187.6A3 3 0 0 1 482.3 184.6H500.1A3 3 0 0 1 503.1 187.6V238Z"/>
+</g>
+<g class="hv"><title>7:30: 4,2%</title><rect class="hit" x="507.7" y="20" width="33" height="218"/>
+<path class="mk s1" d="M512.3 238V167.6A3 3 0 0 1 515.3 164.6H533.1A3 3 0 0 1 536.1 167.6V238Z"/>
+</g>
+<g class="hv"><title>8:00: 3,3%</title><rect class="hit" x="540.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M545.4 238V183.5A3 3 0 0 1 548.4 180.5H566.2A3 3 0 0 1 569.2 183.5V238Z"/>
+</g>
+<g class="hv"><title>8:30: 3,4%</title><rect class="hit" x="573.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M578.4 238V181.5A3 3 0 0 1 581.4 178.5H599.2A3 3 0 0 1 602.2 181.5V238Z"/>
+</g>
+<g class="hv"><title>9:00: 2,4%</title><rect class="hit" x="606.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M611.5 238V200A3 3 0 0 1 614.5 197H632.3A3 3 0 0 1 635.3 200V238Z"/>
+</g>
+<g class="hv"><title>9:30: 3,6%</title><rect class="hit" x="639.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M644.5 238V178A3 3 0 0 1 647.5 175H665.3A3 3 0 0 1 668.3 178V238Z"/>
+</g>
+<g class="hv"><title>10:00: 2,5%</title><rect class="hit" x="672.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M677.6 238V197.4A3 3 0 0 1 680.6 194.4H698.4A3 3 0 0 1 701.4 197.4V238Z"/>
+</g>
+<text class="ax" x="61.5" y="254" text-anchor="middle">0:30</text>
+<text class="ax" x="127.6" y="254" text-anchor="middle">1:30</text>
+<text class="ax" x="193.7" y="254" text-anchor="middle">2:30</text>
+<text class="ax" x="259.8" y="254" text-anchor="middle">3:30</text>
+<text class="ax" x="325.9" y="254" text-anchor="middle">4:30</text>
+<text class="ax" x="392" y="254" text-anchor="middle">5:30</text>
+<text class="ax" x="458.1" y="254" text-anchor="middle">6:30</text>
+<text class="ax" x="524.2" y="254" text-anchor="middle">7:30</text>
+<text class="ax" x="590.3" y="254" text-anchor="middle">8:30</text>
+<text class="ax" x="656.4" y="254" text-anchor="middle">9:30</text>
+<text class="ax" x="45" y="276">активное время, мин:с · доля ушедших от доживших до начала интервала · n = 212</text>
+</svg>

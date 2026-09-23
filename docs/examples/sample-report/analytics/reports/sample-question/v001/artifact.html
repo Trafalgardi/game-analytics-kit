@@ -1,0 +1,527 @@
+<title>Пример: окупается ли закупка в США</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* game-analytics-kit — report theme. Every report and reports/index.html embed this file.
+
+   Colour carries meaning across the whole series of reports; keep it that way:
+     --flow   normal path, organic traffic      --ad     ads, paid acquisition
+     --loss   lost players, bad outcome         --good   revenue, good outcome
+   Each has an -ink variant for text (the fill colours are too light for small type).
+
+   Chart series: --c-1..--c-6, always assigned in this order (blue, orange, teal, violet,
+   amber, pink). The order was validated for colour-vision deficiency in both themes; do not
+   shuffle it and do not add a 7th hue (fold the rest into "other"). --c-old and --c-unk are
+   neutrals for "previous period / version" and "unknown / unattributed".
+   Marks take the classes .s1..s6, .s-old, .s-unk, .s-good, .s-bad; the same classes paint
+   legend swatches (<i class="sw s1">). */
+
+:root {
+  color-scheme: light;
+  --plane:        #f4f3ef;
+  --surface:      #fdfcfa;
+  --surface-sunk: #eeece6;
+  --ink:          #14120f;
+  --ink-2:        #57534b;
+  --ink-3:        #8a8378;
+  --rule:         #e2dfd6;
+  --rule-strong:  #c8c4b8;
+  --flow:         #2a78d6;
+  --flow-ink:     #1f63b5;
+  --ad:           #eb6834;
+  --ad-ink:       #b8461c;
+  --loss:         #d03b3b;
+  --loss-ink:     #b02c2c;
+  --good:         #0ca30c;
+  --good-ink:     #006300;
+  --c-1:          #2a78d6;
+  --c-2:          #eb6834;
+  --c-3:          #1baf7a;
+  --c-4:          #4a3aa7;
+  --c-5:          #eda100;
+  --c-6:          #e87ba4;
+  --c-old:        #aba598;
+  --c-unk:        #c6c1b5;
+  --shadow:       0 1px 2px rgba(20,18,15,.05), 0 8px 24px -16px rgba(20,18,15,.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --plane:        #0e0d0c;
+    --surface:      #1a1918;
+    --surface-sunk: #232120;
+    --ink:          #f6f4ef;
+    --ink-2:        #c2bdb2;
+    --ink-3:        #8d867a;
+    --rule:         #2d2b28;
+    --rule-strong:  #3d3a35;
+    --flow:         #4b93e8;
+    --flow-ink:     #7ab2f2;
+    --ad:           #f07a45;
+    --ad-ink:       #f28e5e;
+    --loss:         #e06a6a;
+    --loss-ink:     #e78585;
+    --good:         #23bd23;
+    --good-ink:     #3fce3f;
+    --c-1:          #4b93e8;
+    --c-2:          #dc6a36;
+    --c-3:          #199e70;
+    --c-4:          #9085e9;
+    --c-5:          #c98500;
+    --c-6:          #d55181;
+    --c-old:        #6f6a60;
+    --c-unk:        #57534c;
+    --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --plane:        #0e0d0c;
+  --surface:      #1a1918;
+  --surface-sunk: #232120;
+  --ink:          #f6f4ef;
+  --ink-2:        #c2bdb2;
+  --ink-3:        #8d867a;
+  --rule:         #2d2b28;
+  --rule-strong:  #3d3a35;
+  --flow:         #4b93e8;
+  --flow-ink:     #7ab2f2;
+  --ad:           #f07a45;
+  --ad-ink:       #f28e5e;
+  --loss:         #e06a6a;
+  --loss-ink:     #e78585;
+  --good:         #23bd23;
+  --good-ink:     #3fce3f;
+  --c-1:          #4b93e8;
+  --c-2:          #dc6a36;
+  --c-3:          #199e70;
+  --c-4:          #9085e9;
+  --c-5:          #c98500;
+  --c-6:          #d55181;
+  --c-old:        #6f6a60;
+  --c-unk:        #57534c;
+  --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+}
+
+/* ---------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--plane); color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+.masthead { border-bottom: 2px solid var(--ink); padding: 56px 0 20px; margin-bottom: 36px; }
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px;
+}
+h1 {
+  font-family: Oxanium, "IBM Plex Sans", system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(34px, 6.4vw, 60px); line-height: .98; letter-spacing: -.02em;
+  margin: 0 0 16px; text-wrap: balance; overflow-wrap: break-word;
+}
+.standfirst { font-size: 18px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+h2 {
+  font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.15; letter-spacing: -.01em; margin: 64px 0 6px; text-wrap: balance; overflow-wrap: break-word;
+}
+h2 + .lede { color: var(--ink-2); margin: 0 0 24px; max-width: 70ch; }
+h3 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.25;
+  margin: 36px 0 8px; text-wrap: balance; }
+p, li { max-width: 70ch; }
+strong, b { font-weight: 600; }
+.num, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .86em; background: var(--surface-sunk);
+  padding: 1px 5px; overflow-wrap: anywhere; }
+small { font-size: .82em; }
+a { color: var(--flow-ink); }
+:focus-visible { outline: 2px solid var(--flow); outline-offset: 2px; }
+
+/* --------------------------------------------------------- stat tiles */
+/* grid blocks draw their hairlines with outlines, so an incomplete last row leaves no grey hole */
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 33px 1px 1px; }
+.tile { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.tile .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+.tile .v { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 34px; line-height: 1;
+  letter-spacing: -.02em; overflow-wrap: break-word; }
+.tile .n { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; line-height: 1.4; }
+.tile.warn .v { color: var(--loss-ink); }
+.tile.ad .v { color: var(--ad-ink); }
+.tile.good .v { color: var(--good-ink); }
+
+/* ------------------------------------------------------ short answers */
+.answers { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.ans { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 170px 1fr; gap: 18px; }
+.ans .q { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+.ans p { margin: 0; font-size: 15px; max-width: none; }
+.ans p + p { margin-top: 8px; }
+
+/* ------------------------------------------------------------ figures */
+figure { margin: 28px 0 0; }
+.figbox { background: var(--surface); border: 1px solid var(--rule); padding: 18px 16px 10px; overflow-x: auto;
+  box-shadow: var(--shadow); }
+.figbox svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.figbox svg + svg { margin-top: 16px; }
+figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 12px; max-width: 76ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.figbox svg + .legend { margin: 12px 0 2px; }  /* legend goes above the chart; below also works */
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.sw.lk { width: 16px; height: 3px; border-radius: 2px; }
+
+/* chart chrome: text wears ink tokens, never the series colour */
+svg .grid { stroke: var(--rule); stroke-width: 1; }
+svg .grid.zero { stroke: var(--rule-strong); }
+svg .ax { fill: var(--ink-3); font: 11px "IBM Plex Mono", ui-monospace, monospace; }
+svg .val { fill: var(--ink-2); font: 10.5px "IBM Plex Mono", ui-monospace, monospace; }
+svg .lab { fill: var(--ink); font: 13px "IBM Plex Sans", system-ui, sans-serif; }
+svg .ann { fill: var(--ink-2); font: 500 12px "IBM Plex Sans", system-ui, sans-serif; }
+svg .band { fill: var(--surface-sunk); }
+svg .refl { stroke: var(--ink-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+svg .refl.alt { stroke-dasharray: 1.5 3; }
+svg .hit { fill: transparent; pointer-events: all; }
+
+/* chart series: fill for marks, background for legend swatches */
+.s1 { --sc: var(--c-1); }
+.s2 { --sc: var(--c-2); }
+.s3 { --sc: var(--c-3); }
+.s4 { --sc: var(--c-4); }
+.s5 { --sc: var(--c-5); }
+.s6 { --sc: var(--c-6); }
+.s-old { --sc: var(--c-old); }
+.s-unk { --sc: var(--c-unk); }
+.s-good { --sc: var(--good); }
+.s-bad { --sc: var(--loss); }
+.s1, .s2, .s3, .s4, .s5, .s6, .s-old, .s-unk, .s-good, .s-bad { fill: var(--sc); background: var(--sc); }
+svg .ln { fill: none; stroke: var(--sc, var(--ink-2)); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg .dot { stroke: var(--surface); stroke-width: 2; }
+svg .mk, svg .dot { transition: opacity .12s ease; }
+svg .hv:hover .mk, svg .hv:hover .dot { opacity: .78; }
+
+/* -------------------------------------------------------- screenshots */
+.shot { margin: 28px 0 0; min-width: 0; }
+.shot .frame { background: var(--surface); border: 1px solid var(--rule); padding: 8px; box-shadow: var(--shadow);
+  overflow-x: auto; }
+.shot img { display: block; max-width: 100%; height: auto; }
+.shot .tag { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ad-ink); margin: 0 0 6px; }
+.shots2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.shots2 .shot { margin-top: 28px; }
+
+/* ------------------------------------------------------------- tables */
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 400; border-bottom: 1px solid var(--rule-strong); }
+td.n, th.n { text-align: right; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 600; border-top: 1px solid var(--rule-strong); }
+td.bad { color: var(--loss-ink); font-weight: 600; }
+td.ok { color: var(--good-ink); font-weight: 600; }
+.tablebox { border: 1px solid var(--rule); background: var(--surface); overflow-x: auto; margin-top: 20px; }
+.tablebox table { min-width: 640px; }
+.tnote { font-size: 13px; color: var(--ink-3); margin: 8px 0 0; max-width: 80ch; }
+
+/* -------------------------------------------------------------- cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1px;
+  margin: 25px 1px 1px; }
+.card { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.card .cnt { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 30px; line-height: 1; }
+.card .cnt em { font-style: normal; font-size: 13px; color: var(--ink-3); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  margin-left: 6px; }
+.card h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 16px; line-height: 1.3; margin: 10px 0 6px; }
+.card h4:first-child { margin-top: 0; }
+.card p { font-size: 14px; color: var(--ink-2); margin: 0; max-width: none; }
+.card p + p { margin-top: 6px; }
+.card.hot { border-left: 3px solid var(--loss); }
+.card.adc { border-left: 3px solid var(--ad); }
+.card.okc { border-left: 3px solid var(--good); }
+
+/* ------------------------------------------------ numbered actions */
+.acts { counter-reset: act; margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.act { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+  align-items: start; }
+.act::before { counter-increment: act; content: counter(act); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-3); border: 1px solid var(--rule-strong); width: 26px; height: 26px;
+  display: grid; place-items: center; margin-top: 2px; }
+.act > div { min-width: 0; }
+.act h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 4px; }
+.act p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.act p + p { margin-top: 6px; }
+.act .why { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+
+.act .eff, .act .measure { font-size: 14px; }
+.act .eff b, .act .measure b { color: var(--ink); }
+.act .why a { color: var(--flow-ink); }
+
+/* ----------------------------------------- fixed skeleton: toc, blocks */
+/* Every report has the same numbered blocks (DESIGN.md section 6); ids are the anchors. */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 8px; }
+.note + .toc { margin-top: 24px; }
+.toc a { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border: 1px solid var(--rule);
+  background: var(--surface); color: var(--ink-2); text-decoration: none; font-size: 13.5px; line-height: 1.3; }
+.toc a:hover { border-color: var(--rule-strong); color: var(--ink); }
+.toc b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 11.5px; color: var(--ink-3);
+  border: 1px solid var(--rule-strong); min-width: 20px; height: 20px; display: inline-grid; place-items: center; }
+section.block, section.method, [id] { scroll-margin-top: 16px; }
+h2 .bn { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: .5em; letter-spacing: 0;
+  color: var(--ink-3); border: 1px solid var(--rule-strong); display: inline-grid; place-items: center;
+  min-width: 1.9em; height: 1.9em; margin-right: 12px; vertical-align: .32em; }
+section.block > h2:first-child { margin-top: 72px; }
+
+/* ------------------------------------------------------- hypotheses */
+.hyps { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.hyp { background: var(--surface); padding: 16px 18px; }
+.hyp .hid { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: var(--ink);
+  margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; max-width: none; }
+.hyp h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 8px; }
+.hyp p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.hyp p + p { margin-top: 6px; }
+.hyp .basis b, .hyp .test b { color: var(--ink); }
+.conf { font-weight: 400; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.conf::before { letter-spacing: 1px; margin-right: 6px; color: var(--ink-2); }
+.conf.high::before { content: "\25CF\25CF\25CF"; }
+.conf.mid::before { content: "\25CF\25CF\25CB"; }
+.conf.low::before { content: "\25CF\25CB\25CB"; }
+
+/* ---------------------------------------------- facts vs interpretation */
+/* Plain paragraphs, tables and charts are facts; a reading of them goes into .interp. */
+.interp { border-left: 2px dashed var(--flow); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 20px 0 0; max-width: 76ch; }
+.interp b:first-child { color: var(--flow-ink); font-weight: 600; }
+
+/* ------------------------------------ key metrics, estimates, drop-off */
+/* these two fit a phone when they can: labels wrap, numbers do not, the box scrolls only if needed */
+.tablebox table.kpi, .tablebox table.drop { min-width: 0; }
+table.kpi td:first-child, table.drop td:first-child { min-width: 9em; }
+table.kpi th.n, table.drop th.n { white-space: normal; min-width: 4.5em; }
+table.ord td:first-child { min-width: 0; width: 12em; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+table.kpi td small, table.drop td small { display: block; font-size: 11px; color: var(--ink-3); line-height: 1.3; }
+td.est, .est { color: var(--ink-3); font-style: italic; }
+tr.est td:first-child { color: var(--ink-3); }
+
+/* ------------------------------------------------------ notes, calc */
+.note { border-left: 2px solid var(--rule-strong); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 24px 0 0; max-width: 76ch; }
+.note b, .note strong { color: var(--ink); }
+.calc { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13.5px; background: var(--surface);
+  border: 1px solid var(--rule); padding: 14px 16px; margin: 20px 0 0; overflow-x: auto; white-space: pre;
+  line-height: 1.7; color: var(--ink); }
+ul.tight { padding-left: 20px; margin: 12px 0 0; }
+ul.tight li { margin: 6px 0; }
+
+/* ------------------------------------------------------------- method */
+.method { margin-top: 64px; border-top: 1px solid var(--rule); padding-top: 20px; font-size: 14px; color: var(--ink-2); }
+.method h2 { font-size: 20px; margin: 0 0 10px; }
+.method li { max-width: 90ch; }
+
+/* --------------------------------------------------------- responsive */
+@media (max-width: 760px) {
+  .wrap { padding: 0 16px 72px; }
+  .masthead { padding-top: 36px; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .ans { grid-template-columns: 1fr; gap: 6px; }
+  .shots2 { grid-template-columns: 1fr; gap: 0; }
+  h2 { margin-top: 52px; }
+}
+@media (max-width: 480px) {
+  body { font-size: 15px; }
+  .standfirst { font-size: 16.5px; }
+  .tile { padding: 14px; }
+  .tile .v { font-size: 27px; }
+  .card .cnt { font-size: 26px; }
+  .act { grid-template-columns: 1fr; gap: 8px; }
+  .figbox { padding: 14px 10px 8px; }
+}
+
+/* --------------------------------------------------------- safety nets */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    color-scheme: light;
+    --plane:        #ffffff;
+    --surface:      #ffffff;
+    --surface-sunk: #f1efe9;
+    --ink:          #14120f;
+    --ink-2:        #57534b;
+    --ink-3:        #7a7368;
+    --rule:         #e2dfd6;
+    --rule-strong:  #c8c4b8;
+    --flow:         #2a78d6;
+    --flow-ink:     #1f63b5;
+    --ad:           #eb6834;
+    --ad-ink:       #b8461c;
+    --loss:         #d03b3b;
+    --loss-ink:     #b02c2c;
+    --good:         #0ca30c;
+    --good-ink:     #006300;
+    --c-1:          #2a78d6;
+    --c-2:          #eb6834;
+    --c-3:          #1baf7a;
+    --c-4:          #4a3aa7;
+    --c-5:          #eda100;
+    --c-6:          #e87ba4;
+    --c-old:        #aba598;
+    --c-unk:        #c6c1b5;
+    --shadow:       none;
+  }
+  body { background: #fff; font-size: 12pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0; }
+  .masthead { padding-top: 0; }
+  .figbox, .shot .frame { box-shadow: none; overflow: visible; }
+  .figbox svg { min-width: 0; }
+  .tablebox { overflow: visible; }
+  .tablebox table { min-width: 0; }
+  figure, .shot, .tablebox, .card, .act, .ans, .tile, .hyp { break-inside: avoid; }
+  .toc { display: none; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Вопрос · Пример · закупка в США · 17–21.09.2026</p>
+  <h1>Пример: окупается ли закупка в США</h1>
+  <p class="standfirst">Нет: игрок стоит втрое больше, чем приносит</p>
+</header>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Краткая информация</h2>
+<div class="tiles">
+  <div class="tile ad"><p class="k">Цена игрока</p><div class="v">$0,40</div><p class="n">расход / 39 игроков · .tile.ad</p></div>
+  <div class="tile"><p class="k">Доход с игрока</p><div class="v">$0,13</div><p class="n">n = 39 · .tile — нейтрально</p></div>
+  <div class="tile warn"><p class="k">ROAS</p><div class="v">33% → 5%</div><p class="n">CPI → tROAS · .tile.warn</p></div>
+  <div class="tile good"><p class="k">Доход в день установки</p><div class="v">80%</div><p class="n">n = 39 · .tile.good</p></div>
+</div>
+<h3 id="summary-answers">Короткие ответы</h3>
+<div class="answers">
+  <div class="ans"><div class="q">Окупается ли закупка в США</div>
+    <div><p><b>Нет.</b> Игрок стоит $0,40, приносит $0,13, и 80% дохода приходит в день установки (<a href="#revenue-payback">3.1</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Метрики дохода</h2>
+<p class="lede">В вопросном отчёте остаются только нужные блоки, с теми же номерами и в том же порядке.</p>
+<h3 id="revenue-payback">3.1 Окупаемость</h3>
+<div class="calc">$15,60 расхода / 39 игроков = $0,40 за игрока
+доход $5,07 / 39 = $0,13 за игрока → ROAS 33%</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Пятеро лучших</span><span><i class="sw s1"></i>Остальные</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="100%" role="img" aria-label="Доход с каждого игрока по убыванию (пример)">
+<line class="grid zero" x1="45" x2="706" y1="218" y2="218"/>
+<text class="ax" x="37" y="222" text-anchor="end">$0</text>
+<line class="grid" x1="45" x2="706" y1="178.4" y2="178.4"/>
+<text class="ax" x="37" y="182.4" text-anchor="end">$0,25</text>
+<line class="grid" x1="45" x2="706" y1="138.8" y2="138.8"/>
+<text class="ax" x="37" y="142.8" text-anchor="end">$0,50</text>
+<line class="grid" x1="45" x2="706" y1="99.2" y2="99.2"/>
+<text class="ax" x="37" y="103.2" text-anchor="end">$0,75</text>
+<line class="grid" x1="45" x2="706" y1="59.6" y2="59.6"/>
+<text class="ax" x="37" y="63.6" text-anchor="end">$1,00</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">$1,25</text>
+<g class="hv"><title>#1 игрок 1: $1,17</title><rect class="hit" x="45" y="20" width="16.9" height="198"/><path class="mk s2" d="M47.4 218V35.7A3 3 0 0 1 50.4 32.7H56.6A3 3 0 0 1 59.6 35.7V218Z"/></g>
+<g class="hv"><title>#2 игрок 2: $0,97</title><rect class="hit" x="61.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M64.3 218V67.4A3 3 0 0 1 67.3 64.4H73.5A3 3 0 0 1 76.5 67.4V218Z"/></g>
+<g class="hv"><title>#3 игрок 3: $0,76</title><rect class="hit" x="78.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M81.3 218V100.6A3 3 0 0 1 84.3 97.6H90.5A3 3 0 0 1 93.5 100.6V218Z"/></g>
+<g class="hv"><title>#4 игрок 4: $0,26</title><rect class="hit" x="95.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M98.2 218V179.8A3 3 0 0 1 101.2 176.8H107.4A3 3 0 0 1 110.4 179.8V218Z"/></g>
+<g class="hv"><title>#5 игрок 5: $0,23</title><rect class="hit" x="112.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M115.2 218V184.6A3 3 0 0 1 118.2 181.6H124.4A3 3 0 0 1 127.4 184.6V218Z"/></g>
+<g class="hv"><title>#6 игрок 6: $0,19</title><rect class="hit" x="129.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M132.1 218V190.9A3 3 0 0 1 135.1 187.9H141.3A3 3 0 0 1 144.3 190.9V218Z"/></g>
+<g class="hv"><title>#7 игрок 7: $0,16</title><rect class="hit" x="146.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M149.1 218V195.7A3 3 0 0 1 152.1 192.7H158.3A3 3 0 0 1 161.3 195.7V218Z"/></g>
+<g class="hv"><title>#8 игрок 8: $0,14</title><rect class="hit" x="163.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M166 218V198.8A3 3 0 0 1 169 195.8H175.2A3 3 0 0 1 178.2 198.8V218Z"/></g>
+<g class="hv"><title>#9 игрок 9: $0,12</title><rect class="hit" x="180.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M183 218V202A3 3 0 0 1 186 199H192.2A3 3 0 0 1 195.2 202V218Z"/></g>
+<g class="hv"><title>#10 игрок 10: $0,11</title><rect class="hit" x="197.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M199.9 218V203.6A3 3 0 0 1 202.9 200.6H209.1A3 3 0 0 1 212.1 203.6V218Z"/></g>
+<g class="hv"><title>#11 игрок 11: $0,10</title><rect class="hit" x="214.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M216.9 218V205.2A3 3 0 0 1 219.9 202.2H226.1A3 3 0 0 1 229.1 205.2V218Z"/></g>
+<g class="hv"><title>#12 игрок 12: $0,09</title><rect class="hit" x="231.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M233.8 218V206.7A3 3 0 0 1 236.8 203.7H243A3 3 0 0 1 246 206.7V218Z"/></g>
+<g class="hv"><title>#13 игрок 13: $0,08</title><rect class="hit" x="248.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M250.8 218V208.3A3 3 0 0 1 253.8 205.3H260A3 3 0 0 1 263 208.3V218Z"/></g>
+<g class="hv"><title>#14 игрок 14: $0,07</title><rect class="hit" x="265.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M267.7 218V209.9A3 3 0 0 1 270.7 206.9H276.9A3 3 0 0 1 279.9 209.9V218Z"/></g>
+<g class="hv"><title>#15 игрок 15: $0,06</title><rect class="hit" x="282.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M284.7 218V211.5A3 3 0 0 1 287.7 208.5H293.9A3 3 0 0 1 296.9 211.5V218Z"/></g>
+<g class="hv"><title>#16 игрок 16: $0,06</title><rect class="hit" x="299.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M301.6 218V211.5A3 3 0 0 1 304.6 208.5H310.8A3 3 0 0 1 313.8 211.5V218Z"/></g>
+<g class="hv"><title>#17 игрок 17: $0,05</title><rect class="hit" x="316.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M318.6 218V213.1A3 3 0 0 1 321.6 210.1H327.8A3 3 0 0 1 330.8 213.1V218Z"/></g>
+<g class="hv"><title>#18 игрок 18: $0,05</title><rect class="hit" x="333.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M335.5 218V213.1A3 3 0 0 1 338.5 210.1H344.7A3 3 0 0 1 347.7 213.1V218Z"/></g>
+<g class="hv"><title>#19 игрок 19: $0,04</title><rect class="hit" x="350.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M352.4 218V214.7A3 3 0 0 1 355.4 211.7H361.7A3 3 0 0 1 364.7 214.7V218Z"/></g>
+<g class="hv"><title>#20 игрок 20: $0,04</title><rect class="hit" x="367" y="20" width="16.9" height="198"/><path class="mk s1" d="M369.4 218V214.7A3 3 0 0 1 372.4 211.7H378.6A3 3 0 0 1 381.6 214.7V218Z"/></g>
+<g class="hv"><title>#21 игрок 21: $0,04</title><rect class="hit" x="384" y="20" width="16.9" height="198"/><path class="mk s1" d="M386.3 218V214.7A3 3 0 0 1 389.3 211.7H395.6A3 3 0 0 1 398.6 214.7V218Z"/></g>
+<g class="hv"><title>#22 игрок 22: $0,04</title><rect class="hit" x="400.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M403.3 218V214.7A3 3 0 0 1 406.3 211.7H412.5A3 3 0 0 1 415.5 214.7V218Z"/></g>
+<g class="hv"><title>#23 игрок 23: $0,03</title><rect class="hit" x="417.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M420.2 218V216.2A3 3 0 0 1 423.2 213.2H429.4A3 3 0 0 1 432.4 216.2V218Z"/></g>
+<g class="hv"><title>#24 игрок 24: $0,03</title><rect class="hit" x="434.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M437.2 218V216.2A3 3 0 0 1 440.2 213.2H446.4A3 3 0 0 1 449.4 216.2V218Z"/></g>
+<g class="hv"><title>#25 игрок 25: $0,03</title><rect class="hit" x="451.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M454.1 218V216.2A3 3 0 0 1 457.1 213.2H463.3A3 3 0 0 1 466.3 216.2V218Z"/></g>
+<g class="hv"><title>#26 игрок 26: $0,02</title><rect class="hit" x="468.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M471.1 218V217.8A3 3 0 0 1 474.1 214.8H480.3A3 3 0 0 1 483.3 217.8V218Z"/></g>
+<g class="hv"><title>#27 игрок 27: $0,02</title><rect class="hit" x="485.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M488 218V217.8A3 3 0 0 1 491 214.8H497.2A3 3 0 0 1 500.2 217.8V218Z"/></g>
+<g class="hv"><title>#28 игрок 28: $0,02</title><rect class="hit" x="502.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M505 218V217.8A3 3 0 0 1 508 214.8H514.2A3 3 0 0 1 517.2 217.8V218Z"/></g>
+<g class="hv"><title>#29 игрок 29: $0,02</title><rect class="hit" x="519.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M521.9 218V217.8A3 3 0 0 1 524.9 214.8H531.1A3 3 0 0 1 534.1 217.8V218Z"/></g>
+<g class="hv"><title>#30 игрок 30: $0,01</title><rect class="hit" x="536.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M538.9 218V218A1.6 1.6 0 0 1 540.5 216.4H549.5A1.6 1.6 0 0 1 551.1 218V218Z"/></g>
+<g class="hv"><title>#31 игрок 31: $0,01</title><rect class="hit" x="553.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M555.8 218V218A1.6 1.6 0 0 1 557.4 216.4H566.5A1.6 1.6 0 0 1 568 218V218Z"/></g>
+<g class="hv"><title>#32 игрок 32: $0,01</title><rect class="hit" x="570.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M572.8 218V218A1.6 1.6 0 0 1 574.4 216.4H583.4A1.6 1.6 0 0 1 585 218V218Z"/></g>
+<g class="hv"><title>#33 игрок 33: $0,01</title><rect class="hit" x="587.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M589.7 218V218A1.6 1.6 0 0 1 591.3 216.4H600.4A1.6 1.6 0 0 1 601.9 218V218Z"/></g>
+<g class="hv"><title>#34 игрок 34: $0,00</title><rect class="hit" x="604.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#35 игрок 35: $0,00</title><rect class="hit" x="621.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#36 игрок 36: $0,00</title><rect class="hit" x="638.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#37 игрок 37: $0,00</title><rect class="hit" x="655.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#38 игрок 38: $0,00</title><rect class="hit" x="672.1" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#39 игрок 39: $0,00</title><rect class="hit" x="689.1" y="20" width="16.9" height="198"/></g>
+<line class="refl" x1="45" x2="706" y1="197.5" y2="197.5"/>
+<text class="ann" x="704" y="191.5" text-anchor="end">среднее $0,13</text>
+<line class="refl alt" x1="45" x2="706" y1="211.7" y2="211.7"/>
+<text class="ann" x="605.6" y="191.5" text-anchor="end">медиана $0,04</text>
+<text class="ann" x="135.7" y="177.9">первые 5 = 67% суммы</text>
+<text class="ax" x="53.5" y="234" text-anchor="middle">1</text>
+<text class="ax" x="121.3" y="234" text-anchor="middle">5</text>
+<text class="ax" x="206" y="234" text-anchor="middle">10</text>
+<text class="ax" x="290.8" y="234" text-anchor="middle">15</text>
+<text class="ax" x="375.5" y="234" text-anchor="middle">20</text>
+<text class="ax" x="460.2" y="234" text-anchor="middle">25</text>
+<text class="ax" x="545" y="234" text-anchor="middle">30</text>
+<text class="ax" x="629.7" y="234" text-anchor="middle">35</text>
+<text class="ax" x="45" y="256">39 вымышленных игроков, доход с рекламы, по убыванию</text>
+</svg>
+  </div>
+  <figcaption>Доход держится на пятерых игроках из 39; медиана $0,04.</figcaption>
+</figure>
+<p class="interp"><b>Интерпретация.</b> Без ценных игроков в выборке ставка на ROAS не находит, кого покупать.</p>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Гипотезы</h2>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">уверенность высокая</span></p>
+    <h4>Доход с игрока ниже цены игрока втрое при любой стратегии ставок</h4>
+    <p class="basis"><b>Опора:</b> $0,13 против $0,40 (<a href="#revenue-payback">3.1</a>).</p>
+    <p class="test"><b>Как проверить:</b> ARPU за 7 дней у следующей закупленной когорты ≥ $0,40.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Рекомендации</h2>
+<div class="acts">
+  <div class="act"><div><h4>Остановить закупку на доход</h4>
+    <p>Оставить небольшой бюджет только для сравнения сборок.</p>
+    <p class="eff"><b>Ожидаемый эффект:</b> минус $50 убытка в день.</p>
+    <p class="measure"><b>Как мерить:</b> дневная маржа закупки в следующем отчёте.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+</div>
+</section>
+
+<section class="method" id="method">
+  <h2>Методика</h2>
+  <ul class="tight">
+    <li>Отчёт v001, собран 23.09.2026. Окно данных 17–21.09.2026. Все числа выдуманы.</li>
+  </ul>
+</section>
+
+</div>
+

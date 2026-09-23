@@ -1,0 +1,112 @@
+<!--
+  report.src.html of a QUESTION report (kind "question"): one question, the same skeleton as
+  a full review, shortened. Write it in the report language and build it with
+      py analytics/ga.py report build <slug>
+  A built version is final: to change it later run `report new <slug> --from vN`.
+
+  Placeholders (resolved at build; HTML comments like this one are dropped first):
+      {{svg:assets/name.svg}}  {{img:assets/name.png}}  {{html:assets/name.html}}  {{meta:field}}
+  (the tables of `ga.py keymetrics` / `ga.py dropoff --format html` go in with {{html:...}}).
+
+  The skeleton is fixed and the build checks it:
+    - sections summary (1), hypotheses (6), actions (7) and method always; of product (2),
+      revenue (3), tech (4), countries (5) only those the question needs — keep their numbers
+      and this order, delete the rest;
+    - every href="#..." points to an existing id, ids are unique;
+    - every hypothesis (.hyp, id h1, h2 ...) has a confidence mark and a link to its numbers;
+    - every recommendation (.act) links to a hypothesis and has .eff and .measure.
+  Facts go in tables, charts and plain sentences; interpretation goes in <p class="interp">.
+  Every number used in blocks 1, 6 and 7 must appear in a table or chart of the blocks above.
+  Fill or delete every TODO.
+-->
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">__T_kind_question__ · TODO game · build(s) · {{meta:window}}</p>
+  <h1>__TITLE__</h1>
+  <p class="standfirst">{{meta:subtitle}}</p>
+</header>
+
+<!-- A version made with `report new --from vK` starts with what changed:
+<p class="note"><b>What changed since v001.</b> ...</p>
+-->
+
+<!-- ================================================================== 1 -->
+<section class="block" id="summary">
+<h2><span class="bn">1</span>__T_summary__</h2>
+<!-- Three or four tiles with the numbers the answer rests on (.warn bad, .ad ads/paid, .good),
+     or the key-metrics table: {{html:assets/keymetrics.html}} -->
+<div class="tiles">
+  <div class="tile"><p class="k">TODO label</p><div class="v">0</div><p class="n">TODO n and window</p></div>
+  <div class="tile warn"><p class="k">TODO label</p><div class="v">0</div><p class="n">TODO n and window</p></div>
+  <div class="tile good"><p class="k">TODO label</p><div class="v">0</div><p class="n">TODO n and window</p></div>
+</div>
+
+<h3 id="summary-answers">__T_answers__</h3>
+<div class="answers">
+  <div class="ans"><div class="q">TODO the question as asked</div>
+    <div><p><b>TODO direct answer.</b> The number it rests on, with n (<a href="#product-main">2.1</a>).</p></div></div>
+</div>
+</section>
+
+<!-- ================================================================== 2 (delete if the question is not about the game itself) -->
+<section class="block" id="product">
+<h2><span class="bn">2</span>__T_product__</h2>
+<p class="lede">TODO the claim of this block.</p>
+
+<h3 id="product-main">2.1 TODO evidence</h3>
+<figure>
+  <div class="figbox">{{svg:assets/chart.svg}}</div>
+  <figcaption>TODO what to see.</figcaption>
+</figure>
+<p class="interp"><b>__T_interp__.</b> TODO the reading of the numbers above.</p>
+</section>
+
+<!-- Blocks 3-5 when the question needs them, in this order, numbers kept:
+<section class="block" id="revenue"><h2><span class="bn">3</span>__T_revenue__</h2> ... </section>
+<section class="block" id="tech"><h2><span class="bn">4</span>__T_tech__</h2> ... </section>
+<section class="block" id="countries"><h2><span class="bn">5</span>__T_countries__</h2> ... </section>
+-->
+
+<!-- ================================================================== 6 -->
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>__T_hypotheses__</h2>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf mid">__T_conf_mid__</span></p>
+    <h4>TODO the claim, one sentence</h4>
+    <p class="basis"><b>__T_basis__:</b> TODO the numbers (<a href="#product-main">2.1</a>).</p>
+    <p class="test"><b>__T_test__:</b> TODO metric and threshold.</p>
+  </article>
+</div>
+</section>
+
+<!-- ================================================================== 7 -->
+<section class="block" id="actions">
+<h2><span class="bn">7</span>__T_actions__</h2>
+<div class="acts">
+  <div class="act"><div><h4>TODO action</h4>
+    <p>TODO what exactly to change.</p>
+    <p class="eff"><b>__T_effect__:</b> TODO which metric moves and by how much.</p>
+    <p class="measure"><b>__T_measure__:</b> TODO metric, cohort, when to look.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="block" id="data">
+<h2>__T_data__</h2>
+<ul class="tight">
+  <li><b>TODO console → exact path:</b> what to export, range and filters, which question it closes.</li>
+</ul>
+</section>
+
+<section class="method" id="method">
+  <h2>__T_method__</h2>
+  <ul class="tight">
+    <li>{{meta:version_label}}, {{meta:built_date}}. __T_window__ {{meta:window}}, TODO time zone.</li>
+    <li>TODO sources, population (dev devices excluded how), sample rate, definitions.</li>
+  </ul>
+</section>
+
+</div>

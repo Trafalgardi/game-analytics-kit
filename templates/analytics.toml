@@ -1,0 +1,34 @@
+# game-analytics-kit project config. Committed with the project; secrets never go here
+# (tokens live in analytics/.env or ~/.config/game-analytics-kit/.env).
+# Paths are relative to this analytics/ folder. Check the result with `py analytics/ga.py status`.
+
+[project]
+name = ""                       # the game's name, shown in reports
+report_language = "ru"          # language of reports; the skills themselves are English
+platforms = ["android"]
+
+[database]
+path = "data/analytics.db"      # SQLite file; data/ is git-ignored and rebuilt by `ga.py sync`
+
+[sources.appmetrica]
+enabled = true
+api_key = ""                    # SDK key from the game code, e.g. AppMetrica.Activate(new AppMetricaConfig("<key>"));
+                                # `ga.py apps` lists the apps the token sees and marks the match
+app_id = ""                     # optional numeric application id; wins over api_key when set
+since = ""                      # first day to pull, YYYY-MM-DD; empty = the app's creation date
+tables = ["events", "sessions_starts", "installations"]
+                                # default set; also: crashes, errors, revenue_events, ad_revenue_events,
+                                # or "all". `sync --tables ...` overrides it for one run.
+chunk_days = 7                  # days per export request: exports are prepared one after another,
+                                # so a one-day request waits about as long as a week
+fresh_days = 7                  # AppMetrica delivers events up to 7 days late; older days are final
+refresh_after_hours = 12        # a fresh day is re-pulled only when its last load is older than this
+sample = 1.0                    # share of devices kept (0 < r <= 1), the same devices in every table;
+                                # fixed by the first sync of a database. Big game (a 7-day events
+                                # export over ~300 MB): 0.1, and multiply absolute counts by 10
+flatten_params = true           # event parameters as rows in event_params (~140 bytes each);
+                                # false for a big game: catalog / model scaffold then sample event_json
+
+[filters]                       # read by the project model (model/*.sql), not by the engine
+dev_countries = []              # e.g. ["NL", "RU"]: countries where the team's test devices live
+published_versions = []         # empty = every app version counts as public

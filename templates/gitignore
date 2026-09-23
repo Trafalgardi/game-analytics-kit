@@ -1,0 +1,7 @@
+# game-analytics-kit - what stays out of git
+data/                 # the SQLite database: rebuilt from the sources with `ga.py sync`
+.env                  # tokens
+imports/              # console exports and screenshots: business data, keep them local
+reports/**/work/      # scratch scripts and intermediate files of a report
+__pycache__/
+*.pyc

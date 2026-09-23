@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="D1 по дню установки (пример)">
+<rect class="band" x="432.5" y="36" width="61.6" height="202"/>
+<text class="ann" x="438.5" y="28" text-anchor="start">переход</text>
+<line class="grid zero" x1="31.8" x2="679.1" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="197.6" y2="197.6"/>
+<text class="ax" x="23.8" y="201.6" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="157.2" y2="157.2"/>
+<text class="ax" x="23.8" y="161.2" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="116.8" y2="116.8"/>
+<text class="ax" x="23.8" y="120.8" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="76.4" y2="76.4"/>
+<text class="ax" x="23.8" y="80.4" text-anchor="end">40%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="36" y2="36"/>
+<text class="ax" x="23.8" y="40" text-anchor="end">50%</text>
+<line class="refl" x1="540.4" x2="540.4" y1="36" y2="238"/>
+<text class="ann" x="545.4" y="48" text-anchor="start">старт закупки</text>
+<path class="ln s-old" d="M47.2 112.8L78 116.8L108.9 108.7L139.7 120.8L170.5 116.8L201.3 112.8L232.2 124.9L263 116.8L293.8 120.8L324.6 112.8L355.5 116.8L386.3 120.8L417.1 116.8L447.9 112.8"/>
+<path class="ln s1" d="M447.9 116.8L478.7 104.7L509.6 96.6L540.4 100.6L571.2 92.6L602 96.6L632.9 88.5L663.7 92.6"/>
+<g class="hv"><title>01.09 — Сборка 1.0.8 31%</title><rect class="hit" x="31.8" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="47.2" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>02.09 — Сборка 1.0.8 30%</title><rect class="hit" x="62.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="78" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>03.09 — Сборка 1.0.8 32%</title><rect class="hit" x="93.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="108.9" cy="108.7" r="4"/>
+</g>
+<g class="hv"><title>04.09 — Сборка 1.0.8 29%</title><rect class="hit" x="124.3" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="139.7" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>05.09 — Сборка 1.0.8 30%</title><rect class="hit" x="155.1" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="170.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>06.09 — Сборка 1.0.8 31%</title><rect class="hit" x="185.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="201.3" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>07.09 — Сборка 1.0.8 28%</title><rect class="hit" x="216.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="232.2" cy="124.9" r="4"/>
+</g>
+<g class="hv"><title>08.09 — Сборка 1.0.8 30%</title><rect class="hit" x="247.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="263" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>09.09 — Сборка 1.0.8 29%</title><rect class="hit" x="278.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="293.8" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>10.09 — Сборка 1.0.8 31%</title><rect class="hit" x="309.2" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="324.6" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>11.09 — Сборка 1.0.8 30%</title><rect class="hit" x="340" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="355.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>12.09 — Сборка 1.0.8 29%</title><rect class="hit" x="370.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="386.3" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>13.09 — Сборка 1.0.8 30%</title><rect class="hit" x="401.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="417.1" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>14.09 — Сборка 1.0.8 31%; Сборка 1.1.0 30%</title><rect class="hit" x="432.5" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="447.9" cy="112.8" r="4"/>
+<circle class="dot s1" cx="447.9" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>15.09 — Сборка 1.1.0 33%</title><rect class="hit" x="463.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="478.7" cy="104.7" r="4"/>
+</g>
+<g class="hv"><title>16.09 — Сборка 1.1.0 35%</title><rect class="hit" x="494.2" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="509.6" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>17.09 — Сборка 1.1.0 34%</title><rect class="hit" x="525" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="540.4" cy="100.6" r="4"/>
+</g>
+<g class="hv"><title>18.09 — Сборка 1.1.0 36%</title><rect class="hit" x="555.8" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="571.2" cy="92.6" r="4"/>
+</g>
+<g class="hv"><title>19.09 — Сборка 1.1.0 35%</title><rect class="hit" x="586.6" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="602" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>20.09 — Сборка 1.1.0 37%</title><rect class="hit" x="617.5" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="632.9" cy="88.5" r="4"/>
+</g>
+<g class="hv"><title>21.09 — Сборка 1.1.0 36%</title><rect class="hit" x="648.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="663.7" cy="92.6" r="4"/>
+</g>
+<text class="val" x="671.7" y="96.6">36%</text>
+<text class="ax" x="47.2" y="254" text-anchor="middle">01.09</text>
+<text class="ax" x="108.9" y="254" text-anchor="middle">03.09</text>
+<text class="ax" x="170.5" y="254" text-anchor="middle">05.09</text>
+<text class="ax" x="232.2" y="254" text-anchor="middle">07.09</text>
+<text class="ax" x="293.8" y="254" text-anchor="middle">09.09</text>
+<text class="ax" x="355.5" y="254" text-anchor="middle">11.09</text>
+<text class="ax" x="417.1" y="254" text-anchor="middle">13.09</text>
+<text class="ax" x="478.7" y="254" text-anchor="middle">15.09</text>
+<text class="ax" x="540.4" y="254" text-anchor="middle">17.09</text>
+<text class="ax" x="602" y="254" text-anchor="middle">19.09</text>
+<text class="ax" x="663.7" y="254" text-anchor="middle">21.09</text>
+<text class="ax" x="31.8" y="276">доля вернувшихся на следующий день · вымышленные данные</text>
+</svg>

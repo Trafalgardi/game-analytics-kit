@@ -1,0 +1,49 @@
+{
+  "slug": "sample",
+  "version": 1,
+  "kind": "full",
+  "title": "Пример 1.0.8 и 1.1.0, 01–20.09: полный разбор",
+  "subtitle": "Новички уходят на первой покупке в обучении, а закупка не окупается ни при какой ставке",
+  "question": "Полный разбор игры за 01–20.09: что изменила 1.1.0, где теряем новичков, окупается ли закупка",
+  "language": "ru",
+  "created_at": "2026-09-23T16:56:54+07:00",
+  "built_at": "2026-09-23T16:56:54+07:00",
+  "previous_version": null,
+  "data_window": {
+    "since": "2026-09-01",
+    "until": "2026-09-20"
+  },
+  "sources_used": [
+    "вымышленные данные",
+    "скриншоты-заглушки"
+  ],
+  "kit_version": "0.3.0",
+  "project_git_commit": "5e377c9",
+  "db_snapshot": {
+    "path": "data/analytics.db",
+    "tables": {
+      "events": {
+        "rows": 52,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "installations": {
+        "rows": 21,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "meta": {
+        "rows": 2,
+        "min_date": null,
+        "max_date": null
+      }
+    },
+    "sample_rate": 0.1
+  },
+  "sizes": {
+    "report.html": 114796,
+    "artifact.html": 114376,
+    "report.src.html": 18617,
+    "assets": 73487
+  }
+}

@@ -1,0 +1,184 @@
+<!--
+  report.src.html of a FULL REVIEW (kind "full"). Write it in the report language
+  (analytics.toml -> project.report_language) and build it with
+      py analytics/ga.py report build <slug>
+  A built version is final: to change it later run `report new <slug> --from vN`.
+
+  Placeholders (resolved at build; HTML comments like this one are dropped first):
+      {{svg:assets/name.svg}}     inline SVG chart (gak.report.charts writes these)
+      {{img:assets/name.png}}     data URI for <img src="...">  (png, jpg, jpeg, webp, gif)
+      {{html:assets/name.html}}   an HTML fragment, e.g. the tables written by
+                                  py analytics/ga.py keymetrics --format html --out analytics/reports/<slug>/vNNN/assets/keymetrics.html
+                                  py analytics/ga.py dropoff --steps <view> --format html --out .../assets/dropoff.html --svg .../assets/dropoff.svg
+      {{meta:field}}              value from meta.json: title, subtitle, question, version_label, built_date,
+                                  window (08–21.09.2026), data_window.since, sources_used ...
+
+  The skeleton is fixed and the build checks it:
+    - sections summary, product, revenue, tech, countries, hypotheses, actions, (data), method,
+      in this order, with the block numbers as written (1-7);
+    - every href="#..." points to an existing id, ids are unique;
+    - every hypothesis (.hyp, id h1, h2 ...) has a confidence mark and a link to the section
+      with the numbers it rests on;
+    - every recommendation (.act) links to a hypothesis and has .eff and .measure.
+  Give every piece of evidence you will cite an id (h3 id="product-dropoff", figure id=...).
+  Facts go in tables, charts and plain sentences; interpretation goes in <p class="interp">.
+  Every number used in blocks 1, 6 and 7 must appear in a table or chart of blocks 1-5.
+  Fill or delete every TODO; the build warns about leftovers.
+-->
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">__T_kind_full__ · TODO game · build(s) · {{meta:window}}</p>
+  <h1>__TITLE__</h1>
+  <p class="standfirst">{{meta:subtitle}}</p>
+</header>
+
+<!-- A version made with `report new --from vK` starts with what changed:
+<p class="note"><b>What changed since v001.</b> Data through 21.09, block 2 recounted, H3 added.</p>
+-->
+
+<nav class="toc">
+  <a href="#summary"><b>1</b>__T_summary__</a>
+  <a href="#product"><b>2</b>__T_product__</a>
+  <a href="#revenue"><b>3</b>__T_revenue__</a>
+  <a href="#tech"><b>4</b>__T_tech__</a>
+  <a href="#countries"><b>5</b>__T_countries__</a>
+  <a href="#hypotheses"><b>6</b>__T_hypotheses__</a>
+  <a href="#actions"><b>7</b>__T_actions__</a>
+</nav>
+
+<!-- ================================================================== 1 -->
+<section class="block" id="summary">
+<h2><span class="bn">1</span>__T_summary__</h2>
+<p class="lede">TODO one line: the cohort, the window, what the table compares.</p>
+
+<h3 id="summary-metrics">__T_keymetrics__</h3>
+<!-- py analytics/ga.py keymetrics --format html --out analytics/reports/<slug>/vNNN/assets/keymetrics.html
+     (columns = first version of the device; --players, --since/--until as in the method) -->
+{{html:assets/keymetrics.html}}
+
+<h3 id="summary-answers">__T_answers__</h3>
+<div class="answers">
+  <div class="ans"><div class="q">TODO the question as asked</div>
+    <div><p><b>TODO direct answer.</b> The number it rests on, with n (<a href="#product-dropoff">2.2</a>).</p></div></div>
+  <div class="ans"><div class="q">TODO question</div>
+    <div><p>TODO answer.</p></div></div>
+</div>
+</section>
+
+<!-- ================================================================== 2 -->
+<section class="block" id="product">
+<h2><span class="bn">2</span>__T_product__</h2>
+<p class="lede">TODO everything about the game except money: retention, first session, core loop, economy.</p>
+
+<h3 id="product-retention">2.1 TODO Retention by install day</h3>
+<!-- figure with a line chart of D1 by first day, or a table -->
+<p class="tnote">TODO cohort and definition.</p>
+
+<h3 id="product-dropoff">2.2 __T_dropoff__</h3>
+<!-- py analytics/ga.py dropoff --steps <view with device_id, step_no, step_name> --format html
+       --out analytics/reports/<slug>/vNNN/assets/dropoff.html --svg analytics/reports/<slug>/vNNN/assets/dropoff.svg -->
+{{html:assets/dropoff.html}}
+<figure>
+  <div class="figbox">{{svg:assets/dropoff.svg}}</div>
+  <figcaption>TODO what to see: where the biggest share leaves.</figcaption>
+</figure>
+<p class="interp"><b>__T_interp__.</b> TODO why they may leave there — a reading, not a fact.</p>
+
+<h3 id="product-core">2.3 TODO Core loop: actions by their number in the session</h3>
+<!-- table: action ordinal -> devices, % of cohort, median active time at which it happens -->
+
+<h3 id="product-negative">2.4 TODO Leaving after negative events</h3>
+<!-- table: event -> devices, left within 20 s (%), came back (%) -->
+
+<h3 id="product-economy">2.5 TODO Economy: sources and sinks</h3>
+</section>
+
+<!-- ================================================================== 3 -->
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>__T_revenue__</h2>
+<p class="lede">TODO ads by format, placement and network; purchases.</p>
+
+<h3 id="revenue-ads">3.1 TODO Ads by format and placement</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>TODO placement</th><th class="n">Impressions</th><th class="n">Per player</th><th class="n">eCPM, $</th><th class="n">Revenue, $</th></tr></thead>
+  <tbody>
+    <tr><td>TODO</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+    <tr class="total"><td>TODO total</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">TODO source, window; estimates from a device sample marked ≈.</p>
+
+<h3 id="revenue-iap">3.2 TODO Purchases</h3>
+</section>
+
+<!-- ================================================================== 4 -->
+<section class="block" id="tech">
+<h2><span class="bn">4</span>__T_tech__</h2>
+<p class="lede">TODO technical problems found and analytics defects: duplicates, empty fields, broken parameters, sources that disagree.</p>
+<div class="cards">
+  <div class="card hot" id="tech-1"><div class="cnt">0<em>TODO unit</em></div><h4>TODO defect</h4>
+    <p>TODO what is wrong, how it biases which metric (direction).</p></div>
+</div>
+</section>
+
+<!-- ================================================================== 5 -->
+<section class="block" id="countries">
+<h2><span class="bn">5</span>__T_countries__</h2>
+<p class="lede">TODO where the players are and how the countries differ.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>TODO country</th><th class="n">Players</th><th class="n">D1</th><th class="n">Active min, median</th><th class="n">ARPU, $</th><th class="n">Share of revenue</th></tr></thead>
+  <tbody>
+    <tr><td>TODO</td><td class="n">0</td><td class="n">0%</td><td class="n">0</td><td class="n">0</td><td class="n">0%</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ================================================================== 6 -->
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>__T_hypotheses__</h2>
+<p class="lede">TODO what we think is going on. Each hypothesis rests on numbers above and says how to test it.</p>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf mid">__T_conf_mid__</span></p>
+    <h4>TODO the claim, one sentence</h4>
+    <p class="basis"><b>__T_basis__:</b> TODO the numbers (<a href="#product-dropoff">2.2</a>).</p>
+    <p class="test"><b>__T_test__:</b> TODO metric and threshold that confirms or kills it.</p>
+  </article>
+</div>
+</section>
+
+<!-- ================================================================== 7 -->
+<section class="block" id="actions">
+<h2><span class="bn">7</span>__T_actions__</h2>
+<p class="lede">TODO ordered by payoff.</p>
+<div class="acts">
+  <div class="act"><div><h4>TODO action</h4>
+    <p>TODO what exactly to change.</p>
+    <p class="eff"><b>__T_effect__:</b> TODO which metric moves and by how much.</p>
+    <p class="measure"><b>__T_measure__:</b> TODO metric, cohort, when to look.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+</div>
+</section>
+
+<!-- ================================================================== -->
+<section class="block" id="data">
+<h2>__T_data__</h2>
+<ul class="tight">
+  <li><b>TODO console → exact path:</b> what to export, range and filters, which question it closes.</li>
+</ul>
+</section>
+
+<section class="method" id="method">
+  <h2>__T_method__</h2>
+  <ul class="tight">
+    <li>{{meta:version_label}}, {{meta:built_date}}. __T_window__ {{meta:window}}, TODO time zone.</li>
+    <li>TODO sources, population (dev devices excluded how), sample rate, definitions (D1, active time, session).</li>
+  </ul>
+</section>
+
+</div>

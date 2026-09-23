@@ -1,0 +1,33 @@
+<!doctype html>
+<!-- Source of social-preview.png (1280x640). Render: msedge --headless --window-size=1280,640 --screenshot=social-preview.png social-preview.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+  html, body { margin: 0; width: 1280px; height: 640px; overflow: hidden; }
+  body { background: #14120f; color: #f6f4ef; font-family: "IBM Plex Sans", sans-serif; position: relative; }
+  .left { position: absolute; left: 72px; top: 76px; width: 610px; }
+  .brand { display: flex; align-items: center; gap: 14px; font: 600 26px "IBM Plex Mono", monospace; color: #c2bdb2; }
+  .mark { display: inline-flex; align-items: flex-end; gap: 4px; height: 30px; }
+  .mark i { width: 8px; display: block; }
+  h1 { font: 700 66px/1.0 Oxanium, sans-serif; letter-spacing: -.02em; margin: 44px 0 26px; }
+  p { font-size: 25px; line-height: 1.45; color: #c2bdb2; margin: 0; }
+  .chips { position: absolute; left: 72px; bottom: 64px; display: flex; gap: 12px; }
+  .chips span { font: 400 17px "IBM Plex Mono", monospace; letter-spacing: .06em; text-transform: uppercase;
+    border: 1px solid #3d3a35; padding: 8px 14px; color: #f6f4ef; }
+  .right { position: absolute; right: -40px; top: 58px; width: 520px; height: 640px; overflow: hidden;
+    border: 1px solid #3d3a35; box-shadow: 0 30px 80px rgba(0,0,0,.6); transform: rotate(-3deg); transform-origin: top left; }
+  .right img { width: 100%; display: block; }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand"><span class="mark"><i style="height:13px;background:#4b93e8"></i><i style="height:21px;background:#f07a45"></i><i style="height:30px;background:#23bd23"></i></span>game-analytics-kit</div>
+    <h1>Your coding agent, working as a game analyst</h1>
+    <p>Raw AppMetrica events → local SQLite → versioned reports in one fixed structure.</p>
+  </div>
+  <div class="chips"><span>Claude Code</span><span>Codex</span><span>stdlib Python</span><span>MIT</span></div>
+  <div class="right"><img src="report-summary.png" alt=""></div>
+</body>
+</html>

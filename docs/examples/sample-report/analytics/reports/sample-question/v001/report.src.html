@@ -1,0 +1,71 @@
+<!-- Example of a question report: blocks 1, 3, 6, 7 and the method. Numbers are made up. -->
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Вопрос · Пример · закупка в США · {{meta:window}}</p>
+  <h1>{{meta:title}}</h1>
+  <p class="standfirst">{{meta:subtitle}}</p>
+</header>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Краткая информация</h2>
+<div class="tiles">
+  <div class="tile ad"><p class="k">Цена игрока</p><div class="v">$0,40</div><p class="n">расход / 39 игроков · .tile.ad</p></div>
+  <div class="tile"><p class="k">Доход с игрока</p><div class="v">$0,13</div><p class="n">n = 39 · .tile — нейтрально</p></div>
+  <div class="tile warn"><p class="k">ROAS</p><div class="v">33% → 5%</div><p class="n">CPI → tROAS · .tile.warn</p></div>
+  <div class="tile good"><p class="k">Доход в день установки</p><div class="v">80%</div><p class="n">n = 39 · .tile.good</p></div>
+</div>
+<h3 id="summary-answers">Короткие ответы</h3>
+<div class="answers">
+  <div class="ans"><div class="q">Окупается ли закупка в США</div>
+    <div><p><b>Нет.</b> Игрок стоит $0,40, приносит $0,13, и 80% дохода приходит в день установки (<a href="#revenue-payback">3.1</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Метрики дохода</h2>
+<p class="lede">В вопросном отчёте остаются только нужные блоки, с теми же номерами и в том же порядке.</p>
+<h3 id="revenue-payback">3.1 Окупаемость</h3>
+<div class="calc">$15,60 расхода / 39 игроков = $0,40 за игрока
+доход $5,07 / 39 = $0,13 за игрока → ROAS 33%</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Пятеро лучших</span><span><i class="sw s1"></i>Остальные</span></div>
+    {{svg:assets/revenue.svg}}
+  </div>
+  <figcaption>Доход держится на пятерых игроках из 39; медиана $0,04.</figcaption>
+</figure>
+<p class="interp"><b>Интерпретация.</b> Без ценных игроков в выборке ставка на ROAS не находит, кого покупать.</p>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Гипотезы</h2>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">уверенность высокая</span></p>
+    <h4>Доход с игрока ниже цены игрока втрое при любой стратегии ставок</h4>
+    <p class="basis"><b>Опора:</b> $0,13 против $0,40 (<a href="#revenue-payback">3.1</a>).</p>
+    <p class="test"><b>Как проверить:</b> ARPU за 7 дней у следующей закупленной когорты ≥ $0,40.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Рекомендации</h2>
+<div class="acts">
+  <div class="act"><div><h4>Остановить закупку на доход</h4>
+    <p>Оставить небольшой бюджет только для сравнения сборок.</p>
+    <p class="eff"><b>Ожидаемый эффект:</b> минус $50 убытка в день.</p>
+    <p class="measure"><b>Как мерить:</b> дневная маржа закупки в следующем отчёте.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+</div>
+</section>
+
+<section class="method" id="method">
+  <h2>Методика</h2>
+  <ul class="tight">
+    <li>Отчёт {{meta:version_label}}, собран {{meta:built_date}}. Окно данных {{meta:window}}. Все числа выдуманы.</li>
+  </ul>
+</section>
+
+</div>

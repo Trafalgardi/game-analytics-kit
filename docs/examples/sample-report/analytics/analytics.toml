@@ -1,0 +1,7 @@
+[project]
+name = "Sample Game"
+report_language = "ru"
+platforms = ["android"]
+
+[database]
+path = "data/analytics.db"

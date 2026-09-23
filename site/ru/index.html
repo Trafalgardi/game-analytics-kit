@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>game-analytics-kit — игровая аналитика для Claude Code и Codex</title>
+<meta name="description" content="Ставится в проект игры: агент выгружает AppMetrica в SQLite, разбирает события игры и выпускает версионные HTML-отчёты в одной жёсткой структуре. Только стандартная библиотека Python, MIT.">
+<meta property="og:title" content="game-analytics-kit">
+<meta property="og:description" content="Навыки игровой аналитики для Claude Code и Codex: сырые события → локальная SQLite → версионные отчёты.">
+<meta property="og:image" content="https://trafalgardi.github.io/game-analytics-kit/images/social-preview.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314120f'/%3E%3Crect x='7' y='17' width='4' height='8' fill='%232a78d6'/%3E%3Crect x='14' y='11' width='4' height='14' fill='%23eb6834'/%3E%3Crect x='21' y='6' width='4' height='19' fill='%230ca30c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+<div class="wrap">
+
+<nav class="top">
+  <a class="brand" href="./"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>game-analytics-kit</a>
+  <span class="links">
+    <a href="#how">Как это работает</a>
+    <a href="#reports">Отчёты</a>
+    <a href="#start">Быстрый старт</a>
+    <a href="../" lang="en">English</a>
+    <a class="gh" href="https://github.com/Trafalgardi/game-analytics-kit">GitHub</a>
+  </span>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">Навыки для агентов · Claude Code · Codex · stdlib Python · MIT</p>
+  <h1>Агент для кода работает игровым аналитиком</h1>
+  <p class="lead">Поставьте набор в проект игры и просите обычными словами. Агент выгружает сырые
+    события AppMetrica в локальную базу SQLite, разбирается, что значат события именно этой игры,
+    перепроверяет свои числа и выпускает отчёт, который можно переслать кому угодно, — каждый раз
+    в тех же семи блоках.</p>
+  <p class="cta">
+    <a class="btn primary" href="../examples/sample/v002/report.html">Открыть живой пример отчёта</a>
+    <a class="btn" href="https://github.com/Trafalgardi/game-analytics-kit">Звезда на GitHub</a>
+  </p>
+  <figure class="shot peek">
+    <a href="../examples/sample/v002/report.html"><img src="../images/report-summary.png" width="960" height="1243"
+      alt="Первый экран полного разбора: название — запрос, семь пронумерованных блоков, ключевые метрики со столбцами по версиям"></a>
+    <figcaption>Полный разбор на выдуманных данных: название — это запрос, ключевые метрики по билдам рядом, оценки по выборке устройств помечены ≈.</figcaption>
+  </figure>
+</header>
+
+<section id="how">
+  <h2>Как это работает</h2>
+  <ol class="steps">
+    <li><b>Установка</b><span><code>py install.py &lt;project&gt;</code> кладёт в репозиторий игры семь навыков для Claude Code и Codex и небольшой движок. Ставить через <code>pip</code> ничего не надо.</span></li>
+    <li><b>Подключение</b><span>«Подключи AppMetrica». Агент найдёт ключ SDK в коде, возьмёт токен только на чтение и выгрузит данные в фоне — с выборкой устройств, если игра большая.</span></li>
+    <li><b>Модель</b><span>«Собери модель данных». Агент читает каталог событий и код аналитики игры, типизирует параметры, отсекает девайсы разработки, определяет сессии и новых игроков.</span></li>
+    <li><b>Вопросы</b><span>«Сделай полный анализ за две недели». «Где теряем новичков?» «Что изменила 1.2?» Каждый ответ — версионный отчёт, а выводы остаются в проекте для следующей сессии.</span></li>
+  </ol>
+</section>
+
+<section id="reports">
+  <h2>Одна структура для каждого отчёта</h2>
+  <p class="lede">Читатель и следующий агент находят одно и то же на одном и том же месте. Отчёт со сломанной структурой или ссылками сборщик не соберёт.</p>
+  <div class="blocks">
+    <div><span>1</span><h3>Краткая информация</h3><p>Ключевые метрики, столбцы — версии билда: D1/D3/D7, время в игре, сессии, реклама на игрока, ARPU, доход — и короткие ответы на ваши вопросы.</p></div>
+    <div><span>2</span><h3>Продукт</h3><p>Ретеншен, отвалы по шагам загрузки и обучения и по каждым 30 с игры, действия ядра по номеру в сессии, уходы после негативных событий, экономика.</p></div>
+    <div><span>3</span><h3>Доход</h3><p>Реклама по форматам, плейсментам и сетям; eCPM; покупки.</p></div>
+    <div><span>4</span><h3>Техника</h3><p>Техпроблемы и ошибки аналитики: дубли, пустые поля, расхождения источников — и какую метрику каждая искажает.</p></div>
+    <div><span>5</span><h3>Страны</h3><p>Разрез по странам в одном месте.</p></div>
+    <div><span>6</span><h3>Гипотезы</h3><p>H1, H2… — каждая стоит на числах со ссылками, с проверкой, порогом и уверенностью.</p></div>
+    <div><span>7</span><h3>Рекомендации</h3><p>Каждая ссылается на гипотезу, с ожидаемым эффектом и тем, как мерить.</p></div>
+  </div>
+  <figure class="shot">
+    <img src="../images/report-hypotheses.png" width="960" height="1063" loading="lazy"
+      alt="Гипотезы с уверенностью и рекомендации со ссылками на гипотезы">
+    <figcaption>Факты отделены от интерпретаций; каждое число из ответов, гипотез и рекомендаций есть в таблице или на графике выше.</figcaption>
+  </figure>
+  <p class="examples">Живые примеры на выдуманных числах:
+    <a href="../examples/sample/v002/report.html">полный разбор</a> ·
+    <a href="../examples/sample-question/v001/report.html">отчёт-вопрос</a> ·
+    <a href="../examples/index.html">список отчётов с версиями</a></p>
+</section>
+
+<section id="inside">
+  <h2>Что внутри</h2>
+  <div class="cols">
+    <div>
+      <h3>Семь навыков</h3>
+      <ul>
+        <li><code>analytics-kit</code> — точка входа и шпаргалка команд</li>
+        <li><code>analytics-connect-appmetrica</code> — ключ, токен, первая выгрузка</li>
+        <li><code>analytics-data-model</code> — типизированные события, устройства, сессии</li>
+        <li><code>analytics-project-audit</code> — что трекает код и что доходит</li>
+        <li><code>analytics-import-external</code> — выгрузки Google Ads, AdMob, GA4, Play Console</li>
+        <li><code>analytics-research</code> — вопрос → данные → гипотезы → независимая проверка</li>
+        <li><code>analytics-report</code> — жёсткая структура, графики, версии</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Движок, который можно прочитать</h3>
+      <ul>
+        <li>Только стандартная библиотека Python, Windows на равных</li>
+        <li>AppMetrica Logs API диапазонами дат, выгрузка отдельным фоновым процессом</li>
+        <li>Выборка устройств и защита диска для игр с 500 тысячами событий в день</li>
+        <li>Стандартные таблицы: ключевые метрики, отвалы, действия по номеру, уходы</li>
+        <li>Самодостаточные HTML-отчёты, светлая и тёмная тема, читаются с телефона</li>
+        <li>Офлайн-самопроверка на синтетике; проверено с настоящими агентами</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <h2>Быстрый старт</h2>
+  <p class="lede">Python 3.11+, git, Claude Code или Codex и игра, которая уже шлёт события в AppMetrica.</p>
+<pre><code>git clone https://github.com/Trafalgardi/game-analytics-kit.git &lt;kit&gt;
+py &lt;kit&gt;/install.py &lt;project&gt;           # python3 на macOS/Linux
+
+# токен AppMetrica только на чтение, один раз на все проекты:
+#   ~/.config/game-analytics-kit/.env  →  APPMETRICA_TOKEN=...
+
+cd &lt;project&gt; &amp;&amp; claude                   # или: codex
+&gt; Подключи AppMetrica и выгрузи последние две недели.
+&gt; Собери модель данных.
+&gt; Сделай полный анализ игры за последние две недели.</code></pre>
+  <p>Полная инструкция — токен по шагам, большие игры, обновление, безопасность, частые проблемы —
+    в <a href="https://github.com/Trafalgardi/game-analytics-kit/blob/main/README.ru.md">README на русском</a>.</p>
+</section>
+
+<footer>
+  <span>Лицензия MIT · для студий, которые выпускают быстро</span>
+  <span><a href="https://github.com/Trafalgardi/game-analytics-kit">GitHub</a> · <a href="../" lang="en">English</a></span>
+</footer>
+
+</div>
+</body>
+</html>

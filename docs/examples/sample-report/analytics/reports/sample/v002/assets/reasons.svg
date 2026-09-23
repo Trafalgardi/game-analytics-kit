@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 233" width="100%" role="img" aria-label="Что делает игрок перед уходом (пример)">
+<line class="grid zero" x1="297.2" x2="297.2" y1="6" y2="176"/>
+<text class="ax" x="297.2" y="192" text-anchor="middle">0%</text>
+<line class="grid" x1="375.2" x2="375.2" y1="6" y2="176"/>
+<text class="ax" x="375.2" y="192" text-anchor="middle">5%</text>
+<line class="grid" x1="453.2" x2="453.2" y1="6" y2="176"/>
+<text class="ax" x="453.2" y="192" text-anchor="middle">10%</text>
+<line class="grid" x1="531.1" x2="531.1" y1="6" y2="176"/>
+<text class="ax" x="531.1" y="192" text-anchor="middle">15%</text>
+<line class="grid" x1="609.1" x2="609.1" y1="6" y2="176"/>
+<text class="ax" x="609.1" y="192" text-anchor="middle">20%</text>
+<line class="grid" x1="687.1" x2="687.1" y1="6" y2="176"/>
+<text class="ax" x="687.1" y="192" text-anchor="middle">25%</text>
+<g class="hv"><title>Свернул игру в течение 20 с после кражи: 25%</title><rect class="hit" x="0" y="6" width="720" height="34"/><text class="lab" x="287.2" y="27.5" text-anchor="end">Свернул игру в течение 20 с после кражи</text>
+<path class="mk s-bad" d="M297.2 12.5H684.1A3 3 0 0 1 687.1 15.5V30.5A3 3 0 0 1 684.1 33.5H297.2Z"/>
+<text class="val" x="693.1" y="27">25%</text>
+</g>
+<g class="hv"><title>Вышел в меню посреди матча: 16%</title><rect class="hit" x="0" y="40" width="720" height="34"/><text class="lab" x="287.2" y="61.5" text-anchor="end">Вышел в меню посреди матча</text>
+<path class="mk s1" d="M297.2 46.5H543.7A3 3 0 0 1 546.7 49.5V64.5A3 3 0 0 1 543.7 67.5H297.2Z"/>
+<text class="val" x="552.7" y="61">16%</text>
+</g>
+<g class="hv"><title>Рестарт после поражения в гонке: 9%</title><rect class="hit" x="0" y="74" width="720" height="34"/><text class="lab" x="287.2" y="95.5" text-anchor="end">Рестарт после поражения в гонке</text>
+<path class="mk s1" d="M297.2 80.5H434.6A3 3 0 0 1 437.6 83.5V98.5A3 3 0 0 1 434.6 101.5H297.2Z"/>
+<text class="val" x="443.6" y="95">9%</text>
+</g>
+<g class="hv"><title>Удвоил награду за рекламу и ушёл: 6%</title><rect class="hit" x="0" y="108" width="720" height="34"/><text class="lab" x="287.2" y="129.5" text-anchor="end">Удвоил награду за рекламу и ушёл</text>
+<path class="mk s1" d="M297.2 114.5H387.8A3 3 0 0 1 390.8 117.5V132.5A3 3 0 0 1 387.8 135.5H297.2Z"/>
+<text class="val" x="396.8" y="129">6%</text>
+</g>
+<g class="hv"><title>Ничего не нажал: последнее событие — загрузка уровня, долгая и без прогресс-бара: 3%</title><rect class="hit" x="0" y="142" width="720" height="34"/><text class="lab" x="287.2" y="163.5" text-anchor="end">Ничего не нажал: последнее событие — заг…</text>
+<path class="mk s1" d="M297.2 148.5H341A3 3 0 0 1 344 151.5V166.5A3 3 0 0 1 341 169.5H297.2Z"/>
+<text class="val" x="350" y="163">3%</text>
+</g>
+<text class="ax" x="297.2" y="214">доля ушедших новичков · длинная подпись обрезана, полный текст</text>
+<text class="ax" x="297.2" y="229">во всплывающей подсказке</text>
+</svg>

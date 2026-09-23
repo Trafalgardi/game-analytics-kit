@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+/scratch/
+# the live example report keeps its built output; its database is synthetic and small
+docs/examples/sample-report/analytics/data/
+docs/examples/sample-report/analytics/reports/**/work/

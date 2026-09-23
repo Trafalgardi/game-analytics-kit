@@ -1,0 +1,52 @@
+name: site
+
+# The site: site/ (landing, EN and RU), docs/images/ and the example reports built from
+# docs/examples/sample-report (made-up data), published to GitHub Pages.
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "docs/images/**", "docs/examples/**", "kit/gak/report/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # Pages needs a public repository on the free plan: skip quietly while it is private.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build the example reports
+        run: python docs/examples/sample-report/make_sample.py
+      - name: Assemble the site
+        run: |
+          mkdir -p _site/images _site/examples
+          cp -r site/. _site/
+          cp docs/images/*.png _site/images/
+          cp -r docs/examples/sample-report/analytics/reports/. _site/examples/
+          find _site/examples -type d -name work -prune -exec rm -rf {} +
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
