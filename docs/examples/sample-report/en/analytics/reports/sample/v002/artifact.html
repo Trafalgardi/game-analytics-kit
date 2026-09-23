@@ -1,0 +1,1369 @@
+<title>Sample 1.0.8 and 1.1.0, Sep 1–20: full review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* game-analytics-kit — report theme. Every report and reports/index.html embed this file.
+
+   Colour carries meaning across the whole series of reports; keep it that way:
+     --flow   normal path, organic traffic      --ad     ads, paid acquisition
+     --loss   lost players, bad outcome         --good   revenue, good outcome
+   Each has an -ink variant for text (the fill colours are too light for small type).
+
+   Chart series: --c-1..--c-6, always assigned in this order (blue, orange, teal, violet,
+   amber, pink). The order was validated for colour-vision deficiency in both themes; do not
+   shuffle it and do not add a 7th hue (fold the rest into "other"). --c-old and --c-unk are
+   neutrals for "previous period / version" and "unknown / unattributed".
+   Marks take the classes .s1..s6, .s-old, .s-unk, .s-good, .s-bad; the same classes paint
+   legend swatches (<i class="sw s1">). */
+
+:root {
+  color-scheme: light;
+  --plane:        #f4f3ef;
+  --surface:      #fdfcfa;
+  --surface-sunk: #eeece6;
+  --ink:          #14120f;
+  --ink-2:        #57534b;
+  --ink-3:        #8a8378;
+  --rule:         #e2dfd6;
+  --rule-strong:  #c8c4b8;
+  --flow:         #2a78d6;
+  --flow-ink:     #1f63b5;
+  --ad:           #eb6834;
+  --ad-ink:       #b8461c;
+  --loss:         #d03b3b;
+  --loss-ink:     #b02c2c;
+  --good:         #0ca30c;
+  --good-ink:     #006300;
+  --c-1:          #2a78d6;
+  --c-2:          #eb6834;
+  --c-3:          #1baf7a;
+  --c-4:          #4a3aa7;
+  --c-5:          #eda100;
+  --c-6:          #e87ba4;
+  --c-old:        #aba598;
+  --c-unk:        #c6c1b5;
+  --shadow:       0 1px 2px rgba(20,18,15,.05), 0 8px 24px -16px rgba(20,18,15,.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --plane:        #0e0d0c;
+    --surface:      #1a1918;
+    --surface-sunk: #232120;
+    --ink:          #f6f4ef;
+    --ink-2:        #c2bdb2;
+    --ink-3:        #8d867a;
+    --rule:         #2d2b28;
+    --rule-strong:  #3d3a35;
+    --flow:         #4b93e8;
+    --flow-ink:     #7ab2f2;
+    --ad:           #f07a45;
+    --ad-ink:       #f28e5e;
+    --loss:         #e06a6a;
+    --loss-ink:     #e78585;
+    --good:         #23bd23;
+    --good-ink:     #3fce3f;
+    --c-1:          #4b93e8;
+    --c-2:          #dc6a36;
+    --c-3:          #199e70;
+    --c-4:          #9085e9;
+    --c-5:          #c98500;
+    --c-6:          #d55181;
+    --c-old:        #6f6a60;
+    --c-unk:        #57534c;
+    --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --plane:        #0e0d0c;
+  --surface:      #1a1918;
+  --surface-sunk: #232120;
+  --ink:          #f6f4ef;
+  --ink-2:        #c2bdb2;
+  --ink-3:        #8d867a;
+  --rule:         #2d2b28;
+  --rule-strong:  #3d3a35;
+  --flow:         #4b93e8;
+  --flow-ink:     #7ab2f2;
+  --ad:           #f07a45;
+  --ad-ink:       #f28e5e;
+  --loss:         #e06a6a;
+  --loss-ink:     #e78585;
+  --good:         #23bd23;
+  --good-ink:     #3fce3f;
+  --c-1:          #4b93e8;
+  --c-2:          #dc6a36;
+  --c-3:          #199e70;
+  --c-4:          #9085e9;
+  --c-5:          #c98500;
+  --c-6:          #d55181;
+  --c-old:        #6f6a60;
+  --c-unk:        #57534c;
+  --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+}
+
+/* ---------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--plane); color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+.masthead { border-bottom: 2px solid var(--ink); padding: 56px 0 20px; margin-bottom: 36px; }
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px;
+}
+h1 {
+  font-family: Oxanium, "IBM Plex Sans", system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(34px, 6.4vw, 60px); line-height: .98; letter-spacing: -.02em;
+  margin: 0 0 16px; text-wrap: balance; overflow-wrap: break-word;
+}
+.standfirst { font-size: 18px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+h2 {
+  font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.15; letter-spacing: -.01em; margin: 64px 0 6px; text-wrap: balance; overflow-wrap: break-word;
+}
+h2 + .lede { color: var(--ink-2); margin: 0 0 24px; max-width: 70ch; }
+h3 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.25;
+  margin: 36px 0 8px; text-wrap: balance; }
+p, li { max-width: 70ch; }
+strong, b { font-weight: 600; }
+.num, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .86em; background: var(--surface-sunk);
+  padding: 1px 5px; overflow-wrap: anywhere; }
+small { font-size: .82em; }
+a { color: var(--flow-ink); }
+:focus-visible { outline: 2px solid var(--flow); outline-offset: 2px; }
+
+/* --------------------------------------------------------- stat tiles */
+/* grid blocks draw their hairlines with outlines, so an incomplete last row leaves no grey hole */
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 33px 1px 1px; }
+.tile { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.tile .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+.tile .v { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 34px; line-height: 1;
+  letter-spacing: -.02em; overflow-wrap: break-word; }
+.tile .n { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; line-height: 1.4; }
+.tile.warn .v { color: var(--loss-ink); }
+.tile.ad .v { color: var(--ad-ink); }
+.tile.good .v { color: var(--good-ink); }
+
+/* ------------------------------------------------------ short answers */
+.answers { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.ans { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 170px 1fr; gap: 18px; }
+.ans .q { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+.ans p { margin: 0; font-size: 15px; max-width: none; }
+.ans p + p { margin-top: 8px; }
+
+/* ------------------------------------------------------------ figures */
+figure { margin: 28px 0 0; }
+.figbox { background: var(--surface); border: 1px solid var(--rule); padding: 18px 16px 10px; overflow-x: auto;
+  box-shadow: var(--shadow); }
+.figbox svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.figbox svg + svg { margin-top: 16px; }
+figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 12px; max-width: 76ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.figbox svg + .legend { margin: 12px 0 2px; }  /* legend goes above the chart; below also works */
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.sw.lk { width: 16px; height: 3px; border-radius: 2px; }
+
+/* chart chrome: text wears ink tokens, never the series colour */
+svg .grid { stroke: var(--rule); stroke-width: 1; }
+svg .grid.zero { stroke: var(--rule-strong); }
+svg .ax { fill: var(--ink-3); font: 11px "IBM Plex Mono", ui-monospace, monospace; }
+svg .val { fill: var(--ink-2); font: 10.5px "IBM Plex Mono", ui-monospace, monospace; }
+svg .lab { fill: var(--ink); font: 13px "IBM Plex Sans", system-ui, sans-serif; }
+svg .ann { fill: var(--ink-2); font: 500 12px "IBM Plex Sans", system-ui, sans-serif; }
+svg .band { fill: var(--surface-sunk); }
+svg .refl { stroke: var(--ink-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+svg .refl.alt { stroke-dasharray: 1.5 3; }
+svg .hit { fill: transparent; pointer-events: all; }
+
+/* chart series: fill for marks, background for legend swatches */
+.s1 { --sc: var(--c-1); }
+.s2 { --sc: var(--c-2); }
+.s3 { --sc: var(--c-3); }
+.s4 { --sc: var(--c-4); }
+.s5 { --sc: var(--c-5); }
+.s6 { --sc: var(--c-6); }
+.s-old { --sc: var(--c-old); }
+.s-unk { --sc: var(--c-unk); }
+.s-good { --sc: var(--good); }
+.s-bad { --sc: var(--loss); }
+.s1, .s2, .s3, .s4, .s5, .s6, .s-old, .s-unk, .s-good, .s-bad { fill: var(--sc); background: var(--sc); }
+svg .ln { fill: none; stroke: var(--sc, var(--ink-2)); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg .dot { stroke: var(--surface); stroke-width: 2; }
+svg .mk, svg .dot { transition: opacity .12s ease; }
+svg .hv:hover .mk, svg .hv:hover .dot { opacity: .78; }
+
+/* -------------------------------------------------------- screenshots */
+.shot { margin: 28px 0 0; min-width: 0; }
+.shot .frame { background: var(--surface); border: 1px solid var(--rule); padding: 8px; box-shadow: var(--shadow);
+  overflow-x: auto; }
+.shot img { display: block; max-width: 100%; height: auto; }
+.shot .tag { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ad-ink); margin: 0 0 6px; }
+.shots2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.shots2 .shot { margin-top: 28px; }
+
+/* ------------------------------------------------------------- tables */
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 400; border-bottom: 1px solid var(--rule-strong); }
+td.n, th.n { text-align: right; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 600; border-top: 1px solid var(--rule-strong); }
+td.bad { color: var(--loss-ink); font-weight: 600; }
+td.ok { color: var(--good-ink); font-weight: 600; }
+.tablebox { border: 1px solid var(--rule); background: var(--surface); overflow-x: auto; margin-top: 20px; }
+.tablebox table { min-width: 640px; }
+.tnote { font-size: 13px; color: var(--ink-3); margin: 8px 0 0; max-width: 80ch; }
+
+/* -------------------------------------------------------------- cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1px;
+  margin: 25px 1px 1px; }
+.card { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.card .cnt { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 30px; line-height: 1; }
+.card .cnt em { font-style: normal; font-size: 13px; color: var(--ink-3); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  margin-left: 6px; }
+.card h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 16px; line-height: 1.3; margin: 10px 0 6px; }
+.card h4:first-child { margin-top: 0; }
+.card p { font-size: 14px; color: var(--ink-2); margin: 0; max-width: none; }
+.card p + p { margin-top: 6px; }
+.card.hot { border-left: 3px solid var(--loss); }
+.card.adc { border-left: 3px solid var(--ad); }
+.card.okc { border-left: 3px solid var(--good); }
+
+/* ------------------------------------------------ numbered actions */
+.acts { counter-reset: act; margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.act { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+  align-items: start; }
+.act::before { counter-increment: act; content: counter(act); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-3); border: 1px solid var(--rule-strong); width: 26px; height: 26px;
+  display: grid; place-items: center; margin-top: 2px; }
+.act > div { min-width: 0; }
+.act h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 4px; }
+.act p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.act p + p { margin-top: 6px; }
+.act .why { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+
+.act .eff, .act .measure { font-size: 14px; }
+.act .eff b, .act .measure b { color: var(--ink); }
+.act .why a { color: var(--flow-ink); }
+
+/* ----------------------------------------- fixed skeleton: toc, blocks */
+/* Every report has the same numbered blocks (DESIGN.md section 6); ids are the anchors. */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 8px; }
+.note + .toc { margin-top: 24px; }
+.toc a { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border: 1px solid var(--rule);
+  background: var(--surface); color: var(--ink-2); text-decoration: none; font-size: 13.5px; line-height: 1.3; }
+.toc a:hover { border-color: var(--rule-strong); color: var(--ink); }
+.toc b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 11.5px; color: var(--ink-3);
+  border: 1px solid var(--rule-strong); min-width: 20px; height: 20px; display: inline-grid; place-items: center; }
+section.block, section.method, [id] { scroll-margin-top: 16px; }
+h2 .bn { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: .5em; letter-spacing: 0;
+  color: var(--ink-3); border: 1px solid var(--rule-strong); display: inline-grid; place-items: center;
+  min-width: 1.9em; height: 1.9em; margin-right: 12px; vertical-align: .32em; }
+section.block > h2:first-child { margin-top: 72px; }
+
+/* ------------------------------------------------------- hypotheses */
+.hyps { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.hyp { background: var(--surface); padding: 16px 18px; }
+.hyp .hid { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: var(--ink);
+  margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; max-width: none; }
+.hyp h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 8px; }
+.hyp p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.hyp p + p { margin-top: 6px; }
+.hyp .basis b, .hyp .test b { color: var(--ink); }
+.conf { font-weight: 400; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.conf::before { letter-spacing: 1px; margin-right: 6px; color: var(--ink-2); }
+.conf.high::before { content: "\25CF\25CF\25CF"; }
+.conf.mid::before { content: "\25CF\25CF\25CB"; }
+.conf.low::before { content: "\25CF\25CB\25CB"; }
+
+/* ---------------------------------------------- facts vs interpretation */
+/* Plain paragraphs, tables and charts are facts; a reading of them goes into .interp. */
+.interp { border-left: 2px dashed var(--flow); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 20px 0 0; max-width: 76ch; }
+.interp b:first-child { color: var(--flow-ink); font-weight: 600; }
+
+/* ------------------------------------ key metrics, estimates, drop-off */
+/* these two fit a phone when they can: labels wrap, numbers do not, the box scrolls only if needed */
+.tablebox table.kpi, .tablebox table.drop { min-width: 0; }
+table.kpi td:first-child, table.drop td:first-child { min-width: 9em; }
+table.kpi th.n, table.drop th.n { white-space: normal; min-width: 4.5em; }
+table.ord td:first-child { min-width: 0; width: 12em; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+table.kpi td small, table.drop td small { display: block; font-size: 11px; color: var(--ink-3); line-height: 1.3; }
+td.est, .est { color: var(--ink-3); font-style: italic; }
+tr.est td:first-child { color: var(--ink-3); }
+
+/* ------------------------------------------------------ notes, calc */
+.note { border-left: 2px solid var(--rule-strong); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 24px 0 0; max-width: 76ch; }
+.note b, .note strong { color: var(--ink); }
+.calc { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13.5px; background: var(--surface);
+  border: 1px solid var(--rule); padding: 14px 16px; margin: 20px 0 0; overflow-x: auto; white-space: pre;
+  line-height: 1.7; color: var(--ink); }
+ul.tight { padding-left: 20px; margin: 12px 0 0; }
+ul.tight li { margin: 6px 0; }
+
+/* ------------------------------------------------------------- method */
+.method { margin-top: 64px; border-top: 1px solid var(--rule); padding-top: 20px; font-size: 14px; color: var(--ink-2); }
+.method h2 { font-size: 20px; margin: 0 0 10px; }
+.method li { max-width: 90ch; }
+
+/* --------------------------------------------------------- responsive */
+@media (max-width: 760px) {
+  .wrap { padding: 0 16px 72px; }
+  .masthead { padding-top: 36px; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .ans { grid-template-columns: 1fr; gap: 6px; }
+  .shots2 { grid-template-columns: 1fr; gap: 0; }
+  h2 { margin-top: 52px; }
+}
+@media (max-width: 480px) {
+  body { font-size: 15px; }
+  .standfirst { font-size: 16.5px; }
+  .tile { padding: 14px; }
+  .tile .v { font-size: 27px; }
+  .card .cnt { font-size: 26px; }
+  .act { grid-template-columns: 1fr; gap: 8px; }
+  .figbox { padding: 14px 10px 8px; }
+}
+
+/* --------------------------------------------------------- safety nets */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    color-scheme: light;
+    --plane:        #ffffff;
+    --surface:      #ffffff;
+    --surface-sunk: #f1efe9;
+    --ink:          #14120f;
+    --ink-2:        #57534b;
+    --ink-3:        #7a7368;
+    --rule:         #e2dfd6;
+    --rule-strong:  #c8c4b8;
+    --flow:         #2a78d6;
+    --flow-ink:     #1f63b5;
+    --ad:           #eb6834;
+    --ad-ink:       #b8461c;
+    --loss:         #d03b3b;
+    --loss-ink:     #b02c2c;
+    --good:         #0ca30c;
+    --good-ink:     #006300;
+    --c-1:          #2a78d6;
+    --c-2:          #eb6834;
+    --c-3:          #1baf7a;
+    --c-4:          #4a3aa7;
+    --c-5:          #eda100;
+    --c-6:          #e87ba4;
+    --c-old:        #aba598;
+    --c-unk:        #c6c1b5;
+    --shadow:       none;
+  }
+  body { background: #fff; font-size: 12pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0; }
+  .masthead { padding-top: 0; }
+  .figbox, .shot .frame { box-shadow: none; overflow: visible; }
+  .figbox svg { min-width: 0; }
+  .tablebox { overflow: visible; }
+  .tablebox table { min-width: 0; }
+  figure, .shot, .tablebox, .card, .act, .ans, .tile, .hyp { break-inside: avoid; }
+  .toc { display: none; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Full review · Sample · 1.0.8 and 1.1.0 · Sep 1–21, 2026</p>
+  <h1>Sample 1.0.8 and 1.1.0, Sep 1–20: full review</h1>
+  <p class="standfirst">New players leave at the first purchase in the tutorial, and paid UA does not pay back at any bid</p>
+</header>
+
+<p class="note"><b>What changed since v001.</b> The data window extends to Sep 21, the ROAS line in 3.3 was recounted. Everything else as before.</p>
+
+<nav class="toc">
+  <a href="#summary"><b>1</b>Summary</a>
+  <a href="#product"><b>2</b>Product metrics</a>
+  <a href="#revenue"><b>3</b>Revenue metrics</a>
+  <a href="#tech"><b>4</b>Technical data</a>
+  <a href="#countries"><b>5</b>Countries</a>
+  <a href="#hypotheses"><b>6</b>Hypotheses</a>
+  <a href="#actions"><b>7</b>Recommendations</a>
+</nav>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Summary</h2>
+<p class="lede">New players of Sep 1–20 by the build of their first launch. Every number is made up: the example shows what each block looks like.</p>
+
+<h3 id="summary-metrics">Key metrics by version</h3>
+<div class="tablebox">
+<table class="kpi">
+  <thead><tr><th>Metric</th><th class="n">1.0.8</th><th class="n">1.1.0</th><th class="n">All players</th></tr></thead>
+  <tbody>
+    <tr><td>Players in the sample</td><td class="n">118</td><td class="n">94</td><td class="n">212</td></tr>
+    <tr class="est"><td>Players, estimate ×10</td><td class="n est">≈ 1,180</td><td class="n est">≈ 940</td><td class="n est">≈ 2,120</td></tr>
+    <tr><td>Retention D1</td><td class="n">31.2%<small>n = 109</small></td><td class="n">35.1%<small>n = 77</small></td><td class="n">32.8%<small>n = 186</small></td></tr>
+    <tr><td>Retention D3</td><td class="n">12.4%<small>n = 97</small></td><td class="n">14.0%<small>n = 57</small></td><td class="n">13.0%<small>n = 154</small></td></tr>
+    <tr><td>Retention D7</td><td class="n">5.1%<small>n = 79</small></td><td class="n">—<small>n = 0</small></td><td class="n">5.1%<small>n = 79</small></td></tr>
+    <tr><td>Active time per player, min</td><td class="n">11.8<small>median 5.3</small></td><td class="n">12.6<small>median 5.4</small></td><td class="n">12.2<small>median 5.3</small></td></tr>
+    <tr><td>Sessions per player</td><td class="n">2.90<small>median 2.0</small></td><td class="n">3.10<small>median 2.0</small></td><td class="n">3.00<small>median 2.0</small></td></tr>
+    <tr><td>Average session, min</td><td class="n">4.1<small>median 1.9</small></td><td class="n">4.1<small>median 2.0</small></td><td class="n">4.1<small>median 1.9</small></td></tr>
+    <tr><td>Interstitials per player</td><td class="n">3.40</td><td class="n">3.60</td><td class="n">3.50</td></tr>
+    <tr><td>Rewarded per player</td><td class="n">0.60</td><td class="n">0.90</td><td class="n">0.70</td></tr>
+    <tr><td>ARPU (ads), $</td><td class="n">$0.0120</td><td class="n">$0.0150</td><td class="n">$0.0133</td></tr>
+    <tr><td>Ad revenue in the sample, $</td><td class="n">$1.42</td><td class="n">$1.41</td><td class="n">$2.83</td></tr>
+    <tr class="est"><td>Ad revenue, estimate ×10, $</td><td class="n est">≈ $14.20</td><td class="n est">≈ $14.10</td><td class="n est">≈ $28.30</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Cohort: devices whose first event is in Sep 1–20, 2026 (v_players); columns: version of the first event. D1/D3/D7: an event on day 1/3/7 after the first, over devices whose day is over (n under the value). Active time: gaps between events inside a session, each capped at 10 min; a session is an AppMetrica session_id. Ads: ad_revenue_events, revenue in USD as sent. A 10% device sample: 'estimate' rows = sample × 10; rates and per-player values stay as they are.</p>
+
+<h3 id="summary-answers">Short answers</h3>
+<div class="answers">
+  <div class="ans"><div class="q">What did 1.1.0 change</div>
+    <div><p><b>More players finish the first match, no more reach the second.</b> 74% vs 62%, second match 45% vs 52% (<a href="#product-core">2.3</a>).</p></div></div>
+  <div class="ans"><div class="q">Where do we lose new players</div>
+    <div><p><b>At the first purchase in the tutorial and in the first 30 seconds of play.</b> 21.2% and 11.3% leave (<a href="#product-dropoff">2.2</a>).</p>
+    <p>A second paragraph inside an answer works too.</p></div></div>
+  <div class="ans"><div class="q">Does paid UA pay back</div>
+    <div><p><b>No.</b> A player costs $0.40 and brings $0.13 (<a href="#revenue-ua">3.3</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="product">
+<h2><span class="bn">2</span>Product metrics</h2>
+<p class="lede">Everything about the game except money: installs and retention, drop-off, the first matches, what players do before they leave.</p>
+
+<h3 id="product-retention">2.1 New players and D1 by day</h3>
+<figure id="fig-daily">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Organic</span><span><i class="sw s2"></i>Paid</span><span><i class="sw s-unk"></i>Unattributed</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="100%" role="img" aria-label="New players per day by source (example)">
+<rect class="band" x="479.1" y="36" width="226.9" height="222"/>
+<text class="ann" x="485.1" y="28" text-anchor="start">from Sep 15: new build (example)</text>
+<line class="grid zero" x1="25.2" x2="706" y1="258" y2="258"/>
+<text class="ax" x="17.2" y="262" text-anchor="end">0</text>
+<line class="grid" x1="25.2" x2="706" y1="213.6" y2="213.6"/>
+<text class="ax" x="17.2" y="217.6" text-anchor="end">10</text>
+<line class="grid" x1="25.2" x2="706" y1="169.2" y2="169.2"/>
+<text class="ax" x="17.2" y="173.2" text-anchor="end">20</text>
+<line class="grid" x1="25.2" x2="706" y1="124.8" y2="124.8"/>
+<text class="ax" x="17.2" y="128.8" text-anchor="end">30</text>
+<line class="grid" x1="25.2" x2="706" y1="80.4" y2="80.4"/>
+<text class="ax" x="17.2" y="84.4" text-anchor="end">40</text>
+<line class="grid" x1="25.2" x2="706" y1="36" y2="36"/>
+<text class="ax" x="17.2" y="40" text-anchor="end">50</text>
+<g class="hv"><title>Sep 1 — Organic 26; Paid 0; Unattributed 2 · total 28</title><rect class="hit" x="25.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="29.7" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M29.7 140.6V136.7A3 3 0 0 1 32.7 133.7H50.1A3 3 0 0 1 53.1 136.7V140.6Z"/>
+<text class="val" x="41.4" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>Sep 2 — Organic 27; Paid 0; Unattributed 1 · total 28</title><rect class="hit" x="57.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="62.2" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M62.2 136.1V136.1A2.4 2.4 0 0 1 64.6 133.7H83.1A2.4 2.4 0 0 1 85.5 136.1V136.1Z"/>
+<text class="val" x="73.8" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>Sep 3 — Organic 25; Paid 0; Unattributed 3 · total 28</title><rect class="hit" x="90" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="94.6" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M94.6 145V136.7A3 3 0 0 1 97.6 133.7H114.9A3 3 0 0 1 117.9 136.7V145Z"/>
+<text class="val" x="106.2" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>Sep 4 — Organic 29; Paid 0; Unattributed 2 · total 31</title><rect class="hit" x="122.5" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="127" y="129.2" width="23.3" height="128.8"/>
+<path class="mk s-unk" d="M127 127.2V123.4A3 3 0 0 1 130 120.4H147.3A3 3 0 0 1 150.3 123.4V127.2Z"/>
+<text class="val" x="138.7" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>Sep 5 — Organic 24; Paid 0; Unattributed 2 · total 26</title><rect class="hit" x="154.9" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="159.4" y="151.4" width="23.3" height="106.6"/>
+<path class="mk s-unk" d="M159.4 149.4V145.6A3 3 0 0 1 162.4 142.6H179.8A3 3 0 0 1 182.8 145.6V149.4Z"/>
+<text class="val" x="171.1" y="137.6" text-anchor="middle">26</text>
+</g>
+<g class="hv"><title>Sep 6 — Organic 28; Paid 0; Unattributed 1 · total 29</title><rect class="hit" x="187.3" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="191.8" y="133.7" width="23.3" height="124.3"/>
+<path class="mk s-unk" d="M191.8 131.7V131.7A2.4 2.4 0 0 1 194.3 129.2H212.7A2.4 2.4 0 0 1 215.2 131.7V131.7Z"/>
+<text class="val" x="203.5" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>Sep 7 — Organic 27; Paid 0; Unattributed 2 · total 29</title><rect class="hit" x="219.7" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="224.3" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M224.3 136.1V132.2A3 3 0 0 1 227.3 129.2H244.6A3 3 0 0 1 247.6 132.2V136.1Z"/>
+<text class="val" x="235.9" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>Sep 8 — Organic 26; Paid 0; Unattributed 3 · total 29</title><rect class="hit" x="252.1" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="256.7" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M256.7 140.6V132.2A3 3 0 0 1 259.7 129.2H277A3 3 0 0 1 280 132.2V140.6Z"/>
+<text class="val" x="268.3" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>Sep 9 — Organic 30; Paid 0; Unattributed 1 · total 31</title><rect class="hit" x="284.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="289.1" y="124.8" width="23.3" height="133.2"/>
+<path class="mk s-unk" d="M289.1 122.8V122.8A2.4 2.4 0 0 1 291.5 120.4H310A2.4 2.4 0 0 1 312.4 122.8V122.8Z"/>
+<text class="val" x="300.8" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>Sep 10 — Organic 25; Paid 0; Unattributed 2 · total 27</title><rect class="hit" x="317" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="321.5" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M321.5 145V141.1A3 3 0 0 1 324.5 138.1H341.9A3 3 0 0 1 344.9 141.1V145Z"/>
+<text class="val" x="333.2" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>Sep 11 — Organic 27; Paid 0; Unattributed 2 · total 29</title><rect class="hit" x="349.4" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="353.9" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M353.9 136.1V132.2A3 3 0 0 1 356.9 129.2H374.3A3 3 0 0 1 377.3 132.2V136.1Z"/>
+<text class="val" x="365.6" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>Sep 12 — Organic 26; Paid 0; Unattributed 1 · total 27</title><rect class="hit" x="381.8" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="386.3" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M386.3 140.6V140.6A2.4 2.4 0 0 1 388.8 138.1H407.2A2.4 2.4 0 0 1 409.7 140.6V140.6Z"/>
+<text class="val" x="398" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>Sep 13 — Organic 28; Paid 0; Unattributed 3 · total 31</title><rect class="hit" x="414.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="418.8" y="133.7" width="23.3" height="124.3"/>
+<path class="mk s-unk" d="M418.8 131.7V123.4A3 3 0 0 1 421.8 120.4H439.1A3 3 0 0 1 442.1 123.4V131.7Z"/>
+<text class="val" x="430.4" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>Sep 14 — Organic 25; Paid 0; Unattributed 2 · total 27</title><rect class="hit" x="446.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="451.2" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M451.2 145V141.1A3 3 0 0 1 454.2 138.1H471.5A3 3 0 0 1 474.5 141.1V145Z"/>
+<text class="val" x="462.9" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>Sep 15 — Organic 11; Paid 0; Unattributed 1 · total 12</title><rect class="hit" x="479.1" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="483.6" y="209.2" width="23.3" height="48.8"/>
+<path class="mk s-unk" d="M483.6 207.2V207.2A2.4 2.4 0 0 1 486 204.7H504.5A2.4 2.4 0 0 1 506.9 207.2V207.2Z"/>
+<text class="val" x="495.3" y="199.7" text-anchor="middle">12</text>
+</g>
+<g class="hv"><title>Sep 16 — Organic 10; Paid 0; Unattributed 1 · total 11</title><rect class="hit" x="511.5" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="516" y="213.6" width="23.3" height="44.4"/>
+<path class="mk s-unk" d="M516 211.6V211.6A2.4 2.4 0 0 1 518.5 209.2H536.9A2.4 2.4 0 0 1 539.4 211.6V211.6Z"/>
+<text class="val" x="527.7" y="204.2" text-anchor="middle">11</text>
+</g>
+<g class="hv"><title>Sep 17 — Organic 9; Paid 7; Unattributed 4 · total 20</title><rect class="hit" x="543.9" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="548.4" y="218" width="23.3" height="40"/>
+<rect class="mk s2" x="548.4" y="187" width="23.3" height="29.1"/>
+<path class="mk s-unk" d="M548.4 185V172.2A3 3 0 0 1 551.4 169.2H568.8A3 3 0 0 1 571.8 172.2V185Z"/>
+<text class="val" x="560.1" y="164.2" text-anchor="middle">20</text>
+</g>
+<g class="hv"><title>Sep 18 — Organic 12; Paid 20; Unattributed 5 · total 37</title><rect class="hit" x="576.3" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="580.9" y="204.7" width="23.3" height="53.3"/>
+<rect class="mk s2" x="580.9" y="115.9" width="23.3" height="86.8"/>
+<path class="mk s-unk" d="M580.9 113.9V96.7A3 3 0 0 1 583.9 93.7H601.2A3 3 0 0 1 604.2 96.7V113.9Z"/>
+<text class="val" x="592.5" y="88.7" text-anchor="middle">37</text>
+</g>
+<g class="hv"><title>Sep 19 — Organic 10; Paid 14; Unattributed 3 · total 27</title><rect class="hit" x="608.7" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="613.3" y="213.6" width="23.3" height="44.4"/>
+<rect class="mk s2" x="613.3" y="151.4" width="23.3" height="60.2"/>
+<path class="mk s-unk" d="M613.3 149.4V141.1A3 3 0 0 1 616.3 138.1H633.6A3 3 0 0 1 636.6 141.1V149.4Z"/>
+<text class="val" x="625" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>Sep 20 — Organic 11; Paid 12; Unattributed 2 · total 25</title><rect class="hit" x="641.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="645.7" y="209.2" width="23.3" height="48.8"/>
+<rect class="mk s2" x="645.7" y="155.9" width="23.3" height="51.3"/>
+<path class="mk s-unk" d="M645.7 153.9V150A3 3 0 0 1 648.7 147H666A3 3 0 0 1 669 150V153.9Z"/>
+<text class="val" x="657.4" y="142" text-anchor="middle">25</text>
+</g>
+<g class="hv"><title>Sep 21 — Organic 9; Paid 31; Unattributed 7 · total 47</title><rect class="hit" x="673.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="678.1" y="218" width="23.3" height="40"/>
+<rect class="mk s2" x="678.1" y="80.4" width="23.3" height="135.6"/>
+<path class="mk s-unk" d="M678.1 78.4V52.3A3 3 0 0 1 681.1 49.3H698.5A3 3 0 0 1 701.5 52.3V78.4Z"/>
+<text class="val" x="689.8" y="44.3" text-anchor="middle">47</text>
+</g>
+<text class="ax" x="41.4" y="274" text-anchor="middle">Sep 1</text>
+<text class="ax" x="106.2" y="274" text-anchor="middle">Sep 3</text>
+<text class="ax" x="171.1" y="274" text-anchor="middle">Sep 5</text>
+<text class="ax" x="235.9" y="274" text-anchor="middle">Sep 7</text>
+<text class="ax" x="300.8" y="274" text-anchor="middle">Sep 9</text>
+<text class="ax" x="365.6" y="274" text-anchor="middle">Sep 11</text>
+<text class="ax" x="430.4" y="274" text-anchor="middle">Sep 13</text>
+<text class="ax" x="495.3" y="274" text-anchor="middle">Sep 15</text>
+<text class="ax" x="560.1" y="274" text-anchor="middle">Sep 17</text>
+<text class="ax" x="625" y="274" text-anchor="middle">Sep 19</text>
+<text class="ax" x="689.8" y="274" text-anchor="middle">Sep 21</text>
+<text class="ax" x="25.2" y="296">September, day of month · made-up data</text>
+</svg>
+  </div>
+  <figcaption>From Sep 15 organic drops about 2.5×, paid starts on Sep 17. Hover a bar for the split.</figcaption>
+</figure>
+<figure id="fig-retention">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw lk s-old"></i>Build 1.0.8</span><span><i class="sw lk s1"></i>Build 1.1.0</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="D1 by install day (example)">
+<rect class="band" x="432.5" y="36" width="61.6" height="202"/>
+<text class="ann" x="438.5" y="28" text-anchor="start">switch</text>
+<line class="grid zero" x1="31.8" x2="679.1" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="197.6" y2="197.6"/>
+<text class="ax" x="23.8" y="201.6" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="157.2" y2="157.2"/>
+<text class="ax" x="23.8" y="161.2" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="116.8" y2="116.8"/>
+<text class="ax" x="23.8" y="120.8" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="76.4" y2="76.4"/>
+<text class="ax" x="23.8" y="80.4" text-anchor="end">40%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="36" y2="36"/>
+<text class="ax" x="23.8" y="40" text-anchor="end">50%</text>
+<line class="refl" x1="540.4" x2="540.4" y1="36" y2="238"/>
+<text class="ann" x="545.4" y="48" text-anchor="start">UA starts</text>
+<path class="ln s-old" d="M47.2 112.8L78 116.8L108.9 108.7L139.7 120.8L170.5 116.8L201.3 112.8L232.2 124.9L263 116.8L293.8 120.8L324.6 112.8L355.5 116.8L386.3 120.8L417.1 116.8L447.9 112.8"/>
+<path class="ln s1" d="M447.9 116.8L478.7 104.7L509.6 96.6L540.4 100.6L571.2 92.6L602 96.6L632.9 88.5L663.7 92.6"/>
+<g class="hv"><title>Sep 1 — Build 1.0.8 31%</title><rect class="hit" x="31.8" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="47.2" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 2 — Build 1.0.8 30%</title><rect class="hit" x="62.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="78" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 3 — Build 1.0.8 32%</title><rect class="hit" x="93.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="108.9" cy="108.7" r="4"/>
+</g>
+<g class="hv"><title>Sep 4 — Build 1.0.8 29%</title><rect class="hit" x="124.3" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="139.7" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 5 — Build 1.0.8 30%</title><rect class="hit" x="155.1" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="170.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 6 — Build 1.0.8 31%</title><rect class="hit" x="185.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="201.3" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 7 — Build 1.0.8 28%</title><rect class="hit" x="216.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="232.2" cy="124.9" r="4"/>
+</g>
+<g class="hv"><title>Sep 8 — Build 1.0.8 30%</title><rect class="hit" x="247.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="263" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 9 — Build 1.0.8 29%</title><rect class="hit" x="278.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="293.8" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 10 — Build 1.0.8 31%</title><rect class="hit" x="309.2" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="324.6" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 11 — Build 1.0.8 30%</title><rect class="hit" x="340" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="355.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 12 — Build 1.0.8 29%</title><rect class="hit" x="370.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="386.3" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 13 — Build 1.0.8 30%</title><rect class="hit" x="401.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="417.1" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 14 — Build 1.0.8 31%; Build 1.1.0 30%</title><rect class="hit" x="432.5" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="447.9" cy="112.8" r="4"/>
+<circle class="dot s1" cx="447.9" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>Sep 15 — Build 1.1.0 33%</title><rect class="hit" x="463.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="478.7" cy="104.7" r="4"/>
+</g>
+<g class="hv"><title>Sep 16 — Build 1.1.0 35%</title><rect class="hit" x="494.2" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="509.6" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>Sep 17 — Build 1.1.0 34%</title><rect class="hit" x="525" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="540.4" cy="100.6" r="4"/>
+</g>
+<g class="hv"><title>Sep 18 — Build 1.1.0 36%</title><rect class="hit" x="555.8" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="571.2" cy="92.6" r="4"/>
+</g>
+<g class="hv"><title>Sep 19 — Build 1.1.0 35%</title><rect class="hit" x="586.6" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="602" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>Sep 20 — Build 1.1.0 37%</title><rect class="hit" x="617.5" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="632.9" cy="88.5" r="4"/>
+</g>
+<g class="hv"><title>Sep 21 — Build 1.1.0 36%</title><rect class="hit" x="648.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="663.7" cy="92.6" r="4"/>
+</g>
+<text class="val" x="671.7" y="96.6">36%</text>
+<text class="ax" x="47.2" y="254" text-anchor="middle">Sep 1</text>
+<text class="ax" x="108.9" y="254" text-anchor="middle">Sep 3</text>
+<text class="ax" x="170.5" y="254" text-anchor="middle">Sep 5</text>
+<text class="ax" x="232.2" y="254" text-anchor="middle">Sep 7</text>
+<text class="ax" x="293.8" y="254" text-anchor="middle">Sep 9</text>
+<text class="ax" x="355.5" y="254" text-anchor="middle">Sep 11</text>
+<text class="ax" x="417.1" y="254" text-anchor="middle">Sep 13</text>
+<text class="ax" x="478.7" y="254" text-anchor="middle">Sep 15</text>
+<text class="ax" x="540.4" y="254" text-anchor="middle">Sep 17</text>
+<text class="ax" x="602" y="254" text-anchor="middle">Sep 19</text>
+<text class="ax" x="663.7" y="254" text-anchor="middle">Sep 21</text>
+<text class="ax" x="31.8" y="276">share who came back the next day · made-up data</text>
+</svg>
+  </div>
+  <figcaption>line: two series with a gap (None), markers, the value at the end of the line, a band and a vertical mark.</figcaption>
+</figure>
+<p class="note"><b>Preliminary.</b> The last seven days are still arriving: D1 for Sep 19–20 can grow. A .note sits next to the number it qualifies.</p>
+
+<h3 id="product-dropoff">2.2 Drop-off by steps and by time</h3>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Step</th><th class="n">Reached</th><th class="n">Lost</th><th class="n">Lost, % of previous</th><th class="n">Reached, % of cohort</th><th class="n">Reached, estimate</th><th class="n">Step time, s: median · p90 · max</th></tr></thead>
+  <tbody>
+    <tr><td>Cohort: first event</td><td class="n">212</td><td class="n">—</td><td class="n">—</td><td class="n">100.0%</td><td class="n est">≈ 2,120</td><td class="n">—</td></tr>
+    <tr><td>Loading: SDK</td><td class="n">207</td><td class="n">5</td><td class="n">2.4%</td><td class="n">97.6%</td><td class="n est">≈ 2,070</td><td class="n">0.4 · 1.1 · 38.0</td></tr>
+    <tr><td>Loading: ads</td><td class="n">188</td><td class="n">19</td><td class="n bad">9.2%</td><td class="n">88.7%</td><td class="n est">≈ 1,880</td><td class="n">7.8 · 24.0 · 3,899</td></tr>
+    <tr><td>First scene</td><td class="n">184</td><td class="n">4</td><td class="n">2.1%</td><td class="n">86.8%</td><td class="n est">≈ 1,840</td><td class="n">10.7 · 31.0 · 1,357</td></tr>
+    <tr><td>Tutorial: first step</td><td class="n">179</td><td class="n">5</td><td class="n bad">2.7%</td><td class="n">84.4%</td><td class="n est">≈ 1,790</td><td class="n">—</td></tr>
+    <tr><td>Tutorial: first purchase</td><td class="n">141</td><td class="n">38</td><td class="n bad">21.2%</td><td class="n">66.5%</td><td class="n est">≈ 1,410</td><td class="n">—</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Active time, m:ss</th><th class="n">Reached</th><th class="n">Lost</th><th class="n">Lost, % of previous</th><th class="n">Reached, % of cohort</th><th class="n">Reached, estimate</th></tr></thead>
+  <tbody>
+    <tr><td>Cohort: first event</td><td class="n">212</td><td class="n">—</td><td class="n">—</td><td class="n">100.0%</td><td class="n est">≈ 2,120</td></tr>
+    <tr><td>0:30</td><td class="n">188</td><td class="n">24</td><td class="n bad">11.3%</td><td class="n">88.7%</td><td class="n est">≈ 1,880</td></tr>
+    <tr><td>1:00</td><td class="n">171</td><td class="n">17</td><td class="n bad">9.0%</td><td class="n">80.7%</td><td class="n est">≈ 1,710</td></tr>
+    <tr><td>1:30</td><td class="n">160</td><td class="n">11</td><td class="n">6.4%</td><td class="n">75.5%</td><td class="n est">≈ 1,600</td></tr>
+    <tr><td>2:00</td><td class="n">151</td><td class="n">9</td><td class="n">5.6%</td><td class="n">71.2%</td><td class="n est">≈ 1,510</td></tr>
+    <tr><td>2:30</td><td class="n">142</td><td class="n">9</td><td class="n">6.0%</td><td class="n">67.0%</td><td class="n est">≈ 1,420</td></tr>
+    <tr><td>3:00</td><td class="n">136</td><td class="n">6</td><td class="n">4.2%</td><td class="n">64.2%</td><td class="n est">≈ 1,360</td></tr>
+    <tr><td>3:30</td><td class="n">129</td><td class="n">7</td><td class="n">5.1%</td><td class="n">60.8%</td><td class="n est">≈ 1,290</td></tr>
+    <tr><td>4:00</td><td class="n">125</td><td class="n">4</td><td class="n">3.1%</td><td class="n">59.0%</td><td class="n est">≈ 1,250</td></tr>
+    <tr><td>4:30</td><td class="n">119</td><td class="n">6</td><td class="n">4.8%</td><td class="n">56.1%</td><td class="n est">≈ 1,190</td></tr>
+    <tr><td>5:00</td><td class="n">110</td><td class="n">9</td><td class="n bad">7.6%</td><td class="n">51.9%</td><td class="n est">≈ 1,100</td></tr>
+    <tr><td>5:30</td><td class="n">106</td><td class="n">4</td><td class="n">3.6%</td><td class="n">50.0%</td><td class="n est">≈ 1,060</td></tr>
+    <tr><td>6:00</td><td class="n">101</td><td class="n">5</td><td class="n">4.7%</td><td class="n">47.6%</td><td class="n est">≈ 1,010</td></tr>
+    <tr><td>6:30</td><td class="n">98</td><td class="n">3</td><td class="n">3.0%</td><td class="n">46.2%</td><td class="n est">≈ 980</td></tr>
+    <tr><td>7:00</td><td class="n">95</td><td class="n">3</td><td class="n">3.1%</td><td class="n">44.8%</td><td class="n est">≈ 950</td></tr>
+    <tr><td>7:30</td><td class="n">91</td><td class="n">4</td><td class="n">4.2%</td><td class="n">42.9%</td><td class="n est">≈ 910</td></tr>
+    <tr><td>8:00</td><td class="n">88</td><td class="n">3</td><td class="n">3.3%</td><td class="n">41.5%</td><td class="n est">≈ 880</td></tr>
+    <tr><td>8:30</td><td class="n">85</td><td class="n">3</td><td class="n">3.4%</td><td class="n">40.1%</td><td class="n est">≈ 850</td></tr>
+    <tr><td>9:00</td><td class="n">83</td><td class="n">2</td><td class="n">2.4%</td><td class="n">39.2%</td><td class="n est">≈ 830</td></tr>
+    <tr><td>9:30</td><td class="n">80</td><td class="n">3</td><td class="n">3.6%</td><td class="n">37.7%</td><td class="n est">≈ 800</td></tr>
+    <tr><td>10:00</td><td class="n">78</td><td class="n">2</td><td class="n">2.5%</td><td class="n">36.8%</td><td class="n est">≈ 780</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Cohort: 212 devices whose first event is in Sep 1–20, 2026 (v_players). A step counts when the device reached it or a later one. Active time: gaps between events inside a session, each capped at 10 min; every session of the device. A 10% device sample: 'estimate' rows = sample × 10; rates and per-player values stay as they are.</p>
+<figure>
+  <div class="figbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Share of players who leave in each 30 s of active time">
+<line class="grid zero" x1="45" x2="706" y1="238" y2="238"/>
+<text class="ax" x="37" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="45" x2="706" y1="194.4" y2="194.4"/>
+<text class="ax" x="37" y="198.4" text-anchor="end">2.5%</text>
+<line class="grid" x1="45" x2="706" y1="150.8" y2="150.8"/>
+<text class="ax" x="37" y="154.8" text-anchor="end">5.0%</text>
+<line class="grid" x1="45" x2="706" y1="107.2" y2="107.2"/>
+<text class="ax" x="37" y="111.2" text-anchor="end">7.5%</text>
+<line class="grid" x1="45" x2="706" y1="63.6" y2="63.6"/>
+<text class="ax" x="37" y="67.6" text-anchor="end">10.0%</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">12.5%</text>
+<g class="hv"><title>0:30: 11.3%</title><rect class="hit" x="45" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M49.6 238V43.6A3 3 0 0 1 52.6 40.6H70.4A3 3 0 0 1 73.4 43.6V238Z"/>
+</g>
+<g class="hv"><title>1:00: 9.0%</title><rect class="hit" x="78" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M82.7 238V83.3A3 3 0 0 1 85.7 80.3H103.5A3 3 0 0 1 106.5 83.3V238Z"/>
+</g>
+<g class="hv"><title>1:30: 6.4%</title><rect class="hit" x="111.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M115.7 238V128.8A3 3 0 0 1 118.7 125.8H136.5A3 3 0 0 1 139.5 128.8V238Z"/>
+</g>
+<g class="hv"><title>2:00: 5.6%</title><rect class="hit" x="144.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M148.8 238V142.9A3 3 0 0 1 151.8 139.9H169.6A3 3 0 0 1 172.6 142.9V238Z"/>
+</g>
+<g class="hv"><title>2:30: 6.0%</title><rect class="hit" x="177.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M181.8 238V137.1A3 3 0 0 1 184.8 134.1H202.6A3 3 0 0 1 205.6 137.1V238Z"/>
+</g>
+<g class="hv"><title>3:00: 4.2%</title><rect class="hit" x="210.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M214.9 238V167.3A3 3 0 0 1 217.9 164.3H235.7A3 3 0 0 1 238.7 167.3V238Z"/>
+</g>
+<g class="hv"><title>3:30: 5.1%</title><rect class="hit" x="243.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M247.9 238V151.2A3 3 0 0 1 250.9 148.2H268.7A3 3 0 0 1 271.7 151.2V238Z"/>
+</g>
+<g class="hv"><title>4:00: 3.1%</title><rect class="hit" x="276.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M281 238V186.9A3 3 0 0 1 284 183.9H301.8A3 3 0 0 1 304.8 186.9V238Z"/>
+</g>
+<g class="hv"><title>4:30: 4.8%</title><rect class="hit" x="309.4" y="20" width="33" height="218"/>
+<path class="mk s1" d="M314 238V157.3A3 3 0 0 1 317 154.3H334.8A3 3 0 0 1 337.8 157.3V238Z"/>
+</g>
+<g class="hv"><title>5:00: 7.6%</title><rect class="hit" x="342.4" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M347.1 238V109.1A3 3 0 0 1 350.1 106.1H367.9A3 3 0 0 1 370.9 109.1V238Z"/>
+</g>
+<g class="hv"><title>5:30: 3.6%</title><rect class="hit" x="375.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M380.1 238V177.6A3 3 0 0 1 383.1 174.6H400.9A3 3 0 0 1 403.9 177.6V238Z"/>
+</g>
+<g class="hv"><title>6:00: 4.7%</title><rect class="hit" x="408.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M413.2 238V158.7A3 3 0 0 1 416.2 155.7H434A3 3 0 0 1 437 158.7V238Z"/>
+</g>
+<g class="hv"><title>6:30: 3.0%</title><rect class="hit" x="441.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M446.2 238V189.2A3 3 0 0 1 449.2 186.2H467A3 3 0 0 1 470 189.2V238Z"/>
+</g>
+<g class="hv"><title>7:00: 3.1%</title><rect class="hit" x="474.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M479.3 238V187.6A3 3 0 0 1 482.3 184.6H500.1A3 3 0 0 1 503.1 187.6V238Z"/>
+</g>
+<g class="hv"><title>7:30: 4.2%</title><rect class="hit" x="507.7" y="20" width="33" height="218"/>
+<path class="mk s1" d="M512.3 238V167.6A3 3 0 0 1 515.3 164.6H533.1A3 3 0 0 1 536.1 167.6V238Z"/>
+</g>
+<g class="hv"><title>8:00: 3.3%</title><rect class="hit" x="540.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M545.4 238V183.5A3 3 0 0 1 548.4 180.5H566.2A3 3 0 0 1 569.2 183.5V238Z"/>
+</g>
+<g class="hv"><title>8:30: 3.4%</title><rect class="hit" x="573.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M578.4 238V181.5A3 3 0 0 1 581.4 178.5H599.2A3 3 0 0 1 602.2 181.5V238Z"/>
+</g>
+<g class="hv"><title>9:00: 2.4%</title><rect class="hit" x="606.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M611.5 238V200A3 3 0 0 1 614.5 197H632.3A3 3 0 0 1 635.3 200V238Z"/>
+</g>
+<g class="hv"><title>9:30: 3.6%</title><rect class="hit" x="639.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M644.5 238V178A3 3 0 0 1 647.5 175H665.3A3 3 0 0 1 668.3 178V238Z"/>
+</g>
+<g class="hv"><title>10:00: 2.5%</title><rect class="hit" x="672.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M677.6 238V197.4A3 3 0 0 1 680.6 194.4H698.4A3 3 0 0 1 701.4 197.4V238Z"/>
+</g>
+<text class="ax" x="61.5" y="254" text-anchor="middle">0:30</text>
+<text class="ax" x="127.6" y="254" text-anchor="middle">1:30</text>
+<text class="ax" x="193.7" y="254" text-anchor="middle">2:30</text>
+<text class="ax" x="259.8" y="254" text-anchor="middle">3:30</text>
+<text class="ax" x="325.9" y="254" text-anchor="middle">4:30</text>
+<text class="ax" x="392" y="254" text-anchor="middle">5:30</text>
+<text class="ax" x="458.1" y="254" text-anchor="middle">6:30</text>
+<text class="ax" x="524.2" y="254" text-anchor="middle">7:30</text>
+<text class="ax" x="590.3" y="254" text-anchor="middle">8:30</text>
+<text class="ax" x="656.4" y="254" text-anchor="middle">9:30</text>
+<text class="ax" x="45" y="276">active time, m:ss · share lost of those who reached the interval · n = 212</text>
+</svg></div>
+  <figcaption>Most players leave in the first 30 seconds of active time; after that the loss is steady, 3–6% per interval.</figcaption>
+</figure>
+<p class="interp"><b>Interpretation.</b> The first purchase in the tutorial needs money a new player does not have yet: 21.2% never get past it. This is a reading of the numbers, not a fact — H1 tests it.</p>
+
+<h3 id="product-core">2.3 The first matches</h3>
+<div class="tablebox">
+<table class="drop ord">
+  <thead><tr><th>Hero purchase · N in session</th><th class="n">Devices</th><th class="n">% of cohort</th><th class="n">Median, m:ss</th><th class="n">Mean, m:ss</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="n">180</td><td class="n">84.9%</td><td class="n">0:42</td><td class="n">2:20</td></tr>
+    <tr><td>2</td><td class="n">130</td><td class="n">61.3%</td><td class="n">2:25</td><td class="n">4:42</td></tr>
+    <tr><td>3</td><td class="n">95</td><td class="n">44.8%</td><td class="n">4:22</td><td class="n">8:09</td></tr>
+    <tr><td>4</td><td class="n">70</td><td class="n">33.0%</td><td class="n">6:04</td><td class="n">11:24</td></tr>
+    <tr><td>5</td><td class="n">51</td><td class="n">24.1%</td><td class="n">8:00</td><td class="n">15:08</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="tablebox">
+<table class="drop ord">
+  <thead><tr><th>Theft · N in session</th><th class="n">Devices</th><th class="n">% of cohort</th><th class="n">Median, m:ss</th><th class="n">Mean, m:ss</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="n">150</td><td class="n">70.8%</td><td class="n">1:33</td><td class="n">3:50</td></tr>
+    <tr><td>2</td><td class="n">112</td><td class="n">52.8%</td><td class="n">3:31</td><td class="n">6:51</td></tr>
+    <tr><td>3</td><td class="n">83</td><td class="n">39.2%</td><td class="n">5:17</td><td class="n">10:45</td></tr>
+    <tr><td>4</td><td class="n">58</td><td class="n">27.4%</td><td class="n">6:50</td><td class="n">16:23</td></tr>
+    <tr><td>5</td><td class="n">41</td><td class="n">19.3%</td><td class="n">8:09</td><td class="n">18:41</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Cohort: 212 devices whose first event is in Sep 1–20, 2026 (v_players). The Nth action is the Nth time within one session; time is since the session's first event (wall clock, includes backgrounded time). A 10% device sample: device counts are the sample (× 10 for an estimate); shares stand as they are.</p>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-old"></i>Build 1.0.8 (neutral .s-old)</span><span><i class="sw s1"></i>Build 1.1.0</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="How many matches a new player started (example)">
+<line class="grid zero" x1="31.8" x2="706" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="706" y1="183.5" y2="183.5"/>
+<text class="ax" x="23.8" y="187.5" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="706" y1="129" y2="129"/>
+<text class="ax" x="23.8" y="133" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="706" y1="74.5" y2="74.5"/>
+<text class="ax" x="23.8" y="78.5" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">40%</text>
+<g class="hv"><title>0 · Build 1.0.8: 16.2%</title><rect class="hit" x="52" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M53 238V152.7A3 3 0 0 1 56 149.7H84A3 3 0 0 1 87 152.7V238Z"/>
+<text class="val" x="70" y="144.7" text-anchor="middle">16.2%</text>
+</g>
+<g class="hv"><title>0 · Build 1.1.0: 20.8%</title><rect class="hit" x="88" y="20" width="36" height="218"/>
+<path class="mk s1" d="M89 238V127.6A3 3 0 0 1 92 124.6H120A3 3 0 0 1 123 127.6V238Z"/>
+<text class="val" x="106" y="119.6" text-anchor="middle">20.8%</text>
+</g>
+<g class="hv"><title>1 · Build 1.0.8: 32.4%</title><rect class="hit" x="164.4" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M165.4 238V64.4A3 3 0 0 1 168.4 61.4H196.4A3 3 0 0 1 199.4 64.4V238Z"/>
+<text class="val" x="182.4" y="56.4" text-anchor="middle">32.4%</text>
+</g>
+<g class="hv"><title>1 · Build 1.1.0: 34.0%</title><rect class="hit" x="200.4" y="20" width="36" height="218"/>
+<path class="mk s1" d="M201.4 238V55.7A3 3 0 0 1 204.4 52.7H232.4A3 3 0 0 1 235.4 55.7V238Z"/>
+<text class="val" x="218.4" y="47.7" text-anchor="middle">34.0%</text>
+</g>
+<g class="hv"><title>2 · Build 1.0.8: 13.2%</title><rect class="hit" x="276.7" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M277.7 238V169.1A3 3 0 0 1 280.7 166.1H308.7A3 3 0 0 1 311.7 169.1V238Z"/>
+<text class="val" x="294.7" y="161.1" text-anchor="middle">13.2%</text>
+</g>
+<g class="hv"><title>2 · Build 1.1.0: 9.4%</title><rect class="hit" x="312.7" y="20" width="36" height="218"/>
+<path class="mk s1" d="M313.7 238V189.8A3 3 0 0 1 316.7 186.8H344.7A3 3 0 0 1 347.7 189.8V238Z"/>
+<text class="val" x="330.7" y="181.8" text-anchor="middle">9.4%</text>
+</g>
+<g class="hv"><title>3–5 · Build 1.0.8: 19.1%</title><rect class="hit" x="389.1" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M390.1 238V136.9A3 3 0 0 1 393.1 133.9H421.1A3 3 0 0 1 424.1 136.9V238Z"/>
+<text class="val" x="407.1" y="128.9" text-anchor="middle">19.1%</text>
+</g>
+<g class="hv"><title>3–5 · Build 1.1.0: 20.8%</title><rect class="hit" x="425.1" y="20" width="36" height="218"/>
+<path class="mk s1" d="M426.1 238V127.6A3 3 0 0 1 429.1 124.6H457.1A3 3 0 0 1 460.1 127.6V238Z"/>
+<text class="val" x="443.1" y="119.6" text-anchor="middle">20.8%</text>
+</g>
+<g class="hv"><title>6–10 · Build 1.0.8: 13.2%</title><rect class="hit" x="501.5" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M502.5 238V169.1A3 3 0 0 1 505.5 166.1H533.5A3 3 0 0 1 536.5 169.1V238Z"/>
+<text class="val" x="519.5" y="161.1" text-anchor="middle">13.2%</text>
+</g>
+<g class="hv"><title>6–10 · Build 1.1.0: 9.4%</title><rect class="hit" x="537.5" y="20" width="36" height="218"/>
+<path class="mk s1" d="M538.5 238V189.8A3 3 0 0 1 541.5 186.8H569.5A3 3 0 0 1 572.5 189.8V238Z"/>
+<text class="val" x="555.5" y="181.8" text-anchor="middle">9.4%</text>
+</g>
+<g class="hv"><title>11+ · Build 1.0.8: 5.9%</title><rect class="hit" x="613.8" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M614.8 238V208.8A3 3 0 0 1 617.8 205.8H645.8A3 3 0 0 1 648.8 208.8V238Z"/>
+<text class="val" x="631.8" y="200.8" text-anchor="middle">5.9%</text>
+</g>
+<g class="hv"><title>11+ · Build 1.1.0: 5.7%</title><rect class="hit" x="649.8" y="20" width="36" height="218"/>
+<path class="mk s1" d="M650.8 238V209.9A3 3 0 0 1 653.8 206.9H681.8A3 3 0 0 1 684.8 209.9V238Z"/>
+<text class="val" x="667.8" y="201.9" text-anchor="middle">5.7%</text>
+</g>
+<text class="ax" x="88" y="254" text-anchor="middle">0</text>
+<text class="ax" x="200.4" y="254" text-anchor="middle">1</text>
+<text class="ax" x="312.7" y="254" text-anchor="middle">2</text>
+<text class="ax" x="425.1" y="254" text-anchor="middle">3–5</text>
+<text class="ax" x="537.5" y="254" text-anchor="middle">6–10</text>
+<text class="ax" x="649.8" y="254" text-anchor="middle">11+</text>
+<text class="ax" x="31.8" y="276">matches started over the lifetime · share of new players · made-up data</text>
+</svg>
+  </div>
+  <figcaption>grouped_bars: values above the bars when they fit. The distributions nearly match.</figcaption>
+</figure>
+<div class="tablebox">
+<table>
+  <thead><tr><th>New players</th><th class="n">1.0.8</th><th class="n">1.1.0</th><th class="n">Difference</th></tr></thead>
+  <tbody>
+    <tr><td>Players</td><td class="n">118</td><td class="n">94</td><td class="n">−24</td></tr>
+    <tr><td>Finished the first match</td><td class="n">62%</td><td class="n ok">74%</td><td class="n ok">+12 pp</td></tr>
+    <tr><td>Started a second match</td><td class="n">52%</td><td class="n bad">45%</td><td class="n bad">−7 pp</td></tr>
+    <tr><td>Playtime, median</td><td class="n">5.3 min</td><td class="n">5.4 min</td><td class="n">+0.1</td></tr>
+    <tr class="total"><td>Sessions in total</td><td class="n">342</td><td class="n">291</td><td class="n">−51</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">.tnote under a table: cohorts, window, filters. td.n numbers, td.ok / td.bad a verdict, tr.total a total.</p>
+<p class="interp"><b>Interpretation.</b> 1.1.0 moved the loss from the first match to the step to the second one. 7 pp on 94 players is a direction, not a proven effect.</p>
+
+<h3 id="product-negative">2.4 Leaving after negative events</h3>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Event</th><th class="n">Devices with it</th><th class="n">Backgrounded within 20 s</th><th class="n">Back within 20 s</th><th class="n">Nothing else within 20 s</th><th class="n">Never came back</th></tr></thead>
+  <tbody>
+    <tr><td>Hero stolen</td><td class="n">120</td><td class="n">46.7%<small>56 devices</small></td><td class="n">53.6%<small>30 devices</small></td><td class="n">20.8%<small>25 devices</small></td><td class="n">5.0%<small>6 devices</small></td></tr>
+    <tr><td>Got hit</td><td class="n">150</td><td class="n">40.7%<small>61 devices</small></td><td class="n">55.7%<small>34 devices</small></td><td class="n">14.7%<small>22 devices</small></td><td class="n">1.3%<small>2 devices</small></td></tr>
+    <tr><td>Interstitial started</td><td class="n">131</td><td class="n">64.9%<small>85 devices</small></td><td class="n">50.6%<small>43 devices</small></td><td class="n">22.9%<small>30 devices</small></td><td class="n">0.8%<small>1 devices</small></td></tr>
+    <tr><td>Hero purchase (neutral)</td><td class="n">180</td><td class="n">22.8%<small>41 devices</small></td><td class="n">73.2%<small>30 devices</small></td><td class="n">0.0%<small>0 devices</small></td><td class="n">0.0%<small>0 devices</small></td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Cohort: 212 devices whose first event is in Sep 1–20, 2026 (v_players). Shares are of devices that had the event at least once; backgrounded = a pause event (app_pause) within 20 s, back = of those backgrounded; nothing else = no other event within 20 s; never came back = no event at all after it. A 10% device sample: device counts are the sample (× 10 for an estimate); shares stand as they are.</p>
+<p class="interp"><b>Interpretation.</b> After a theft 46.7% background the game — twice as often as after a neutral purchase (22.8%).</p>
+<figure>
+  <div class="figbox">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 233" width="100%" role="img" aria-label="What a player does before leaving (example)">
+<line class="grid zero" x1="298.3" x2="298.3" y1="6" y2="176"/>
+<text class="ax" x="298.3" y="192" text-anchor="middle">0%</text>
+<line class="grid" x1="376" x2="376" y1="6" y2="176"/>
+<text class="ax" x="376" y="192" text-anchor="middle">5%</text>
+<line class="grid" x1="453.8" x2="453.8" y1="6" y2="176"/>
+<text class="ax" x="453.8" y="192" text-anchor="middle">10%</text>
+<line class="grid" x1="531.6" x2="531.6" y1="6" y2="176"/>
+<text class="ax" x="531.6" y="192" text-anchor="middle">15%</text>
+<line class="grid" x1="609.3" x2="609.3" y1="6" y2="176"/>
+<text class="ax" x="609.3" y="192" text-anchor="middle">20%</text>
+<line class="grid" x1="687.1" x2="687.1" y1="6" y2="176"/>
+<text class="ax" x="687.1" y="192" text-anchor="middle">25%</text>
+<g class="hv"><title>Backgrounded the game within 20 s of a theft: 25%</title><rect class="hit" x="0" y="6" width="720" height="34"/><text class="lab" x="288.3" y="27.5" text-anchor="end">Backgrounded the game within 20 s of a th…</text>
+<path class="mk s-bad" d="M298.3 12.5H684.1A3 3 0 0 1 687.1 15.5V30.5A3 3 0 0 1 684.1 33.5H298.3Z"/>
+<text class="val" x="693.1" y="27">25%</text>
+</g>
+<g class="hv"><title>Left to the menu mid-match: 16%</title><rect class="hit" x="0" y="40" width="720" height="34"/><text class="lab" x="288.3" y="61.5" text-anchor="end">Left to the menu mid-match</text>
+<path class="mk s1" d="M298.3 46.5H544.1A3 3 0 0 1 547.1 49.5V64.5A3 3 0 0 1 544.1 67.5H298.3Z"/>
+<text class="val" x="553.1" y="61">16%</text>
+</g>
+<g class="hv"><title>Restarted after losing a race: 9%</title><rect class="hit" x="0" y="74" width="720" height="34"/><text class="lab" x="288.3" y="95.5" text-anchor="end">Restarted after losing a race</text>
+<path class="mk s1" d="M298.3 80.5H435.2A3 3 0 0 1 438.2 83.5V98.5A3 3 0 0 1 435.2 101.5H298.3Z"/>
+<text class="val" x="444.2" y="95">9%</text>
+</g>
+<g class="hv"><title>Doubled a reward with an ad and left: 6%</title><rect class="hit" x="0" y="108" width="720" height="34"/><text class="lab" x="288.3" y="129.5" text-anchor="end">Doubled a reward with an ad and left</text>
+<path class="mk s1" d="M298.3 114.5H388.6A3 3 0 0 1 391.6 117.5V132.5A3 3 0 0 1 388.6 135.5H298.3Z"/>
+<text class="val" x="397.6" y="129">6%</text>
+</g>
+<g class="hv"><title>Pressed nothing: the last event is a level load, long and without a progress bar: 3%</title><rect class="hit" x="0" y="142" width="720" height="34"/><text class="lab" x="288.3" y="163.5" text-anchor="end">Pressed nothing: the last event is a level l…</text>
+<path class="mk s1" d="M298.3 148.5H341.9A3 3 0 0 1 344.9 151.5V166.5A3 3 0 0 1 341.9 169.5H298.3Z"/>
+<text class="val" x="350.9" y="163">3%</text>
+</g>
+<text class="ax" x="298.3" y="214">share of new players who left · a long label is clipped, the</text>
+<text class="ax" x="298.3" y="229">tooltip has the full text</text>
+</svg>
+  </div>
+  <figcaption>Every fourth player who left backgrounded the game within 20 seconds of a theft.</figcaption>
+</figure>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Revenue metrics</h2>
+<p class="lede">Ads by format, placement and network; revenue concentration; paid acquisition.</p>
+
+<h3 id="revenue-ads">3.1 Ads by placement</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Placement</th><th class="n">Impressions in the sample</th><th class="n">Impressions, estimate</th><th class="n">Per player</th><th class="n">eCPM, $</th></tr></thead>
+  <tbody>
+    <tr><td>Interstitial after a match</td><td class="n">612</td><td class="n est">≈ 6,120</td><td class="n">2.9</td><td class="n">3.10</td></tr>
+    <tr><td>Rewarded: double the reward</td><td class="n">118</td><td class="n est">≈ 1,180</td><td class="n">0.6</td><td class="n ok">6.40</td></tr>
+    <tr><td>Rewarded: second chance</td><td class="n">31</td><td class="n est">≈ 310</td><td class="n">0.1</td><td class="n">5.90</td></tr>
+    <tr class="total"><td>Total</td><td class="n">761</td><td class="n est">≈ 7,610</td><td class="n">3.6</td><td class="n">3.72</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">≈ an estimate from a 10% device sample (× 10), italic .est. Shares and per-player values stand as they are.</p>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Network A</span><span><i class="sw s2"></i>Network B</span><span><i class="sw s3"></i>Network C</span><span><i class="sw s4"></i>Network D</span><span><i class="sw s5"></i>Network E</span><span><i class="sw s6"></i>Network F</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="100%" role="img" aria-label="Share of revenue by ad network (example)">
+<line class="grid zero" x1="31.8" x2="706" y1="218" y2="218"/>
+<text class="ax" x="23.8" y="222" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="706" y1="168.5" y2="168.5"/>
+<text class="ax" x="23.8" y="172.5" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="706" y1="119" y2="119"/>
+<text class="ax" x="23.8" y="123" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="706" y1="69.5" y2="69.5"/>
+<text class="ax" x="23.8" y="73.5" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">40%</text>
+<g class="hv"><title>week 1 · Network A: 34%</title><rect class="hit" x="53.3" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M54.3 218V52.7A3 3 0 0 1 57.3 49.7H79.6A3 3 0 0 1 82.6 52.7V218Z"/>
+<text class="val" x="68.4" y="44.7" text-anchor="middle">34%</text>
+</g>
+<g class="hv"><title>week 1 · Network B: 22%</title><rect class="hit" x="83.6" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M84.6 218V112.1A3 3 0 0 1 87.6 109.1H109.9A3 3 0 0 1 112.9 112.1V218Z"/>
+<text class="val" x="98.7" y="104.1" text-anchor="middle">22%</text>
+</g>
+<g class="hv"><title>week 1 · Network C: 15%</title><rect class="hit" x="113.9" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M114.9 218V146.8A3 3 0 0 1 117.9 143.8H140.2A3 3 0 0 1 143.2 146.8V218Z"/>
+<text class="val" x="129" y="138.8" text-anchor="middle">15%</text>
+</g>
+<g class="hv"><title>week 1 · Network D: 12%</title><rect class="hit" x="144.2" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M145.2 218V161.6A3 3 0 0 1 148.2 158.6H170.5A3 3 0 0 1 173.5 161.6V218Z"/>
+<text class="val" x="159.3" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>week 1 · Network E: 10%</title><rect class="hit" x="174.5" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M175.5 218V171.5A3 3 0 0 1 178.5 168.5H200.8A3 3 0 0 1 203.8 171.5V218Z"/>
+<text class="val" x="189.6" y="163.5" text-anchor="middle">10%</text>
+</g>
+<g class="hv"><title>week 1 · Network F: 7%</title><rect class="hit" x="204.8" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M205.8 218V186.3A3 3 0 0 1 208.8 183.3H231.1A3 3 0 0 1 234.1 186.3V218Z"/>
+<text class="val" x="219.9" y="178.3" text-anchor="middle">7%</text>
+</g>
+<g class="hv"><title>week 2 · Network A: 31%</title><rect class="hit" x="278" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M279 218V67.5A3 3 0 0 1 282 64.5H304.3A3 3 0 0 1 307.3 67.5V218Z"/>
+<text class="val" x="293.2" y="59.5" text-anchor="middle">31%</text>
+</g>
+<g class="hv"><title>week 2 · Network B: 24%</title><rect class="hit" x="308.3" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M309.3 218V102.2A3 3 0 0 1 312.3 99.2H334.6A3 3 0 0 1 337.6 102.2V218Z"/>
+<text class="val" x="323.5" y="94.2" text-anchor="middle">24%</text>
+</g>
+<g class="hv"><title>week 2 · Network C: 14%</title><rect class="hit" x="338.6" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M339.6 218V151.7A3 3 0 0 1 342.6 148.7H364.9A3 3 0 0 1 367.9 151.7V218Z"/>
+<text class="val" x="353.8" y="143.7" text-anchor="middle">14%</text>
+</g>
+<g class="hv"><title>week 2 · Network D: 13%</title><rect class="hit" x="368.9" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M369.9 218V156.6A3 3 0 0 1 372.9 153.6H395.2A3 3 0 0 1 398.2 156.6V218Z"/>
+<text class="val" x="384" y="148.6" text-anchor="middle">13%</text>
+</g>
+<g class="hv"><title>week 2 · Network E: 11%</title><rect class="hit" x="399.2" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M400.2 218V166.6A3 3 0 0 1 403.2 163.6H425.5A3 3 0 0 1 428.5 166.6V218Z"/>
+<text class="val" x="414.3" y="158.6" text-anchor="middle">11%</text>
+</g>
+<g class="hv"><title>week 2 · Network F: 7%</title><rect class="hit" x="429.5" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M430.5 218V186.3A3 3 0 0 1 433.5 183.3H455.8A3 3 0 0 1 458.8 186.3V218Z"/>
+<text class="val" x="444.6" y="178.3" text-anchor="middle">7%</text>
+</g>
+<g class="hv"><title>week 3 · Network A: 29%</title><rect class="hit" x="502.7" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M503.7 218V77.5A3 3 0 0 1 506.7 74.5H529A3 3 0 0 1 532 77.5V218Z"/>
+<text class="val" x="517.9" y="69.5" text-anchor="middle">29%</text>
+</g>
+<g class="hv"><title>week 3 · Network B: 21%</title><rect class="hit" x="533" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M534 218V117A3 3 0 0 1 537 114H559.3A3 3 0 0 1 562.3 117V218Z"/>
+<text class="val" x="548.2" y="109" text-anchor="middle">21%</text>
+</g>
+<g class="hv"><title>week 3 · Network C: 18%</title><rect class="hit" x="563.3" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M564.3 218V131.9A3 3 0 0 1 567.3 128.9H589.6A3 3 0 0 1 592.6 131.9V218Z"/>
+<text class="val" x="578.5" y="123.9" text-anchor="middle">18%</text>
+</g>
+<g class="hv"><title>week 3 · Network D: 12%</title><rect class="hit" x="593.6" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M594.6 218V161.6A3 3 0 0 1 597.6 158.6H619.9A3 3 0 0 1 622.9 161.6V218Z"/>
+<text class="val" x="608.8" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>week 3 · Network E: 12%</title><rect class="hit" x="623.9" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M624.9 218V161.6A3 3 0 0 1 627.9 158.6H650.2A3 3 0 0 1 653.2 161.6V218Z"/>
+<text class="val" x="639.1" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>week 3 · Network F: 8%</title><rect class="hit" x="654.2" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M655.2 218V181.4A3 3 0 0 1 658.2 178.4H680.5A3 3 0 0 1 683.5 181.4V218Z"/>
+<text class="val" x="669.4" y="173.4" text-anchor="middle">8%</text>
+</g>
+<text class="ax" x="144.2" y="234" text-anchor="middle">week 1</text>
+<text class="ax" x="368.9" y="234" text-anchor="middle">week 2</text>
+<text class="ax" x="593.6" y="234" text-anchor="middle">week 3</text>
+<text class="ax" x="31.8" y="256">six series: the whole categorical palette .s1–.s6 in order · made-up data</text>
+</svg>
+  </div>
+  <figcaption>Six categorical colours in order. There is never a seventh series: the rest folds into "other".</figcaption>
+</figure>
+
+<h3 id="revenue-concentration">3.2 Revenue sits with a few players</h3>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Top five</span><span><i class="sw s1"></i>Everyone else</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="100%" role="img" aria-label="Revenue per player, descending (example)">
+<line class="grid zero" x1="45" x2="706" y1="218" y2="218"/>
+<text class="ax" x="37" y="222" text-anchor="end">$0</text>
+<line class="grid" x1="45" x2="706" y1="178.4" y2="178.4"/>
+<text class="ax" x="37" y="182.4" text-anchor="end">$0.25</text>
+<line class="grid" x1="45" x2="706" y1="138.8" y2="138.8"/>
+<text class="ax" x="37" y="142.8" text-anchor="end">$0.50</text>
+<line class="grid" x1="45" x2="706" y1="99.2" y2="99.2"/>
+<text class="ax" x="37" y="103.2" text-anchor="end">$0.75</text>
+<line class="grid" x1="45" x2="706" y1="59.6" y2="59.6"/>
+<text class="ax" x="37" y="63.6" text-anchor="end">$1.00</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">$1.25</text>
+<g class="hv"><title>#1 player 1: $1.17</title><rect class="hit" x="45" y="20" width="16.9" height="198"/><path class="mk s2" d="M47.4 218V35.7A3 3 0 0 1 50.4 32.7H56.6A3 3 0 0 1 59.6 35.7V218Z"/></g>
+<g class="hv"><title>#2 player 2: $0.97</title><rect class="hit" x="61.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M64.3 218V67.4A3 3 0 0 1 67.3 64.4H73.5A3 3 0 0 1 76.5 67.4V218Z"/></g>
+<g class="hv"><title>#3 player 3: $0.76</title><rect class="hit" x="78.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M81.3 218V100.6A3 3 0 0 1 84.3 97.6H90.5A3 3 0 0 1 93.5 100.6V218Z"/></g>
+<g class="hv"><title>#4 player 4: $0.26</title><rect class="hit" x="95.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M98.2 218V179.8A3 3 0 0 1 101.2 176.8H107.4A3 3 0 0 1 110.4 179.8V218Z"/></g>
+<g class="hv"><title>#5 player 5: $0.23</title><rect class="hit" x="112.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M115.2 218V184.6A3 3 0 0 1 118.2 181.6H124.4A3 3 0 0 1 127.4 184.6V218Z"/></g>
+<g class="hv"><title>#6 player 6: $0.19</title><rect class="hit" x="129.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M132.1 218V190.9A3 3 0 0 1 135.1 187.9H141.3A3 3 0 0 1 144.3 190.9V218Z"/></g>
+<g class="hv"><title>#7 player 7: $0.16</title><rect class="hit" x="146.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M149.1 218V195.7A3 3 0 0 1 152.1 192.7H158.3A3 3 0 0 1 161.3 195.7V218Z"/></g>
+<g class="hv"><title>#8 player 8: $0.14</title><rect class="hit" x="163.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M166 218V198.8A3 3 0 0 1 169 195.8H175.2A3 3 0 0 1 178.2 198.8V218Z"/></g>
+<g class="hv"><title>#9 player 9: $0.12</title><rect class="hit" x="180.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M183 218V202A3 3 0 0 1 186 199H192.2A3 3 0 0 1 195.2 202V218Z"/></g>
+<g class="hv"><title>#10 player 10: $0.11</title><rect class="hit" x="197.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M199.9 218V203.6A3 3 0 0 1 202.9 200.6H209.1A3 3 0 0 1 212.1 203.6V218Z"/></g>
+<g class="hv"><title>#11 player 11: $0.10</title><rect class="hit" x="214.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M216.9 218V205.2A3 3 0 0 1 219.9 202.2H226.1A3 3 0 0 1 229.1 205.2V218Z"/></g>
+<g class="hv"><title>#12 player 12: $0.09</title><rect class="hit" x="231.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M233.8 218V206.7A3 3 0 0 1 236.8 203.7H243A3 3 0 0 1 246 206.7V218Z"/></g>
+<g class="hv"><title>#13 player 13: $0.08</title><rect class="hit" x="248.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M250.8 218V208.3A3 3 0 0 1 253.8 205.3H260A3 3 0 0 1 263 208.3V218Z"/></g>
+<g class="hv"><title>#14 player 14: $0.07</title><rect class="hit" x="265.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M267.7 218V209.9A3 3 0 0 1 270.7 206.9H276.9A3 3 0 0 1 279.9 209.9V218Z"/></g>
+<g class="hv"><title>#15 player 15: $0.06</title><rect class="hit" x="282.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M284.7 218V211.5A3 3 0 0 1 287.7 208.5H293.9A3 3 0 0 1 296.9 211.5V218Z"/></g>
+<g class="hv"><title>#16 player 16: $0.06</title><rect class="hit" x="299.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M301.6 218V211.5A3 3 0 0 1 304.6 208.5H310.8A3 3 0 0 1 313.8 211.5V218Z"/></g>
+<g class="hv"><title>#17 player 17: $0.05</title><rect class="hit" x="316.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M318.6 218V213.1A3 3 0 0 1 321.6 210.1H327.8A3 3 0 0 1 330.8 213.1V218Z"/></g>
+<g class="hv"><title>#18 player 18: $0.05</title><rect class="hit" x="333.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M335.5 218V213.1A3 3 0 0 1 338.5 210.1H344.7A3 3 0 0 1 347.7 213.1V218Z"/></g>
+<g class="hv"><title>#19 player 19: $0.04</title><rect class="hit" x="350.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M352.4 218V214.7A3 3 0 0 1 355.4 211.7H361.7A3 3 0 0 1 364.7 214.7V218Z"/></g>
+<g class="hv"><title>#20 player 20: $0.04</title><rect class="hit" x="367" y="20" width="16.9" height="198"/><path class="mk s1" d="M369.4 218V214.7A3 3 0 0 1 372.4 211.7H378.6A3 3 0 0 1 381.6 214.7V218Z"/></g>
+<g class="hv"><title>#21 player 21: $0.04</title><rect class="hit" x="384" y="20" width="16.9" height="198"/><path class="mk s1" d="M386.3 218V214.7A3 3 0 0 1 389.3 211.7H395.6A3 3 0 0 1 398.6 214.7V218Z"/></g>
+<g class="hv"><title>#22 player 22: $0.04</title><rect class="hit" x="400.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M403.3 218V214.7A3 3 0 0 1 406.3 211.7H412.5A3 3 0 0 1 415.5 214.7V218Z"/></g>
+<g class="hv"><title>#23 player 23: $0.03</title><rect class="hit" x="417.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M420.2 218V216.2A3 3 0 0 1 423.2 213.2H429.4A3 3 0 0 1 432.4 216.2V218Z"/></g>
+<g class="hv"><title>#24 player 24: $0.03</title><rect class="hit" x="434.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M437.2 218V216.2A3 3 0 0 1 440.2 213.2H446.4A3 3 0 0 1 449.4 216.2V218Z"/></g>
+<g class="hv"><title>#25 player 25: $0.03</title><rect class="hit" x="451.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M454.1 218V216.2A3 3 0 0 1 457.1 213.2H463.3A3 3 0 0 1 466.3 216.2V218Z"/></g>
+<g class="hv"><title>#26 player 26: $0.02</title><rect class="hit" x="468.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M471.1 218V217.8A3 3 0 0 1 474.1 214.8H480.3A3 3 0 0 1 483.3 217.8V218Z"/></g>
+<g class="hv"><title>#27 player 27: $0.02</title><rect class="hit" x="485.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M488 218V217.8A3 3 0 0 1 491 214.8H497.2A3 3 0 0 1 500.2 217.8V218Z"/></g>
+<g class="hv"><title>#28 player 28: $0.02</title><rect class="hit" x="502.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M505 218V217.8A3 3 0 0 1 508 214.8H514.2A3 3 0 0 1 517.2 217.8V218Z"/></g>
+<g class="hv"><title>#29 player 29: $0.02</title><rect class="hit" x="519.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M521.9 218V217.8A3 3 0 0 1 524.9 214.8H531.1A3 3 0 0 1 534.1 217.8V218Z"/></g>
+<g class="hv"><title>#30 player 30: $0.01</title><rect class="hit" x="536.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M538.9 218V218A1.6 1.6 0 0 1 540.5 216.4H549.5A1.6 1.6 0 0 1 551.1 218V218Z"/></g>
+<g class="hv"><title>#31 player 31: $0.01</title><rect class="hit" x="553.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M555.8 218V218A1.6 1.6 0 0 1 557.4 216.4H566.5A1.6 1.6 0 0 1 568 218V218Z"/></g>
+<g class="hv"><title>#32 player 32: $0.01</title><rect class="hit" x="570.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M572.8 218V218A1.6 1.6 0 0 1 574.4 216.4H583.4A1.6 1.6 0 0 1 585 218V218Z"/></g>
+<g class="hv"><title>#33 player 33: $0.01</title><rect class="hit" x="587.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M589.7 218V218A1.6 1.6 0 0 1 591.3 216.4H600.4A1.6 1.6 0 0 1 601.9 218V218Z"/></g>
+<g class="hv"><title>#34 player 34: $0.00</title><rect class="hit" x="604.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#35 player 35: $0.00</title><rect class="hit" x="621.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#36 player 36: $0.00</title><rect class="hit" x="638.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#37 player 37: $0.00</title><rect class="hit" x="655.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#38 player 38: $0.00</title><rect class="hit" x="672.1" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#39 player 39: $0.00</title><rect class="hit" x="689.1" y="20" width="16.9" height="198"/></g>
+<line class="refl" x1="45" x2="706" y1="197.5" y2="197.5"/>
+<text class="ann" x="704" y="191.5" text-anchor="end">mean $0.13</text>
+<line class="refl alt" x1="45" x2="706" y1="211.7" y2="211.7"/>
+<text class="ann" x="625" y="191.5" text-anchor="end">median $0.04</text>
+<text class="ann" x="135.7" y="177.9">top 5 = 67% of total</text>
+<text class="ax" x="53.5" y="234" text-anchor="middle">1</text>
+<text class="ax" x="121.3" y="234" text-anchor="middle">5</text>
+<text class="ax" x="206" y="234" text-anchor="middle">10</text>
+<text class="ax" x="290.8" y="234" text-anchor="middle">15</text>
+<text class="ax" x="375.5" y="234" text-anchor="middle">20</text>
+<text class="ax" x="460.2" y="234" text-anchor="middle">25</text>
+<text class="ax" x="545" y="234" text-anchor="middle">30</text>
+<text class="ax" x="629.7" y="234" text-anchor="middle">35</text>
+<text class="ax" x="45" y="256">39 made-up players, ad revenue, descending</text>
+</svg>
+  </div>
+  <figcaption>Five players pull the mean up; the median is several times lower.</figcaption>
+</figure>
+
+<h3 id="revenue-ua">3.3 Paid acquisition</h3>
+<div class="calc">Break-even revenue per player (example):
+  cost $0.40, ROAS 100%  →  need $0.40 per player   (now $0.13, ×3.1)
+  cost $0.40, ROAS 50%   →  need $0.20              (×1.5)</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-good"></i>In profit (.s-good)</span><span><i class="sw s-bad"></i>At a loss (.s-bad)</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Daily UA margin (example)">
+<line class="grid" x1="31.8" x2="706" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">−$4</text>
+<line class="grid" x1="31.8" x2="706" y1="183.5" y2="183.5"/>
+<text class="ax" x="23.8" y="187.5" text-anchor="end">−$2</text>
+<line class="grid zero" x1="31.8" x2="706" y1="129" y2="129"/>
+<text class="ax" x="23.8" y="133" text-anchor="end">$0</text>
+<line class="grid" x1="31.8" x2="706" y1="74.5" y2="74.5"/>
+<text class="ax" x="23.8" y="78.5" text-anchor="end">$2</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">$4</text>
+<g class="hv"><title>Sep 12: −$3.20</title><rect class="hit" x="31.8" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M51.5 129V213.2A3 3 0 0 0 54.5 216.2H76.5A3 3 0 0 0 79.5 213.2V129Z"/>
+<text class="val" x="65.5" y="229.2" text-anchor="middle">−$3.20</text>
+</g>
+<g class="hv"><title>Sep 13: −$1.50</title><rect class="hit" x="99.2" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M118.9 129V166.9A3 3 0 0 0 121.9 169.9H143.9A3 3 0 0 0 146.9 166.9V129Z"/>
+<text class="val" x="132.9" y="182.9" text-anchor="middle">−$1.50</text>
+</g>
+<g class="hv"><title>Sep 14: $0.40</title><rect class="hit" x="166.6" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M186.4 129V121.1A3 3 0 0 1 189.4 118.1H211.4A3 3 0 0 1 214.4 121.1V129Z"/>
+<text class="val" x="200.4" y="113.1" text-anchor="middle">$0.40</text>
+</g>
+<g class="hv"><title>Sep 15: $2.10</title><rect class="hit" x="234.1" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M253.8 129V74.8A3 3 0 0 1 256.8 71.8H278.8A3 3 0 0 1 281.8 74.8V129Z"/>
+<text class="val" x="267.8" y="66.8" text-anchor="middle">$2.10</text>
+</g>
+<g class="hv"><title>Sep 16: −$0.80</title><rect class="hit" x="301.5" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M321.2 129V147.8A3 3 0 0 0 324.2 150.8H346.2A3 3 0 0 0 349.2 147.8V129Z"/>
+<text class="val" x="335.2" y="163.8" text-anchor="middle">−$0.80</text>
+</g>
+<g class="hv"><title>Sep 17: $1.60</title><rect class="hit" x="368.9" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M388.6 129V88.4A3 3 0 0 1 391.6 85.4H413.6A3 3 0 0 1 416.6 88.4V129Z"/>
+<text class="val" x="402.6" y="80.4" text-anchor="middle">$1.60</text>
+</g>
+<g class="hv"><title>Sep 18: $3.30</title><rect class="hit" x="436.3" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M456 129V42.1A3 3 0 0 1 459 39.1H481A3 3 0 0 1 484 42.1V129Z"/>
+<text class="val" x="470" y="34.1" text-anchor="middle">$3.30</text>
+</g>
+<g class="hv"><title>Sep 19: −$2.40</title><rect class="hit" x="503.7" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M523.5 129V191.4A3 3 0 0 0 526.5 194.4H548.5A3 3 0 0 0 551.5 191.4V129Z"/>
+<text class="val" x="537.5" y="207.4" text-anchor="middle">−$2.40</text>
+</g>
+<g class="hv"><title>Sep 20: $0.90</title><rect class="hit" x="571.2" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M590.9 129V107.5A3 3 0 0 1 593.9 104.5H615.9A3 3 0 0 1 618.9 107.5V129Z"/>
+<text class="val" x="604.9" y="99.5" text-anchor="middle">$0.90</text>
+</g>
+<g class="hv"><title>Sep 21: $1.20</title><rect class="hit" x="638.6" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M658.3 129V99.3A3 3 0 0 1 661.3 96.3H683.3A3 3 0 0 1 686.3 99.3V129Z"/>
+<text class="val" x="672.3" y="91.3" text-anchor="middle">$1.20</text>
+</g>
+<text class="ax" x="65.5" y="254" text-anchor="middle">Sep 12</text>
+<text class="ax" x="132.9" y="254" text-anchor="middle">Sep 13</text>
+<text class="ax" x="200.4" y="254" text-anchor="middle">Sep 14</text>
+<text class="ax" x="267.8" y="254" text-anchor="middle">Sep 15</text>
+<text class="ax" x="335.2" y="254" text-anchor="middle">Sep 16</text>
+<text class="ax" x="402.6" y="254" text-anchor="middle">Sep 17</text>
+<text class="ax" x="470" y="254" text-anchor="middle">Sep 18</text>
+<text class="ax" x="537.5" y="254" text-anchor="middle">Sep 19</text>
+<text class="ax" x="604.9" y="254" text-anchor="middle">Sep 20</text>
+<text class="ax" x="672.3" y="254" text-anchor="middle">Sep 21</text>
+<text class="ax" x="31.8" y="276">revenue minus spend per day · made-up data</text>
+</svg>
+  </div>
+  <figcaption>bar with negative values: a bar grows down from zero, only the data end is rounded.</figcaption>
+</figure>
+<div class="shot"><p class="tag">Console · all countries · Sep 17–20</p>
+  <div class="frame"><img alt="A made-up console screenshot: five blue bars on a white card" src="data:image/png;base64,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"></div>
+  <p class="tnote">What the screenshot shows and what it does not.</p></div>
+<div class="shots2">
+  <div class="shot"><p class="tag">Console · US · Sep 17–20</p><div class="frame"><img alt="A made-up screenshot: orange bars" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAFoCAIAAABIUN0GAAAIzUlEQVR42u3XsQ2EMBBFQaohIIWiaNsOnBAhJFLogAhWNp7RL2B1gd8xjNNsZmZmwRv8BGZmZgJsZmYmwGZmZibAZmZmAmxmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmAmxmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmZgJsZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmaNBng/TjMzMwueAJuZmQmwmZmZAJuZmZkAm5mZCbCZmZkJsJmZmQCbmZmZAJuZmQmwmZmZCbCZmZkAm5mZCbCZmZkJsJmZmQCbmZmZAJuZmQmwmZmZCbCZmZkAm5mZmQCbmZm1GeALADomwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwPRnW5ew+bUBARZgBBhAgBFgAAFGgAUYEGABRoABBBgBFmBAgAUYAQYQYARYgAEBFmAEGECAEWABBgRYgBFgAAFGgAEEGAEWYECABRgBBhBgBFiAAQEWYAQYQIARYAEGBFiAEWAAAUaABRgQYAFGgAEEGAEGEGAEWIABARZgBBhAgBFgAQYEWIARYAABRoAFGBBgAUaAAQQYARZgQIAFGAEGEGAEGECA/fQC3GKA/YEABBgBFmBAgAUYARZgQIARYAEGBFiAEWABBgQYARZgQIARYAEWYBBgAUaABRgQYARYgAEBFmAETIABAX6ScrFqFxkw95vZ1xNgfAH7AgZ8AQswAizAgAAjwO4HBFiABViABRgQYARYgAEBRoAFWIBBgAUYARZgQIARYAEGBFiAEWABBgQYARZgQIAFGAEWYECAEWD3AwIswAiwAAMCjAALMCDACLAACzAIsAAjwAIMCDACLMCAAAswAizAgAAjwAIMCLAAC5j7BRgQYAEWMPcDAizAAuB+AQYEWIAFTIABAUbA3C/AIMACLMACJsCAACNg7gcEWIAF2P0CDAiwAAuY+wEBFmABdr8AAwIswALmfkCABVgA3C/AgAALsIAJMCDACJj7BRgEWIAFWMAEGBBgBMz9gAALsAC7X4ABARZgAXM/IMACLMDuF2BAgAVYwNwPCLAAC4D7BRgQYAEWMAEGBBgBc78AgwALsAALmAADAoyAuR8QYAEWYPcLMCDAAixg7gcEWIAF2P0CDAiwAAuY+wEBFmABcL8AAwIswALmfn8gQIARAPe7HwRYgAVYANwvwCDACID73Q8CLMAC7H73CzAIsAALgPsFGARYgAXY/e4XYBBgARYA9wswCLAAe0Dd735AgAVYANwvwCDAfnoBcL/7QYAFWIAFwP0CDAKMALjf/SDAAizA7ne/AIMAC7AAuF+AQYAFWIDd734BBgEWYAFwvwCDAAuwALvf/YAAC7AAuF+AQYAFWADc734QYAEWYAFwvwCDACMA7nc/CLAAC7D73S/AIMAIgPsFGARYgAXY/e4XYBBgARYA9wswCLAAC7D73Q8IsAALgPsFGARYgAXA/e4HBFiABcD9AgwC/IaUy48X+YC63/213W9W2wTYF7AvMPf7AgZfwAIswO53vwCDAAuwALhfgEGABVgA3O9+QIAFWADcL8AgwAiA+90PAizAAiwA7hdgEGAEwP3uBwEWYAF2v/sFGARYgAXA/QIMAizAAux+9wswCLAAC4D7BRgEWIA9oO53PyDAAiwA7hdgEGAEwP3uBwEWYAEWAPcLMAgwAuB+94MAC7AAu9/9AgwCLMAC4H4BBgFuIcAeUPe7X4BBgAXY/e53PwiwAHtA3e9+AQYBFmD3u9/9IMAC7AF1v/sFGATYA+p+9wswCLAAe0Dd734BBgH2gLrf/QIMAizA7ne/+wEB9oC63/0CDAIswO53v/tBgAXYA+p+9wswCLAAu9/97gcBFmAPqPvdL8AgwB5Q97tfgEGABdgD6n73CzAIsAfU/e4XYBBgAXa/+90PCLAH1P3uF2AQYAF2v/vdDwIswB5Q97tfgEGABdj97nc/CLAAe0Dd734BBgH2gLrf/QIMAizAHlD3u1+AQYA9oO53vwCDAAuwB9T97gcE2APqfvcLMAiwALvf/e4HARZgD6j73S/AIMAC7H73ux8EWIA9oO53vwCDAHuA3O9+AQYBFmAPqPvdL8AgwB5Q97tfgEGABdgD6n73AwLsAXW/+wUYBFiA3e9+9wMC7AF1v/sFGARYgN3vfveDAAuwB9T97hdgEGAPkPvdL8AgwALsAXW/+wUYBNgD6n73CzAIsAB7QN3vfgEGAfaAut/9AgwCLMDud7/7AQH2gLrf/QIMAizA7ne/+0GABdgD6n73CzAIsAfI/e53PwiwAHtA3e9+AQYB9oC63/0CDAIswB5Q97tfgEGAPaDud78AgwALsPvd735AgD2g7ne/AIMAC7D73e9+EGAB9oC63/0CDALsAXK/+90PAlx/gFMuZmZmARNgAPAFLMAAIMAAIMACDAACDAACDAACLMAAIMAAIMACDAACDAACLMAAIMAAIMACDAACDAACDAACLMAAIMAAIMACDAACDAACbGZmZt9PgM3MzATYzMxMgM3MzEyAzczMBNjMzMwE2MzMTIDNzMxMgM3MzATYzMzMBNjMzEyAzczMBNjMzMwE2MzMTIDNzMxMgM3MzATYzMzMBNjMzEyAzczMTIDNzMwE2MzMTIDNzMxMgM3MzATYzMzMBNjMzEyAzczMTIDNzMwE2MzMzATYzMxMgM3MzDrbDXHT8u86IPv6AAAAAElFTkSuQmCC"></div></div>
+  <div class="shot"><p class="tag">Console · US · Sep 21</p><div class="frame"><img alt="A made-up screenshot: green bars" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAFoCAIAAABIUN0GAAAJP0lEQVR42u3XsQnDMBRFUQ3gOVK4zcieTCrUm0DauE2lwsjfyDqHN4AI5l+SXuvbzMzMgpf8BGZmZgJsZmYmwGZmZibAZmZmAmxmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmAmxmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmZgJsZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmaDBnj/fM3MzCx4AmxmZibAZmZmAmxmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmJsBmZmYmwGZmZgJsZmZmAmxmZibAZmZmJsBmZmYCbGZmZgJsZmY2ZoB/ADAxAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAQYAARZgABBgABBgAQYAAQYAARZgABBgABBgAQYAAQYAAb7Dsi1h83kBIMACDIAACzAAAizAAgyAAAswAAIswAIMgAALMAACLMACDIAACzAAAizAAgyAAAswAAIswAAIsAALMAACLMAACLAACzAAAizAAAiwAAswAAIswAAIsAALMAACLMAACLAAw318/yDAAgy+fxBgAXaAEGDfPwiwAwS+fxBgAXaAEGDfPwiwAwS+fxBgAXaAEGDfPwiwAwS+fxBgAXaAEGBAgB0g8P2DAAsw+P5BgAXYAUKAff8gwA4Q+P5BgAXYAUKAff8gwA4Q+P5BgAXYAUKAff8gwA4Q+P5BgAXYAUKAAQF2gMD3DwIswCDAwBMDnEttLPIAtV9iFj/fv1nfCbB/AOD7B/+ABdgBQoB9/yDADhD4/kGABRgEGBBgBwgB9v2DADtA4PsHARZgBwgB9v2DADtA4PsHARZgBwgB9v2DADtA+H58/yDAAuwACbAA+/5BgB0gfD++fxBgAUaABRgQYAcIAfb9gwA7oAiwAIMAC7ADhAD7/kGAHSAE2PtBgAXYARJgAfb9gwA7QPh+fP8gwALsAAmwAPv+QYAdIHw/vn8QYAFGgAUYEGAHCAH2/YMAO6AIsACDAAuwA4QA+/5BgB0gBNj7QYAF2AESYAH2/YMAO0D4fnz/IMAC7AAJsAD7/kGAHSB8P75/EGABRoAFGBBgBwgB9v2DADugCLAAgwALsAOEAPv+QYAdIATY+0GABdgBQoB9/yDADhC+H98/CLAAO0ACLMC+fxBgBwjfj+8fBFiAEWABBgTYAUKAff8gwA4oAizAIMAC7AAhwL5/EGAHFAH2fhBgAXaAEGDfPwiwA4Tvx/cPAizADpAAC7DvHwTYAcL34/sHARZgBFiAAQF2gBBg3z8IsAOKAAswCLAAO0AIsO8fBNgBRYC9HwRYgB0gBNj3DwLsACHAvn8QYAF2gARYgH3/IMAOEL4f3z8IsAAjwAIMCLADhAD7/kGAHVAEWIBBgAXYAUKAff8gwA4oAizAIMAC7AAhwL5/EGAHCAH2/YMAC7ADJMAC7PsHAXaA8P34/kGABdgBEmABBgTYAcL34/sHARZgBFiAQYAF2AF1QH0/vh8QYAfUARVg3w8IsAA7oPh+fD8gwA6QAyrAvh8QYAF2QAXY9+P7AQF2QB1Q34/vBwRYgB1QAfb9AALsgDqgfn/fDwiwADugAuz7AQTYAXVAfT++HxDgHnKpjUUeoPZLzm30948+34/vx+x/AuwfjH8wvh/fD/gHLMAOqAD7fnw/IMAOqAPq9/f9gAALsAMqwL4fQIAdUAfU9+P7AQF2QB1QAfb9gAALsAPqgPp+fD8gwA6QAyrA3g8CLMAOqAD7fnw/IMAOqAPq+/H9gAALsAMqwL4f3w8IsAPqgPr9fT8gwALs/QLs+wEE2AF1QH0/vh8QYAfUARVg3w8IsAA7oA6o78f3AwLsADmgAuz9IMAC7IAKsO/H9wMC7IA6oL4f3w8IsAA7oN7v/QIMAuyAer/3CzAIsAB7v/d7PyDADqj3e78AgwALsPd7v/eDAAuwA+r93i/AIMAOkPd7v/eDAAuwA+r93i/AIMAOqPd7vwCDAAuwA+r93i/AIMAOqPd7vwCDAAuw93u/9wMC7IB6v/cLMAiwAHu/93s/CLAAO6De7/0CDALsAHm/93s/CLAAO6De7/0CDALsgHq/9wswCLAAO6De7/0CDALsgHq/9wswCLAAe7/3ez8gwA6o93u/AIMAC7D3e7/3gwALsAPq/d4vwCDAAuz93u/9IMAC7IB6v/cLMAiwA+r93i/AIMAC7IB6v/cLMAiwA+r93i/AIMAC7P3e7/2AADug3u/9AgwCLMDe7/3eDwIswA6o93u/AIMAC7D3e7/3gwALsAPq/d4vwCDADqj3e78AgwALsAPq/d4vwCDADqj3e78AgwALsPd7v/cDAuyAer/3CzAIsAB7v/d7PwiwADug3u/9AgwCLMDe7/3eDwIswA6o93u/AIMAO6De7/0CDAIswA6o93u/AIMAO6De7/0CDAIswA6o93s/IMAOqPd7vwCDAAuw93u/94MAC7AD6v3eL8AgwALs/d7v/SDAAuyAer/3CzAIsAPk/d4vwCDAAuyAer/3CzAIsAPq/d4vwCDAAuyAer/3AwLsgHq/9wswCLAAe7/3ez8gwA6o93u/AIMA95BLNTMzC5gAA4B/wAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwAIMAAIMAAIswAAgwAAgwAAgwAIMAAIMAAIswAAgwAAgwGZmZnb9BNjMzEyAzczMBNjMzMwE2MzMTIDNzMxMgM3MzATYzMzMBNjMzEyAzczMTIDNzMwE2MzMTIDNzMxMgM3MzATYzMzMBNjMzEyAzczMTIDNzMwE2MzMzATYzMxMgM3MzATYzMzMBNjMzEyAzczMTIDNzMwE2MzMzATYzMxMgM3MzEyAzczMBNjMzGyyHcOSuvtM3eC2AAAAAElFTkSuQmCC"></div></div>
+</div>
+</section>
+
+<section class="block" id="tech">
+<h2><span class="bn">4</span>Technical data</h2>
+<p class="lede">Technical problems and analytics defects. .cards: .hot loss, .adc ads, .okc good.</p>
+<div class="cards">
+  <div class="card hot" id="tech-duplicates"><div class="cnt">38%<em>of events</em></div><h4>Duplicated income</h4><p>One payout arrives as two events: economy totals are doubled.</p></div>
+  <div class="card adc" id="tech-timeouts"><div class="cnt">346<em>errors</em></div><h4>False ad timeouts</h4><p>342 of them are real impressions in the same second.</p></div>
+  <div class="card okc"><div class="cnt">60<em>FPS</em></div><h4>Performance is fine</h4><p>An .okc card.</p></div>
+  <div class="card"><h4>Telemetry details</h4><p>A card without a number or a modifier; <code>AdImpression</code> as code.</p></div>
+</div>
+</section>
+
+<section class="block" id="countries">
+<h2><span class="bn">5</span>Countries</h2>
+<p class="lede">The country split in one place.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Country</th><th class="n">Players</th><th class="n">D1</th><th class="n">Playtime, median</th><th class="n">ARPU, $</th><th class="n">Share of revenue</th></tr></thead>
+  <tbody>
+    <tr><td>US</td><td class="n">81</td><td class="n ok">38.3%</td><td class="n">6.1 min</td><td class="n ok">0.031</td><td class="n">71%</td></tr>
+    <tr><td>Brazil</td><td class="n">64</td><td class="n">31.1%</td><td class="n">5.0 min</td><td class="n">0.004</td><td class="n">9%</td></tr>
+    <tr><td>India</td><td class="n">67</td><td class="n bad">27.4%</td><td class="n">4.6 min</td><td class="n bad">0.002</td><td class="n">5%</td></tr>
+    <tr class="total"><td>All</td><td class="n">212</td><td class="n">32.8%</td><td class="n">5.3 min</td><td class="n">0.013</td><td class="n">100%</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Hypotheses</h2>
+<p class="lede">What we think is going on. Each hypothesis rests on numbers from blocks 2–5 and says how to test it.</p>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">confidence high</span></p>
+    <h4>The first purchase in the tutorial is too expensive</h4>
+    <p class="basis"><b>Rests on:</b> 21.2% of those who reach the "first purchase" step leave there (<a href="#product-dropoff">2.2</a>).</p>
+    <p class="test"><b>How to test:</b> give starting money for the purchase; confirmed if the loss at that step falls below 10% at n ≥ 150.</p>
+  </article>
+  <article class="hyp" id="h2">
+    <p class="hid">H2 <span class="conf mid">confidence medium</span></p>
+    <h4>After the first match the player is not offered a next step</h4>
+    <p class="basis"><b>Rests on:</b> 45% start a second match vs 52% (<a href="#product-core">2.3</a>); players leave right after the results screen (<a href="#product-negative">2.4</a>).</p>
+    <p class="test"><b>How to test:</b> the share starting a second match ≥ 60% in a new build, same countries.</p>
+  </article>
+  <article class="hyp" id="h3">
+    <p class="hid">H3 <span class="conf low">confidence low</span></p>
+    <h4>Paid UA in the US can pay back only through rewarded ads</h4>
+    <p class="basis"><b>Rests on:</b> rewarded eCPM 6.40 vs 3.10 for interstitials (<a href="#revenue-ads">3.1</a>), a player costs $0.40 (<a href="#revenue-ua">3.3</a>).</p>
+    <p class="test"><b>How to test:</b> 7-day ARPU ≥ $0.40 for a paid cohort after rewarded placements are added.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Recommendations</h2>
+<p class="lede">Ordered by payoff. .acts numbers them itself.</p>
+<div class="acts">
+  <div class="act"><div><h4>Give starting money for the first purchase</h4>
+    <p>Grant the price of the first purchase when the tutorial starts.</p>
+    <p class="eff"><b>Expected effect:</b> the loss at the "first purchase" step from 21% to ~10%, +20 of 212 players reach the game.</p>
+    <p class="measure"><b>How to measure:</b> ga.py dropoff on the new build a week later, n ≥ 150.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+  <div class="act"><div><h4>A "Next match" button on the results screen</h4>
+    <p>The main button starts the next match; the garage comes second.</p>
+    <p class="eff"><b>Expected effect:</b> second-match starts from 45% to 60%.</p>
+    <p class="measure"><b>How to measure:</b> the share starting a second match among those who finished the first, new players.</p>
+    <p class="why">→ <a href="#h2">H2</a></p></div></div>
+  <div class="act"><div><h4>Buy traffic to measure, not to earn</h4>
+    <p>A small budget per build, one country.</p>
+    <p class="eff"><b>Expected effect:</b> 40 new players per build for $16 — builds compared without organic noise.</p>
+    <p class="measure"><b>How to measure:</b> the key metrics of block 1 by version.</p>
+    <p class="why">→ <a href="#h3">H3</a></p></div></div>
+</div>
+</section>
+
+<section class="block" id="data">
+<h2>Data I need</h2>
+<ul class="tight">
+  <li><b>Console → Reports → By day:</b> spend and installs for the report window.</li>
+  <li><b>Store → Listing statistics:</b> visitors and listing conversion by day.</li>
+</ul>
+</section>
+
+<section class="method" id="method">
+  <h2>Method</h2>
+  <ul class="tight">
+    <li>Report v002 "Sample 1.0.8 and 1.1.0, Sep 1–20: full review", built 2026-09-23. Data window Sep 1–21, 2026.</li>
+    <li>Sources: made-up data, placeholder screenshots. Question: Full review of Sep 1–20: what 1.1.0 changed, where new players leave, whether paid UA pays back</li>
+    <li>Tables of blocks 1 and 2 — <code>ga.py keymetrics</code>, <code>dropoff</code>, <code>ordinals</code>, <code>leaving --format html</code>; charts — <code>gak.report.charts</code>; build — <code>py analytics/ga.py report build sample</code>.</li>
+  </ul>
+</section>
+
+</div>
+

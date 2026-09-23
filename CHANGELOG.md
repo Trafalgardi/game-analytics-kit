@@ -42,6 +42,8 @@ differently.
   the test log and examples no longer name the test game.
 - Public repository: a site on GitHub Pages (landing in English and Russian, the live example
   reports), CI on Linux, macOS and Windows with Python 3.11 and 3.13, SECURITY.md, badges.
+- The example reports come in English and Russian (docs/examples/sample-report/en/, ru/); table
+  notes of the standard tables print the data window as people write it.
 
 ## 0.2.3 — 2026-09-21
 

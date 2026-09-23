@@ -8,7 +8,7 @@
 ![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)
 ![Claude Code and Codex](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex-6f42c1.svg)
 
-**[Живой пример отчёта](https://trafalgardi.github.io/game-analytics-kit/examples/sample/v002/report.html)** · [Сайт](https://trafalgardi.github.io/game-analytics-kit/ru/) · [Быстрый старт](#быстрый-старт)
+**[Живой пример отчёта](https://trafalgardi.github.io/game-analytics-kit/ru/examples/sample/v002/report.html)** · [Сайт](https://trafalgardi.github.io/game-analytics-kit/ru/) · [Быстрый старт](#быстрый-старт)
 
 Набор, который превращает агента для кода — **Claude Code** или **OpenAI Codex** — в игрового
 аналитика. Его ставят в проект игры, и агент сам выгружает сырую аналитику в локальную базу,
@@ -19,7 +19,7 @@
 Набор одинаковый для всех проектов. Всё, что зависит от игры — смысл событий, фильтры,
 когорты, запросы, заметки о данных, — агент пишет уже внутри проекта по инструкциям навыков.
 
-![Первый экран полного разбора: название, блоки, ключевые метрики по версиям](docs/images/report-summary.png)
+![Первый экран полного разбора: название, блоки, ключевые метрики по версиям](docs/images/report-summary.ru.png)
 
 - [Что внутри](#что-внутри)
 - [Быстрый старт](#быстрый-старт)
@@ -199,14 +199,15 @@ claude          # или: codex
 Факты отделены от интерпретаций, и каждое число из ответов, гипотез и рекомендаций есть в
 таблице или на графике отчёта. Отчёт со сломанной структурой или ссылками сборщик не соберёт.
 
-![Гипотезы с уверенностью и рекомендации со ссылками на них](docs/images/report-hypotheses.png)
+![Гипотезы с уверенностью и рекомендации со ссылками на них](docs/images/report-hypotheses.ru.png)
 
 - Собранная версия не меняется. Исправление или новые данные — новая версия (`v002`), она
   начинается с блока «что изменилось».
 - `report.html` — один самодостаточный файл (из интернета грузятся только шрифты), светлая и
   тёмная тема, читается с телефона.
 - Живые примеры на выдуманных числах:
-  [docs/examples/sample-report/analytics/reports/](docs/examples/sample-report/analytics/reports/)
+  [на сайте](https://trafalgardi.github.io/game-analytics-kit/ru/examples/index.html) и в
+  [docs/examples/sample-report/ru/analytics/reports/](docs/examples/sample-report/ru/analytics/reports/)
   (`sample` — полный разбор в трёх версиях, `sample-question` — отчёт-вопрос). В клоне откройте
   `index.html`.
 

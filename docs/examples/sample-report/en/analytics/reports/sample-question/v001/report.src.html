@@ -1,0 +1,71 @@
+<!-- Example of a question report: blocks 1, 3, 6, 7 and the method. Numbers are made up. -->
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Question · Sample · paid UA in the US · {{meta:window}}</p>
+  <h1>{{meta:title}}</h1>
+  <p class="standfirst">{{meta:subtitle}}</p>
+</header>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Summary</h2>
+<div class="tiles">
+  <div class="tile ad"><p class="k">Cost per player</p><div class="v">$0.40</div><p class="n">spend / 39 players · .tile.ad</p></div>
+  <div class="tile"><p class="k">Revenue per player</p><div class="v">$0.13</div><p class="n">n = 39 · .tile — neutral</p></div>
+  <div class="tile warn"><p class="k">ROAS</p><div class="v">33% → 5%</div><p class="n">CPI → tROAS · .tile.warn</p></div>
+  <div class="tile good"><p class="k">Revenue on install day</p><div class="v">80%</div><p class="n">n = 39 · .tile.good</p></div>
+</div>
+<h3 id="summary-answers">Short answers</h3>
+<div class="answers">
+  <div class="ans"><div class="q">Does paid UA in the US pay back</div>
+    <div><p><b>No.</b> A player costs $0.40 and brings $0.13, and 80% of the revenue comes on the install day (<a href="#revenue-payback">3.1</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Revenue metrics</h2>
+<p class="lede">A question report keeps only the blocks it needs, with the same numbers and in the same order.</p>
+<h3 id="revenue-payback">3.1 Payback</h3>
+<div class="calc">$15.60 spend / 39 players = $0.40 per player
+revenue $5.07 / 39 = $0.13 per player → ROAS 33%</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Top five</span><span><i class="sw s1"></i>Everyone else</span></div>
+    {{svg:assets/revenue.svg}}
+  </div>
+  <figcaption>Revenue rests on five players of 39; the median is $0.04.</figcaption>
+</figure>
+<p class="interp"><b>Interpretation.</b> With no valuable players in the sample, a ROAS bid has nobody to buy.</p>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Hypotheses</h2>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">confidence high</span></p>
+    <h4>Revenue per player is a third of its cost under any bidding strategy</h4>
+    <p class="basis"><b>Rests on:</b> $0.13 vs $0.40 (<a href="#revenue-payback">3.1</a>).</p>
+    <p class="test"><b>How to test:</b> 7-day ARPU of the next paid cohort ≥ $0.40.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Recommendations</h2>
+<div class="acts">
+  <div class="act"><div><h4>Stop buying traffic for revenue</h4>
+    <p>Keep a small budget only to compare builds.</p>
+    <p class="eff"><b>Expected effect:</b> $50 less loss a day.</p>
+    <p class="measure"><b>How to measure:</b> the daily UA margin in the next report.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+</div>
+</section>
+
+<section class="method" id="method">
+  <h2>Method</h2>
+  <ul class="tight">
+    <li>Report {{meta:version_label}}, built {{meta:built_date}}. Data window {{meta:window}}. Every number is made up.</li>
+  </ul>
+</section>
+
+</div>

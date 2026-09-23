@@ -1,0 +1,49 @@
+{
+  "slug": "sample",
+  "version": 2,
+  "kind": "full",
+  "title": "Sample 1.0.8 and 1.1.0, Sep 1–20: full review",
+  "subtitle": "New players leave at the first purchase in the tutorial, and paid UA does not pay back at any bid",
+  "question": "Full review of Sep 1–20: what 1.1.0 changed, where new players leave, whether paid UA pays back",
+  "language": "en",
+  "created_at": "2026-09-23T17:10:13+07:00",
+  "built_at": "2026-09-23T17:10:13+07:00",
+  "previous_version": 1,
+  "data_window": {
+    "since": "2026-09-01",
+    "until": "2026-09-21"
+  },
+  "sources_used": [
+    "made-up data",
+    "placeholder screenshots"
+  ],
+  "kit_version": "0.3.0",
+  "project_git_commit": "042a76c",
+  "db_snapshot": {
+    "path": "data/analytics.db",
+    "tables": {
+      "events": {
+        "rows": 52,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "installations": {
+        "rows": 21,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "meta": {
+        "rows": 2,
+        "min_date": null,
+        "max_date": null
+      }
+    },
+    "sample_rate": 0.1
+  },
+  "sizes": {
+    "report.html": 106166,
+    "artifact.html": 105746,
+    "report.src.html": 14723,
+    "assets": 68965
+  }
+}

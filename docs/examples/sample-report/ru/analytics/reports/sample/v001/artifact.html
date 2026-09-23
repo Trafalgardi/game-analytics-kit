@@ -1,0 +1,1367 @@
+<title>Пример 1.0.8 и 1.1.0, 01–20.09: полный разбор</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@500;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* game-analytics-kit — report theme. Every report and reports/index.html embed this file.
+
+   Colour carries meaning across the whole series of reports; keep it that way:
+     --flow   normal path, organic traffic      --ad     ads, paid acquisition
+     --loss   lost players, bad outcome         --good   revenue, good outcome
+   Each has an -ink variant for text (the fill colours are too light for small type).
+
+   Chart series: --c-1..--c-6, always assigned in this order (blue, orange, teal, violet,
+   amber, pink). The order was validated for colour-vision deficiency in both themes; do not
+   shuffle it and do not add a 7th hue (fold the rest into "other"). --c-old and --c-unk are
+   neutrals for "previous period / version" and "unknown / unattributed".
+   Marks take the classes .s1..s6, .s-old, .s-unk, .s-good, .s-bad; the same classes paint
+   legend swatches (<i class="sw s1">). */
+
+:root {
+  color-scheme: light;
+  --plane:        #f4f3ef;
+  --surface:      #fdfcfa;
+  --surface-sunk: #eeece6;
+  --ink:          #14120f;
+  --ink-2:        #57534b;
+  --ink-3:        #8a8378;
+  --rule:         #e2dfd6;
+  --rule-strong:  #c8c4b8;
+  --flow:         #2a78d6;
+  --flow-ink:     #1f63b5;
+  --ad:           #eb6834;
+  --ad-ink:       #b8461c;
+  --loss:         #d03b3b;
+  --loss-ink:     #b02c2c;
+  --good:         #0ca30c;
+  --good-ink:     #006300;
+  --c-1:          #2a78d6;
+  --c-2:          #eb6834;
+  --c-3:          #1baf7a;
+  --c-4:          #4a3aa7;
+  --c-5:          #eda100;
+  --c-6:          #e87ba4;
+  --c-old:        #aba598;
+  --c-unk:        #c6c1b5;
+  --shadow:       0 1px 2px rgba(20,18,15,.05), 0 8px 24px -16px rgba(20,18,15,.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --plane:        #0e0d0c;
+    --surface:      #1a1918;
+    --surface-sunk: #232120;
+    --ink:          #f6f4ef;
+    --ink-2:        #c2bdb2;
+    --ink-3:        #8d867a;
+    --rule:         #2d2b28;
+    --rule-strong:  #3d3a35;
+    --flow:         #4b93e8;
+    --flow-ink:     #7ab2f2;
+    --ad:           #f07a45;
+    --ad-ink:       #f28e5e;
+    --loss:         #e06a6a;
+    --loss-ink:     #e78585;
+    --good:         #23bd23;
+    --good-ink:     #3fce3f;
+    --c-1:          #4b93e8;
+    --c-2:          #dc6a36;
+    --c-3:          #199e70;
+    --c-4:          #9085e9;
+    --c-5:          #c98500;
+    --c-6:          #d55181;
+    --c-old:        #6f6a60;
+    --c-unk:        #57534c;
+    --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --plane:        #0e0d0c;
+  --surface:      #1a1918;
+  --surface-sunk: #232120;
+  --ink:          #f6f4ef;
+  --ink-2:        #c2bdb2;
+  --ink-3:        #8d867a;
+  --rule:         #2d2b28;
+  --rule-strong:  #3d3a35;
+  --flow:         #4b93e8;
+  --flow-ink:     #7ab2f2;
+  --ad:           #f07a45;
+  --ad-ink:       #f28e5e;
+  --loss:         #e06a6a;
+  --loss-ink:     #e78585;
+  --good:         #23bd23;
+  --good-ink:     #3fce3f;
+  --c-1:          #4b93e8;
+  --c-2:          #dc6a36;
+  --c-3:          #199e70;
+  --c-4:          #9085e9;
+  --c-5:          #c98500;
+  --c-6:          #d55181;
+  --c-old:        #6f6a60;
+  --c-unk:        #57534c;
+  --shadow:       0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px rgba(0,0,0,.8);
+}
+
+/* ---------------------------------------------------------------- base */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--plane); color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 96px; }
+.masthead { border-bottom: 2px solid var(--ink); padding: 56px 0 20px; margin-bottom: 36px; }
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 14px;
+}
+h1 {
+  font-family: Oxanium, "IBM Plex Sans", system-ui, sans-serif; font-weight: 700;
+  font-size: clamp(34px, 6.4vw, 60px); line-height: .98; letter-spacing: -.02em;
+  margin: 0 0 16px; text-wrap: balance; overflow-wrap: break-word;
+}
+.standfirst { font-size: 18px; color: var(--ink-2); max-width: 66ch; margin: 0; }
+h2 {
+  font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.15; letter-spacing: -.01em; margin: 64px 0 6px; text-wrap: balance; overflow-wrap: break-word;
+}
+h2 + .lede { color: var(--ink-2); margin: 0 0 24px; max-width: 70ch; }
+h3 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 19px; line-height: 1.25;
+  margin: 36px 0 8px; text-wrap: balance; }
+p, li { max-width: 70ch; }
+strong, b { font-weight: 600; }
+.num, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .86em; background: var(--surface-sunk);
+  padding: 1px 5px; overflow-wrap: anywhere; }
+small { font-size: .82em; }
+a { color: var(--flow-ink); }
+:focus-visible { outline: 2px solid var(--flow); outline-offset: 2px; }
+
+/* --------------------------------------------------------- stat tiles */
+/* grid blocks draw their hairlines with outlines, so an incomplete last row leaves no grey hole */
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 33px 1px 1px; }
+.tile { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.tile .k { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 8px; }
+.tile .v { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 34px; line-height: 1;
+  letter-spacing: -.02em; overflow-wrap: break-word; }
+.tile .n { font-size: 13px; color: var(--ink-2); margin: 6px 0 0; line-height: 1.4; }
+.tile.warn .v { color: var(--loss-ink); }
+.tile.ad .v { color: var(--ad-ink); }
+.tile.good .v { color: var(--good-ink); }
+
+/* ------------------------------------------------------ short answers */
+.answers { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.ans { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 170px 1fr; gap: 18px; }
+.ans .q { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+.ans p { margin: 0; font-size: 15px; max-width: none; }
+.ans p + p { margin-top: 8px; }
+
+/* ------------------------------------------------------------ figures */
+figure { margin: 28px 0 0; }
+.figbox { background: var(--surface); border: 1px solid var(--rule); padding: 18px 16px 10px; overflow-x: auto;
+  box-shadow: var(--shadow); }
+.figbox svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.figbox svg + svg { margin-top: 16px; }
+figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 12px; max-width: 76ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); margin: 0 0 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.figbox svg + .legend { margin: 12px 0 2px; }  /* legend goes above the chart; below also works */
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; flex: none; }
+.sw.lk { width: 16px; height: 3px; border-radius: 2px; }
+
+/* chart chrome: text wears ink tokens, never the series colour */
+svg .grid { stroke: var(--rule); stroke-width: 1; }
+svg .grid.zero { stroke: var(--rule-strong); }
+svg .ax { fill: var(--ink-3); font: 11px "IBM Plex Mono", ui-monospace, monospace; }
+svg .val { fill: var(--ink-2); font: 10.5px "IBM Plex Mono", ui-monospace, monospace; }
+svg .lab { fill: var(--ink); font: 13px "IBM Plex Sans", system-ui, sans-serif; }
+svg .ann { fill: var(--ink-2); font: 500 12px "IBM Plex Sans", system-ui, sans-serif; }
+svg .band { fill: var(--surface-sunk); }
+svg .refl { stroke: var(--ink-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+svg .refl.alt { stroke-dasharray: 1.5 3; }
+svg .hit { fill: transparent; pointer-events: all; }
+
+/* chart series: fill for marks, background for legend swatches */
+.s1 { --sc: var(--c-1); }
+.s2 { --sc: var(--c-2); }
+.s3 { --sc: var(--c-3); }
+.s4 { --sc: var(--c-4); }
+.s5 { --sc: var(--c-5); }
+.s6 { --sc: var(--c-6); }
+.s-old { --sc: var(--c-old); }
+.s-unk { --sc: var(--c-unk); }
+.s-good { --sc: var(--good); }
+.s-bad { --sc: var(--loss); }
+.s1, .s2, .s3, .s4, .s5, .s6, .s-old, .s-unk, .s-good, .s-bad { fill: var(--sc); background: var(--sc); }
+svg .ln { fill: none; stroke: var(--sc, var(--ink-2)); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg .dot { stroke: var(--surface); stroke-width: 2; }
+svg .mk, svg .dot { transition: opacity .12s ease; }
+svg .hv:hover .mk, svg .hv:hover .dot { opacity: .78; }
+
+/* -------------------------------------------------------- screenshots */
+.shot { margin: 28px 0 0; min-width: 0; }
+.shot .frame { background: var(--surface); border: 1px solid var(--rule); padding: 8px; box-shadow: var(--shadow);
+  overflow-x: auto; }
+.shot img { display: block; max-width: 100%; height: auto; }
+.shot .tag { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ad-ink); margin: 0 0 6px; }
+.shots2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.shots2 .shot { margin-top: 28px; }
+
+/* ------------------------------------------------------------- tables */
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+thead th { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); font-weight: 400; border-bottom: 1px solid var(--rule-strong); }
+td.n, th.n { text-align: right; font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.total td { font-weight: 600; border-top: 1px solid var(--rule-strong); }
+td.bad { color: var(--loss-ink); font-weight: 600; }
+td.ok { color: var(--good-ink); font-weight: 600; }
+.tablebox { border: 1px solid var(--rule); background: var(--surface); overflow-x: auto; margin-top: 20px; }
+.tablebox table { min-width: 640px; }
+.tnote { font-size: 13px; color: var(--ink-3); margin: 8px 0 0; max-width: 80ch; }
+
+/* -------------------------------------------------------------- cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 1px;
+  margin: 25px 1px 1px; }
+.card { background: var(--surface); padding: 18px; min-width: 0; outline: 1px solid var(--rule); }
+.card .cnt { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 30px; line-height: 1; }
+.card .cnt em { font-style: normal; font-size: 13px; color: var(--ink-3); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  margin-left: 6px; }
+.card h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 16px; line-height: 1.3; margin: 10px 0 6px; }
+.card h4:first-child { margin-top: 0; }
+.card p { font-size: 14px; color: var(--ink-2); margin: 0; max-width: none; }
+.card p + p { margin-top: 6px; }
+.card.hot { border-left: 3px solid var(--loss); }
+.card.adc { border-left: 3px solid var(--ad); }
+.card.okc { border-left: 3px solid var(--good); }
+
+/* ------------------------------------------------ numbered actions */
+.acts { counter-reset: act; margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.act { background: var(--surface); padding: 16px 18px; display: grid; grid-template-columns: 34px 1fr; gap: 14px;
+  align-items: start; }
+.act::before { counter-increment: act; content: counter(act); font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px; color: var(--ink-3); border: 1px solid var(--rule-strong); width: 26px; height: 26px;
+  display: grid; place-items: center; margin-top: 2px; }
+.act > div { min-width: 0; }
+.act h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 4px; }
+.act p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.act p + p { margin-top: 6px; }
+.act .why { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; color: var(--ink-3); margin-top: 8px; }
+
+.act .eff, .act .measure { font-size: 14px; }
+.act .eff b, .act .measure b { color: var(--ink); }
+.act .why a { color: var(--flow-ink); }
+
+/* ----------------------------------------- fixed skeleton: toc, blocks */
+/* Every report has the same numbered blocks (DESIGN.md section 6); ids are the anchors. */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 8px; }
+.note + .toc { margin-top: 24px; }
+.toc a { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px 5px 6px; border: 1px solid var(--rule);
+  background: var(--surface); color: var(--ink-2); text-decoration: none; font-size: 13.5px; line-height: 1.3; }
+.toc a:hover { border-color: var(--rule-strong); color: var(--ink); }
+.toc b { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: 11.5px; color: var(--ink-3);
+  border: 1px solid var(--rule-strong); min-width: 20px; height: 20px; display: inline-grid; place-items: center; }
+section.block, section.method, [id] { scroll-margin-top: 16px; }
+h2 .bn { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 600; font-size: .5em; letter-spacing: 0;
+  color: var(--ink-3); border: 1px solid var(--rule-strong); display: inline-grid; place-items: center;
+  min-width: 1.9em; height: 1.9em; margin-right: 12px; vertical-align: .32em; }
+section.block > h2:first-child { margin-top: 72px; }
+
+/* ------------------------------------------------------- hypotheses */
+.hyps { margin: 24px 0 0; display: flex; flex-direction: column; gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); }
+.hyp { background: var(--surface); padding: 16px 18px; }
+.hyp .hid { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; color: var(--ink);
+  margin: 0 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; max-width: none; }
+.hyp h4 { font-family: Oxanium, "IBM Plex Sans", sans-serif; font-size: 17px; line-height: 1.3; margin: 0 0 8px; }
+.hyp p { margin: 0; font-size: 14.5px; color: var(--ink-2); max-width: none; }
+.hyp p + p { margin-top: 6px; }
+.hyp .basis b, .hyp .test b { color: var(--ink); }
+.conf { font-weight: 400; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.conf::before { letter-spacing: 1px; margin-right: 6px; color: var(--ink-2); }
+.conf.high::before { content: "\25CF\25CF\25CF"; }
+.conf.mid::before { content: "\25CF\25CF\25CB"; }
+.conf.low::before { content: "\25CF\25CB\25CB"; }
+
+/* ---------------------------------------------- facts vs interpretation */
+/* Plain paragraphs, tables and charts are facts; a reading of them goes into .interp. */
+.interp { border-left: 2px dashed var(--flow); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 20px 0 0; max-width: 76ch; }
+.interp b:first-child { color: var(--flow-ink); font-weight: 600; }
+
+/* ------------------------------------ key metrics, estimates, drop-off */
+/* these two fit a phone when they can: labels wrap, numbers do not, the box scrolls only if needed */
+.tablebox table.kpi, .tablebox table.drop { min-width: 0; }
+table.kpi td:first-child, table.drop td:first-child { min-width: 9em; }
+table.kpi th.n, table.drop th.n { white-space: normal; min-width: 4.5em; }
+table.ord td:first-child { min-width: 0; width: 12em; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+table.kpi td small, table.drop td small { display: block; font-size: 11px; color: var(--ink-3); line-height: 1.3; }
+td.est, .est { color: var(--ink-3); font-style: italic; }
+tr.est td:first-child { color: var(--ink-3); }
+
+/* ------------------------------------------------------ notes, calc */
+.note { border-left: 2px solid var(--rule-strong); padding: 2px 0 2px 16px; color: var(--ink-2); font-size: 14.5px;
+  margin: 24px 0 0; max-width: 76ch; }
+.note b, .note strong { color: var(--ink); }
+.calc { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13.5px; background: var(--surface);
+  border: 1px solid var(--rule); padding: 14px 16px; margin: 20px 0 0; overflow-x: auto; white-space: pre;
+  line-height: 1.7; color: var(--ink); }
+ul.tight { padding-left: 20px; margin: 12px 0 0; }
+ul.tight li { margin: 6px 0; }
+
+/* ------------------------------------------------------------- method */
+.method { margin-top: 64px; border-top: 1px solid var(--rule); padding-top: 20px; font-size: 14px; color: var(--ink-2); }
+.method h2 { font-size: 20px; margin: 0 0 10px; }
+.method li { max-width: 90ch; }
+
+/* --------------------------------------------------------- responsive */
+@media (max-width: 760px) {
+  .wrap { padding: 0 16px 72px; }
+  .masthead { padding-top: 36px; }
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+  .ans { grid-template-columns: 1fr; gap: 6px; }
+  .shots2 { grid-template-columns: 1fr; gap: 0; }
+  h2 { margin-top: 52px; }
+}
+@media (max-width: 480px) {
+  body { font-size: 15px; }
+  .standfirst { font-size: 16.5px; }
+  .tile { padding: 14px; }
+  .tile .v { font-size: 27px; }
+  .card .cnt { font-size: 26px; }
+  .act { grid-template-columns: 1fr; gap: 8px; }
+  .figbox { padding: 14px 10px 8px; }
+}
+
+/* --------------------------------------------------------- safety nets */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    color-scheme: light;
+    --plane:        #ffffff;
+    --surface:      #ffffff;
+    --surface-sunk: #f1efe9;
+    --ink:          #14120f;
+    --ink-2:        #57534b;
+    --ink-3:        #7a7368;
+    --rule:         #e2dfd6;
+    --rule-strong:  #c8c4b8;
+    --flow:         #2a78d6;
+    --flow-ink:     #1f63b5;
+    --ad:           #eb6834;
+    --ad-ink:       #b8461c;
+    --loss:         #d03b3b;
+    --loss-ink:     #b02c2c;
+    --good:         #0ca30c;
+    --good-ink:     #006300;
+    --c-1:          #2a78d6;
+    --c-2:          #eb6834;
+    --c-3:          #1baf7a;
+    --c-4:          #4a3aa7;
+    --c-5:          #eda100;
+    --c-6:          #e87ba4;
+    --c-old:        #aba598;
+    --c-unk:        #c6c1b5;
+    --shadow:       none;
+  }
+  body { background: #fff; font-size: 12pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0; }
+  .masthead { padding-top: 0; }
+  .figbox, .shot .frame { box-shadow: none; overflow: visible; }
+  .figbox svg { min-width: 0; }
+  .tablebox { overflow: visible; }
+  .tablebox table { min-width: 0; }
+  figure, .shot, .tablebox, .card, .act, .ans, .tile, .hyp { break-inside: avoid; }
+  .toc { display: none; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Полный разбор · Пример · 1.0.8 и 1.1.0 · 01–20.09.2026</p>
+  <h1>Пример 1.0.8 и 1.1.0, 01–20.09: полный разбор</h1>
+  <p class="standfirst">Новички уходят на первой покупке в обучении, а закупка не окупается ни при какой ставке</p>
+</header>
+
+<nav class="toc">
+  <a href="#summary"><b>1</b>Краткая информация</a>
+  <a href="#product"><b>2</b>Продуктовые метрики</a>
+  <a href="#revenue"><b>3</b>Метрики дохода</a>
+  <a href="#tech"><b>4</b>Технические данные</a>
+  <a href="#countries"><b>5</b>Страны</a>
+  <a href="#hypotheses"><b>6</b>Гипотезы</a>
+  <a href="#actions"><b>7</b>Рекомендации</a>
+</nav>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Краткая информация</h2>
+<p class="lede">Новые игроки 01–20.09 по версии первого запуска. Все числа выдуманы: пример показывает, как выглядит каждый блок.</p>
+
+<h3 id="summary-metrics">Ключевые метрики по версиям</h3>
+<div class="tablebox">
+<table class="kpi">
+  <thead><tr><th>Метрика</th><th class="n">1.0.8</th><th class="n">1.1.0</th><th class="n">Все игроки</th></tr></thead>
+  <tbody>
+    <tr><td>Игроков в выборке</td><td class="n">118</td><td class="n">94</td><td class="n">212</td></tr>
+    <tr class="est"><td>Игроков, оценка ×10</td><td class="n est">≈ 1 180</td><td class="n est">≈ 940</td><td class="n est">≈ 2 120</td></tr>
+    <tr><td>Retention D1</td><td class="n">31,2%<small>n = 109</small></td><td class="n">35,1%<small>n = 77</small></td><td class="n">32,8%<small>n = 186</small></td></tr>
+    <tr><td>Retention D3</td><td class="n">12,4%<small>n = 97</small></td><td class="n">14,0%<small>n = 57</small></td><td class="n">13,0%<small>n = 154</small></td></tr>
+    <tr><td>Retention D7</td><td class="n">5,1%<small>n = 79</small></td><td class="n">—<small>n = 0</small></td><td class="n">5,1%<small>n = 79</small></td></tr>
+    <tr><td>Время в игре на игрока, мин</td><td class="n">11,8<small>медиана 5,3</small></td><td class="n">12,6<small>медиана 5,4</small></td><td class="n">12,2<small>медиана 5,3</small></td></tr>
+    <tr><td>Сессий на игрока</td><td class="n">2,90<small>медиана 2,0</small></td><td class="n">3,10<small>медиана 2,0</small></td><td class="n">3,00<small>медиана 2,0</small></td></tr>
+    <tr><td>Средняя длина сессии, мин</td><td class="n">4,1<small>медиана 1,9</small></td><td class="n">4,1<small>медиана 2,0</small></td><td class="n">4,1<small>медиана 1,9</small></td></tr>
+    <tr><td>Интерстишалов на игрока</td><td class="n">3,40</td><td class="n">3,60</td><td class="n">3,50</td></tr>
+    <tr><td>Ревардов на игрока</td><td class="n">0,60</td><td class="n">0,90</td><td class="n">0,70</td></tr>
+    <tr><td>ARPU (реклама), $</td><td class="n">$0,0120</td><td class="n">$0,0150</td><td class="n">$0,0133</td></tr>
+    <tr><td>Доход с рекламы в выборке, $</td><td class="n">$1,42</td><td class="n">$1,41</td><td class="n">$2,83</td></tr>
+    <tr class="est"><td>Доход с рекламы, оценка ×10, $</td><td class="n est">≈ $14,20</td><td class="n est">≈ $14,10</td><td class="n est">≈ $28,30</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Когорта — устройства с первым событием 01–20.09.2026 (v_players); столбцы — версия первого события. D1/D3/D7 — событие на 1/3/7-й день после первого, считается только по устройствам, чей этот день уже закончился (n под значением). Время в игре — сумма пауз между событиями внутри сессии, каждая не больше 10 мин; сессия — session_id AppMetrica. Реклама — ad_revenue_events, доход в долларах как прислан. Выборка 10% устройств: строки «оценка» = выборка × 10, доли и средние на игрока не пересчитываются.</p>
+
+<h3 id="summary-answers">Короткие ответы</h3>
+<div class="answers">
+  <div class="ans"><div class="q">Что изменила 1.1.0</div>
+    <div><p><b>Первый матч доигрывают чаще, до второго доходит не больше игроков.</b> 74% против 62%, второй матч 45% против 52% (<a href="#product-core">2.3</a>).</p></div></div>
+  <div class="ans"><div class="q">Где теряем новичков</div>
+    <div><p><b>На первой покупке в обучении и в первые 30 секунд игры.</b> Уходит 21,2% и 11,3% (<a href="#product-dropoff">2.2</a>).</p>
+    <p>Второй абзац внутри ответа тоже поддерживается.</p></div></div>
+  <div class="ans"><div class="q">Окупается ли закупка</div>
+    <div><p><b>Нет.</b> Игрок стоит $0,40, приносит $0,13 (<a href="#revenue-ua">3.3</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="product">
+<h2><span class="bn">2</span>Продуктовые метрики</h2>
+<p class="lede">Всё про игру, кроме денег: приток и удержание, отвалы, первые матчи, поведение перед уходом.</p>
+
+<h3 id="product-retention">2.1 Новые игроки и D1 по дням</h3>
+<figure id="fig-daily">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Органика</span><span><i class="sw s2"></i>Закупка</span><span><i class="sw s-unk"></i>Без атрибуции</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" width="100%" role="img" aria-label="Новые игроки по дням и источникам (пример)">
+<rect class="band" x="479.1" y="36" width="226.9" height="222"/>
+<text class="ann" x="485.1" y="28" text-anchor="start">с 15.09: новая версия (пример)</text>
+<line class="grid zero" x1="25.2" x2="706" y1="258" y2="258"/>
+<text class="ax" x="17.2" y="262" text-anchor="end">0</text>
+<line class="grid" x1="25.2" x2="706" y1="213.6" y2="213.6"/>
+<text class="ax" x="17.2" y="217.6" text-anchor="end">10</text>
+<line class="grid" x1="25.2" x2="706" y1="169.2" y2="169.2"/>
+<text class="ax" x="17.2" y="173.2" text-anchor="end">20</text>
+<line class="grid" x1="25.2" x2="706" y1="124.8" y2="124.8"/>
+<text class="ax" x="17.2" y="128.8" text-anchor="end">30</text>
+<line class="grid" x1="25.2" x2="706" y1="80.4" y2="80.4"/>
+<text class="ax" x="17.2" y="84.4" text-anchor="end">40</text>
+<line class="grid" x1="25.2" x2="706" y1="36" y2="36"/>
+<text class="ax" x="17.2" y="40" text-anchor="end">50</text>
+<g class="hv"><title>01.09 — Органика 26; Закупка 0; Без атрибуции 2 · всего 28</title><rect class="hit" x="25.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="29.7" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M29.7 140.6V136.7A3 3 0 0 1 32.7 133.7H50.1A3 3 0 0 1 53.1 136.7V140.6Z"/>
+<text class="val" x="41.4" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>02.09 — Органика 27; Закупка 0; Без атрибуции 1 · всего 28</title><rect class="hit" x="57.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="62.2" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M62.2 136.1V136.1A2.4 2.4 0 0 1 64.6 133.7H83.1A2.4 2.4 0 0 1 85.5 136.1V136.1Z"/>
+<text class="val" x="73.8" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>03.09 — Органика 25; Закупка 0; Без атрибуции 3 · всего 28</title><rect class="hit" x="90" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="94.6" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M94.6 145V136.7A3 3 0 0 1 97.6 133.7H114.9A3 3 0 0 1 117.9 136.7V145Z"/>
+<text class="val" x="106.2" y="128.7" text-anchor="middle">28</text>
+</g>
+<g class="hv"><title>04.09 — Органика 29; Закупка 0; Без атрибуции 2 · всего 31</title><rect class="hit" x="122.5" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="127" y="129.2" width="23.3" height="128.8"/>
+<path class="mk s-unk" d="M127 127.2V123.4A3 3 0 0 1 130 120.4H147.3A3 3 0 0 1 150.3 123.4V127.2Z"/>
+<text class="val" x="138.7" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>05.09 — Органика 24; Закупка 0; Без атрибуции 2 · всего 26</title><rect class="hit" x="154.9" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="159.4" y="151.4" width="23.3" height="106.6"/>
+<path class="mk s-unk" d="M159.4 149.4V145.6A3 3 0 0 1 162.4 142.6H179.8A3 3 0 0 1 182.8 145.6V149.4Z"/>
+<text class="val" x="171.1" y="137.6" text-anchor="middle">26</text>
+</g>
+<g class="hv"><title>06.09 — Органика 28; Закупка 0; Без атрибуции 1 · всего 29</title><rect class="hit" x="187.3" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="191.8" y="133.7" width="23.3" height="124.3"/>
+<path class="mk s-unk" d="M191.8 131.7V131.7A2.4 2.4 0 0 1 194.3 129.2H212.7A2.4 2.4 0 0 1 215.2 131.7V131.7Z"/>
+<text class="val" x="203.5" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>07.09 — Органика 27; Закупка 0; Без атрибуции 2 · всего 29</title><rect class="hit" x="219.7" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="224.3" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M224.3 136.1V132.2A3 3 0 0 1 227.3 129.2H244.6A3 3 0 0 1 247.6 132.2V136.1Z"/>
+<text class="val" x="235.9" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>08.09 — Органика 26; Закупка 0; Без атрибуции 3 · всего 29</title><rect class="hit" x="252.1" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="256.7" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M256.7 140.6V132.2A3 3 0 0 1 259.7 129.2H277A3 3 0 0 1 280 132.2V140.6Z"/>
+<text class="val" x="268.3" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>09.09 — Органика 30; Закупка 0; Без атрибуции 1 · всего 31</title><rect class="hit" x="284.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="289.1" y="124.8" width="23.3" height="133.2"/>
+<path class="mk s-unk" d="M289.1 122.8V122.8A2.4 2.4 0 0 1 291.5 120.4H310A2.4 2.4 0 0 1 312.4 122.8V122.8Z"/>
+<text class="val" x="300.8" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>10.09 — Органика 25; Закупка 0; Без атрибуции 2 · всего 27</title><rect class="hit" x="317" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="321.5" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M321.5 145V141.1A3 3 0 0 1 324.5 138.1H341.9A3 3 0 0 1 344.9 141.1V145Z"/>
+<text class="val" x="333.2" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>11.09 — Органика 27; Закупка 0; Без атрибуции 2 · всего 29</title><rect class="hit" x="349.4" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="353.9" y="138.1" width="23.3" height="119.9"/>
+<path class="mk s-unk" d="M353.9 136.1V132.2A3 3 0 0 1 356.9 129.2H374.3A3 3 0 0 1 377.3 132.2V136.1Z"/>
+<text class="val" x="365.6" y="124.2" text-anchor="middle">29</text>
+</g>
+<g class="hv"><title>12.09 — Органика 26; Закупка 0; Без атрибуции 1 · всего 27</title><rect class="hit" x="381.8" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="386.3" y="142.6" width="23.3" height="115.4"/>
+<path class="mk s-unk" d="M386.3 140.6V140.6A2.4 2.4 0 0 1 388.8 138.1H407.2A2.4 2.4 0 0 1 409.7 140.6V140.6Z"/>
+<text class="val" x="398" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>13.09 — Органика 28; Закупка 0; Без атрибуции 3 · всего 31</title><rect class="hit" x="414.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="418.8" y="133.7" width="23.3" height="124.3"/>
+<path class="mk s-unk" d="M418.8 131.7V123.4A3 3 0 0 1 421.8 120.4H439.1A3 3 0 0 1 442.1 123.4V131.7Z"/>
+<text class="val" x="430.4" y="115.4" text-anchor="middle">31</text>
+</g>
+<g class="hv"><title>14.09 — Органика 25; Закупка 0; Без атрибуции 2 · всего 27</title><rect class="hit" x="446.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="451.2" y="147" width="23.3" height="111"/>
+<path class="mk s-unk" d="M451.2 145V141.1A3 3 0 0 1 454.2 138.1H471.5A3 3 0 0 1 474.5 141.1V145Z"/>
+<text class="val" x="462.9" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>15.09 — Органика 11; Закупка 0; Без атрибуции 1 · всего 12</title><rect class="hit" x="479.1" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="483.6" y="209.2" width="23.3" height="48.8"/>
+<path class="mk s-unk" d="M483.6 207.2V207.2A2.4 2.4 0 0 1 486 204.7H504.5A2.4 2.4 0 0 1 506.9 207.2V207.2Z"/>
+<text class="val" x="495.3" y="199.7" text-anchor="middle">12</text>
+</g>
+<g class="hv"><title>16.09 — Органика 10; Закупка 0; Без атрибуции 1 · всего 11</title><rect class="hit" x="511.5" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="516" y="213.6" width="23.3" height="44.4"/>
+<path class="mk s-unk" d="M516 211.6V211.6A2.4 2.4 0 0 1 518.5 209.2H536.9A2.4 2.4 0 0 1 539.4 211.6V211.6Z"/>
+<text class="val" x="527.7" y="204.2" text-anchor="middle">11</text>
+</g>
+<g class="hv"><title>17.09 — Органика 9; Закупка 7; Без атрибуции 4 · всего 20</title><rect class="hit" x="543.9" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="548.4" y="218" width="23.3" height="40"/>
+<rect class="mk s2" x="548.4" y="187" width="23.3" height="29.1"/>
+<path class="mk s-unk" d="M548.4 185V172.2A3 3 0 0 1 551.4 169.2H568.8A3 3 0 0 1 571.8 172.2V185Z"/>
+<text class="val" x="560.1" y="164.2" text-anchor="middle">20</text>
+</g>
+<g class="hv"><title>18.09 — Органика 12; Закупка 20; Без атрибуции 5 · всего 37</title><rect class="hit" x="576.3" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="580.9" y="204.7" width="23.3" height="53.3"/>
+<rect class="mk s2" x="580.9" y="115.9" width="23.3" height="86.8"/>
+<path class="mk s-unk" d="M580.9 113.9V96.7A3 3 0 0 1 583.9 93.7H601.2A3 3 0 0 1 604.2 96.7V113.9Z"/>
+<text class="val" x="592.5" y="88.7" text-anchor="middle">37</text>
+</g>
+<g class="hv"><title>19.09 — Органика 10; Закупка 14; Без атрибуции 3 · всего 27</title><rect class="hit" x="608.7" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="613.3" y="213.6" width="23.3" height="44.4"/>
+<rect class="mk s2" x="613.3" y="151.4" width="23.3" height="60.2"/>
+<path class="mk s-unk" d="M613.3 149.4V141.1A3 3 0 0 1 616.3 138.1H633.6A3 3 0 0 1 636.6 141.1V149.4Z"/>
+<text class="val" x="625" y="133.1" text-anchor="middle">27</text>
+</g>
+<g class="hv"><title>20.09 — Органика 11; Закупка 12; Без атрибуции 2 · всего 25</title><rect class="hit" x="641.2" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="645.7" y="209.2" width="23.3" height="48.8"/>
+<rect class="mk s2" x="645.7" y="155.9" width="23.3" height="51.3"/>
+<path class="mk s-unk" d="M645.7 153.9V150A3 3 0 0 1 648.7 147H666A3 3 0 0 1 669 150V153.9Z"/>
+<text class="val" x="657.4" y="142" text-anchor="middle">25</text>
+</g>
+<g class="hv"><title>21.09 — Органика 9; Закупка 31; Без атрибуции 7 · всего 47</title><rect class="hit" x="673.6" y="36" width="32.4" height="222"/>
+<rect class="mk s1" x="678.1" y="218" width="23.3" height="40"/>
+<rect class="mk s2" x="678.1" y="80.4" width="23.3" height="135.6"/>
+<path class="mk s-unk" d="M678.1 78.4V52.3A3 3 0 0 1 681.1 49.3H698.5A3 3 0 0 1 701.5 52.3V78.4Z"/>
+<text class="val" x="689.8" y="44.3" text-anchor="middle">47</text>
+</g>
+<text class="ax" x="41.4" y="274" text-anchor="middle">01.09</text>
+<text class="ax" x="106.2" y="274" text-anchor="middle">03.09</text>
+<text class="ax" x="171.1" y="274" text-anchor="middle">05.09</text>
+<text class="ax" x="235.9" y="274" text-anchor="middle">07.09</text>
+<text class="ax" x="300.8" y="274" text-anchor="middle">09.09</text>
+<text class="ax" x="365.6" y="274" text-anchor="middle">11.09</text>
+<text class="ax" x="430.4" y="274" text-anchor="middle">13.09</text>
+<text class="ax" x="495.3" y="274" text-anchor="middle">15.09</text>
+<text class="ax" x="560.1" y="274" text-anchor="middle">17.09</text>
+<text class="ax" x="625" y="274" text-anchor="middle">19.09</text>
+<text class="ax" x="689.8" y="274" text-anchor="middle">21.09</text>
+<text class="ax" x="25.2" y="296">сентябрь, день месяца · вымышленные данные</text>
+</svg>
+  </div>
+  <figcaption>С 15.09 органика падает примерно в 2,5 раза, закупка начинается 17.09. Наведи на столбик — подсказка покажет разбивку.</figcaption>
+</figure>
+<figure id="fig-retention">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw lk s-old"></i>Сборка 1.0.8</span><span><i class="sw lk s1"></i>Сборка 1.1.0</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="D1 по дню установки (пример)">
+<rect class="band" x="432.5" y="36" width="61.6" height="202"/>
+<text class="ann" x="438.5" y="28" text-anchor="start">переход</text>
+<line class="grid zero" x1="31.8" x2="679.1" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="197.6" y2="197.6"/>
+<text class="ax" x="23.8" y="201.6" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="157.2" y2="157.2"/>
+<text class="ax" x="23.8" y="161.2" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="116.8" y2="116.8"/>
+<text class="ax" x="23.8" y="120.8" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="76.4" y2="76.4"/>
+<text class="ax" x="23.8" y="80.4" text-anchor="end">40%</text>
+<line class="grid" x1="31.8" x2="679.1" y1="36" y2="36"/>
+<text class="ax" x="23.8" y="40" text-anchor="end">50%</text>
+<line class="refl" x1="540.4" x2="540.4" y1="36" y2="238"/>
+<text class="ann" x="545.4" y="48" text-anchor="start">старт закупки</text>
+<path class="ln s-old" d="M47.2 112.8L78 116.8L108.9 108.7L139.7 120.8L170.5 116.8L201.3 112.8L232.2 124.9L263 116.8L293.8 120.8L324.6 112.8L355.5 116.8L386.3 120.8L417.1 116.8L447.9 112.8"/>
+<path class="ln s1" d="M447.9 116.8L478.7 104.7L509.6 96.6L540.4 100.6L571.2 92.6L602 96.6L632.9 88.5L663.7 92.6"/>
+<g class="hv"><title>01.09 — Сборка 1.0.8 31%</title><rect class="hit" x="31.8" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="47.2" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>02.09 — Сборка 1.0.8 30%</title><rect class="hit" x="62.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="78" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>03.09 — Сборка 1.0.8 32%</title><rect class="hit" x="93.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="108.9" cy="108.7" r="4"/>
+</g>
+<g class="hv"><title>04.09 — Сборка 1.0.8 29%</title><rect class="hit" x="124.3" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="139.7" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>05.09 — Сборка 1.0.8 30%</title><rect class="hit" x="155.1" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="170.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>06.09 — Сборка 1.0.8 31%</title><rect class="hit" x="185.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="201.3" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>07.09 — Сборка 1.0.8 28%</title><rect class="hit" x="216.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="232.2" cy="124.9" r="4"/>
+</g>
+<g class="hv"><title>08.09 — Сборка 1.0.8 30%</title><rect class="hit" x="247.6" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="263" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>09.09 — Сборка 1.0.8 29%</title><rect class="hit" x="278.4" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="293.8" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>10.09 — Сборка 1.0.8 31%</title><rect class="hit" x="309.2" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="324.6" cy="112.8" r="4"/>
+</g>
+<g class="hv"><title>11.09 — Сборка 1.0.8 30%</title><rect class="hit" x="340" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="355.5" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>12.09 — Сборка 1.0.8 29%</title><rect class="hit" x="370.9" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="386.3" cy="120.8" r="4"/>
+</g>
+<g class="hv"><title>13.09 — Сборка 1.0.8 30%</title><rect class="hit" x="401.7" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="417.1" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>14.09 — Сборка 1.0.8 31%; Сборка 1.1.0 30%</title><rect class="hit" x="432.5" y="36" width="30.8" height="202"/>
+<circle class="dot s-old" cx="447.9" cy="112.8" r="4"/>
+<circle class="dot s1" cx="447.9" cy="116.8" r="4"/>
+</g>
+<g class="hv"><title>15.09 — Сборка 1.1.0 33%</title><rect class="hit" x="463.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="478.7" cy="104.7" r="4"/>
+</g>
+<g class="hv"><title>16.09 — Сборка 1.1.0 35%</title><rect class="hit" x="494.2" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="509.6" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>17.09 — Сборка 1.1.0 34%</title><rect class="hit" x="525" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="540.4" cy="100.6" r="4"/>
+</g>
+<g class="hv"><title>18.09 — Сборка 1.1.0 36%</title><rect class="hit" x="555.8" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="571.2" cy="92.6" r="4"/>
+</g>
+<g class="hv"><title>19.09 — Сборка 1.1.0 35%</title><rect class="hit" x="586.6" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="602" cy="96.6" r="4"/>
+</g>
+<g class="hv"><title>20.09 — Сборка 1.1.0 37%</title><rect class="hit" x="617.5" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="632.9" cy="88.5" r="4"/>
+</g>
+<g class="hv"><title>21.09 — Сборка 1.1.0 36%</title><rect class="hit" x="648.3" y="36" width="30.8" height="202"/>
+<circle class="dot s1" cx="663.7" cy="92.6" r="4"/>
+</g>
+<text class="val" x="671.7" y="96.6">36%</text>
+<text class="ax" x="47.2" y="254" text-anchor="middle">01.09</text>
+<text class="ax" x="108.9" y="254" text-anchor="middle">03.09</text>
+<text class="ax" x="170.5" y="254" text-anchor="middle">05.09</text>
+<text class="ax" x="232.2" y="254" text-anchor="middle">07.09</text>
+<text class="ax" x="293.8" y="254" text-anchor="middle">09.09</text>
+<text class="ax" x="355.5" y="254" text-anchor="middle">11.09</text>
+<text class="ax" x="417.1" y="254" text-anchor="middle">13.09</text>
+<text class="ax" x="478.7" y="254" text-anchor="middle">15.09</text>
+<text class="ax" x="540.4" y="254" text-anchor="middle">17.09</text>
+<text class="ax" x="602" y="254" text-anchor="middle">19.09</text>
+<text class="ax" x="663.7" y="254" text-anchor="middle">21.09</text>
+<text class="ax" x="31.8" y="276">доля вернувшихся на следующий день · вымышленные данные</text>
+</svg>
+  </div>
+  <figcaption>line: две серии с разрывом (None), маркеры, значение в конце линии, полоса и вертикальная отметка.</figcaption>
+</figure>
+<p class="note"><b>Предварительно.</b> Последние семь дней ещё догружаются: D1 за 19–20.09 может вырасти. .note стоит рядом с числом, которое он уточняет.</p>
+
+<h3 id="product-dropoff">2.2 Отвалы по шагам и по времени</h3>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Шаг</th><th class="n">Дошло</th><th class="n">Ушло</th><th class="n">Ушло, % от предыдущего</th><th class="n">Дошло, % от когорты</th><th class="n">Дошло, оценка</th><th class="n">Время шага, с: медиана · p90 · макс</th></tr></thead>
+  <tbody>
+    <tr><td>Когорта: первое событие</td><td class="n">212</td><td class="n">—</td><td class="n">—</td><td class="n">100,0%</td><td class="n est">≈ 2 120</td><td class="n">—</td></tr>
+    <tr><td>Загрузка: SDK</td><td class="n">207</td><td class="n">5</td><td class="n">2,4%</td><td class="n">97,6%</td><td class="n est">≈ 2 070</td><td class="n">0,4 · 1,1 · 38,0</td></tr>
+    <tr><td>Загрузка: реклама</td><td class="n">188</td><td class="n">19</td><td class="n bad">9,2%</td><td class="n">88,7%</td><td class="n est">≈ 1 880</td><td class="n">7,8 · 24,0 · 3 899</td></tr>
+    <tr><td>Первая сцена</td><td class="n">184</td><td class="n">4</td><td class="n">2,1%</td><td class="n">86,8%</td><td class="n est">≈ 1 840</td><td class="n">10,7 · 31,0 · 1 357</td></tr>
+    <tr><td>Обучение: первый шаг</td><td class="n">179</td><td class="n">5</td><td class="n bad">2,7%</td><td class="n">84,4%</td><td class="n est">≈ 1 790</td><td class="n">—</td></tr>
+    <tr><td>Обучение: первая покупка</td><td class="n">141</td><td class="n">38</td><td class="n bad">21,2%</td><td class="n">66,5%</td><td class="n est">≈ 1 410</td><td class="n">—</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Активное время, мин:с</th><th class="n">Дошло</th><th class="n">Ушло</th><th class="n">Ушло, % от предыдущего</th><th class="n">Дошло, % от когорты</th><th class="n">Дошло, оценка</th></tr></thead>
+  <tbody>
+    <tr><td>Когорта: первое событие</td><td class="n">212</td><td class="n">—</td><td class="n">—</td><td class="n">100,0%</td><td class="n est">≈ 2 120</td></tr>
+    <tr><td>0:30</td><td class="n">188</td><td class="n">24</td><td class="n bad">11,3%</td><td class="n">88,7%</td><td class="n est">≈ 1 880</td></tr>
+    <tr><td>1:00</td><td class="n">171</td><td class="n">17</td><td class="n bad">9,0%</td><td class="n">80,7%</td><td class="n est">≈ 1 710</td></tr>
+    <tr><td>1:30</td><td class="n">160</td><td class="n">11</td><td class="n">6,4%</td><td class="n">75,5%</td><td class="n est">≈ 1 600</td></tr>
+    <tr><td>2:00</td><td class="n">151</td><td class="n">9</td><td class="n">5,6%</td><td class="n">71,2%</td><td class="n est">≈ 1 510</td></tr>
+    <tr><td>2:30</td><td class="n">142</td><td class="n">9</td><td class="n">6,0%</td><td class="n">67,0%</td><td class="n est">≈ 1 420</td></tr>
+    <tr><td>3:00</td><td class="n">136</td><td class="n">6</td><td class="n">4,2%</td><td class="n">64,2%</td><td class="n est">≈ 1 360</td></tr>
+    <tr><td>3:30</td><td class="n">129</td><td class="n">7</td><td class="n">5,1%</td><td class="n">60,8%</td><td class="n est">≈ 1 290</td></tr>
+    <tr><td>4:00</td><td class="n">125</td><td class="n">4</td><td class="n">3,1%</td><td class="n">59,0%</td><td class="n est">≈ 1 250</td></tr>
+    <tr><td>4:30</td><td class="n">119</td><td class="n">6</td><td class="n">4,8%</td><td class="n">56,1%</td><td class="n est">≈ 1 190</td></tr>
+    <tr><td>5:00</td><td class="n">110</td><td class="n">9</td><td class="n bad">7,6%</td><td class="n">51,9%</td><td class="n est">≈ 1 100</td></tr>
+    <tr><td>5:30</td><td class="n">106</td><td class="n">4</td><td class="n">3,6%</td><td class="n">50,0%</td><td class="n est">≈ 1 060</td></tr>
+    <tr><td>6:00</td><td class="n">101</td><td class="n">5</td><td class="n">4,7%</td><td class="n">47,6%</td><td class="n est">≈ 1 010</td></tr>
+    <tr><td>6:30</td><td class="n">98</td><td class="n">3</td><td class="n">3,0%</td><td class="n">46,2%</td><td class="n est">≈ 980</td></tr>
+    <tr><td>7:00</td><td class="n">95</td><td class="n">3</td><td class="n">3,1%</td><td class="n">44,8%</td><td class="n est">≈ 950</td></tr>
+    <tr><td>7:30</td><td class="n">91</td><td class="n">4</td><td class="n">4,2%</td><td class="n">42,9%</td><td class="n est">≈ 910</td></tr>
+    <tr><td>8:00</td><td class="n">88</td><td class="n">3</td><td class="n">3,3%</td><td class="n">41,5%</td><td class="n est">≈ 880</td></tr>
+    <tr><td>8:30</td><td class="n">85</td><td class="n">3</td><td class="n">3,4%</td><td class="n">40,1%</td><td class="n est">≈ 850</td></tr>
+    <tr><td>9:00</td><td class="n">83</td><td class="n">2</td><td class="n">2,4%</td><td class="n">39,2%</td><td class="n est">≈ 830</td></tr>
+    <tr><td>9:30</td><td class="n">80</td><td class="n">3</td><td class="n">3,6%</td><td class="n">37,7%</td><td class="n est">≈ 800</td></tr>
+    <tr><td>10:00</td><td class="n">78</td><td class="n">2</td><td class="n">2,5%</td><td class="n">36,8%</td><td class="n est">≈ 780</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Когорта — 212 устройств с первым событием 01–20.09.2026 (v_players). Шаг засчитан, если устройство дошло до него или дальше. Активное время — сумма пауз между событиями внутри сессии, каждая не больше 10 мин; все сессии устройства. Выборка 10% устройств: строки «оценка» = выборка × 10, доли и средние на игрока не пересчитываются.</p>
+<figure>
+  <div class="figbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Какая доля игроков уходит в каждые 30 с активного времени">
+<line class="grid zero" x1="45" x2="706" y1="238" y2="238"/>
+<text class="ax" x="37" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="45" x2="706" y1="194.4" y2="194.4"/>
+<text class="ax" x="37" y="198.4" text-anchor="end">2,5%</text>
+<line class="grid" x1="45" x2="706" y1="150.8" y2="150.8"/>
+<text class="ax" x="37" y="154.8" text-anchor="end">5,0%</text>
+<line class="grid" x1="45" x2="706" y1="107.2" y2="107.2"/>
+<text class="ax" x="37" y="111.2" text-anchor="end">7,5%</text>
+<line class="grid" x1="45" x2="706" y1="63.6" y2="63.6"/>
+<text class="ax" x="37" y="67.6" text-anchor="end">10,0%</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">12,5%</text>
+<g class="hv"><title>0:30: 11,3%</title><rect class="hit" x="45" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M49.6 238V43.6A3 3 0 0 1 52.6 40.6H70.4A3 3 0 0 1 73.4 43.6V238Z"/>
+</g>
+<g class="hv"><title>1:00: 9,0%</title><rect class="hit" x="78" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M82.7 238V83.3A3 3 0 0 1 85.7 80.3H103.5A3 3 0 0 1 106.5 83.3V238Z"/>
+</g>
+<g class="hv"><title>1:30: 6,4%</title><rect class="hit" x="111.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M115.7 238V128.8A3 3 0 0 1 118.7 125.8H136.5A3 3 0 0 1 139.5 128.8V238Z"/>
+</g>
+<g class="hv"><title>2:00: 5,6%</title><rect class="hit" x="144.1" y="20" width="33" height="218"/>
+<path class="mk s1" d="M148.8 238V142.9A3 3 0 0 1 151.8 139.9H169.6A3 3 0 0 1 172.6 142.9V238Z"/>
+</g>
+<g class="hv"><title>2:30: 6,0%</title><rect class="hit" x="177.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M181.8 238V137.1A3 3 0 0 1 184.8 134.1H202.6A3 3 0 0 1 205.6 137.1V238Z"/>
+</g>
+<g class="hv"><title>3:00: 4,2%</title><rect class="hit" x="210.2" y="20" width="33" height="218"/>
+<path class="mk s1" d="M214.9 238V167.3A3 3 0 0 1 217.9 164.3H235.7A3 3 0 0 1 238.7 167.3V238Z"/>
+</g>
+<g class="hv"><title>3:30: 5,1%</title><rect class="hit" x="243.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M247.9 238V151.2A3 3 0 0 1 250.9 148.2H268.7A3 3 0 0 1 271.7 151.2V238Z"/>
+</g>
+<g class="hv"><title>4:00: 3,1%</title><rect class="hit" x="276.3" y="20" width="33" height="218"/>
+<path class="mk s1" d="M281 238V186.9A3 3 0 0 1 284 183.9H301.8A3 3 0 0 1 304.8 186.9V238Z"/>
+</g>
+<g class="hv"><title>4:30: 4,8%</title><rect class="hit" x="309.4" y="20" width="33" height="218"/>
+<path class="mk s1" d="M314 238V157.3A3 3 0 0 1 317 154.3H334.8A3 3 0 0 1 337.8 157.3V238Z"/>
+</g>
+<g class="hv"><title>5:00: 7,6%</title><rect class="hit" x="342.4" y="20" width="33" height="218"/>
+<path class="mk s-bad" d="M347.1 238V109.1A3 3 0 0 1 350.1 106.1H367.9A3 3 0 0 1 370.9 109.1V238Z"/>
+</g>
+<g class="hv"><title>5:30: 3,6%</title><rect class="hit" x="375.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M380.1 238V177.6A3 3 0 0 1 383.1 174.6H400.9A3 3 0 0 1 403.9 177.6V238Z"/>
+</g>
+<g class="hv"><title>6:00: 4,7%</title><rect class="hit" x="408.5" y="20" width="33" height="218"/>
+<path class="mk s1" d="M413.2 238V158.7A3 3 0 0 1 416.2 155.7H434A3 3 0 0 1 437 158.7V238Z"/>
+</g>
+<g class="hv"><title>6:30: 3,0%</title><rect class="hit" x="441.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M446.2 238V189.2A3 3 0 0 1 449.2 186.2H467A3 3 0 0 1 470 189.2V238Z"/>
+</g>
+<g class="hv"><title>7:00: 3,1%</title><rect class="hit" x="474.6" y="20" width="33" height="218"/>
+<path class="mk s1" d="M479.3 238V187.6A3 3 0 0 1 482.3 184.6H500.1A3 3 0 0 1 503.1 187.6V238Z"/>
+</g>
+<g class="hv"><title>7:30: 4,2%</title><rect class="hit" x="507.7" y="20" width="33" height="218"/>
+<path class="mk s1" d="M512.3 238V167.6A3 3 0 0 1 515.3 164.6H533.1A3 3 0 0 1 536.1 167.6V238Z"/>
+</g>
+<g class="hv"><title>8:00: 3,3%</title><rect class="hit" x="540.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M545.4 238V183.5A3 3 0 0 1 548.4 180.5H566.2A3 3 0 0 1 569.2 183.5V238Z"/>
+</g>
+<g class="hv"><title>8:30: 3,4%</title><rect class="hit" x="573.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M578.4 238V181.5A3 3 0 0 1 581.4 178.5H599.2A3 3 0 0 1 602.2 181.5V238Z"/>
+</g>
+<g class="hv"><title>9:00: 2,4%</title><rect class="hit" x="606.8" y="20" width="33" height="218"/>
+<path class="mk s1" d="M611.5 238V200A3 3 0 0 1 614.5 197H632.3A3 3 0 0 1 635.3 200V238Z"/>
+</g>
+<g class="hv"><title>9:30: 3,6%</title><rect class="hit" x="639.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M644.5 238V178A3 3 0 0 1 647.5 175H665.3A3 3 0 0 1 668.3 178V238Z"/>
+</g>
+<g class="hv"><title>10:00: 2,5%</title><rect class="hit" x="672.9" y="20" width="33" height="218"/>
+<path class="mk s1" d="M677.6 238V197.4A3 3 0 0 1 680.6 194.4H698.4A3 3 0 0 1 701.4 197.4V238Z"/>
+</g>
+<text class="ax" x="61.5" y="254" text-anchor="middle">0:30</text>
+<text class="ax" x="127.6" y="254" text-anchor="middle">1:30</text>
+<text class="ax" x="193.7" y="254" text-anchor="middle">2:30</text>
+<text class="ax" x="259.8" y="254" text-anchor="middle">3:30</text>
+<text class="ax" x="325.9" y="254" text-anchor="middle">4:30</text>
+<text class="ax" x="392" y="254" text-anchor="middle">5:30</text>
+<text class="ax" x="458.1" y="254" text-anchor="middle">6:30</text>
+<text class="ax" x="524.2" y="254" text-anchor="middle">7:30</text>
+<text class="ax" x="590.3" y="254" text-anchor="middle">8:30</text>
+<text class="ax" x="656.4" y="254" text-anchor="middle">9:30</text>
+<text class="ax" x="45" y="276">активное время, мин:с · доля ушедших от доживших до начала интервала · n = 212</text>
+</svg></div>
+  <figcaption>Больше всего уходит в первые 30 секунд активного времени; дальше потери ровные, 3–6% на интервал.</figcaption>
+</figure>
+<p class="interp"><b>Интерпретация.</b> Первая покупка в обучении требует денег, которых у новичка ещё нет: 21,2% не доходят до неё. Это чтение чисел, а не факт — его проверяет H1.</p>
+
+<h3 id="product-core">2.3 Первые матчи</h3>
+<div class="tablebox">
+<table class="drop ord">
+  <thead><tr><th>Покупка героя · № в сессии</th><th class="n">Устройств</th><th class="n">% когорты</th><th class="n">Медиана, мин:с</th><th class="n">Среднее, мин:с</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="n">180</td><td class="n">84,9%</td><td class="n">0:42</td><td class="n">2:20</td></tr>
+    <tr><td>2</td><td class="n">130</td><td class="n">61,3%</td><td class="n">2:25</td><td class="n">4:42</td></tr>
+    <tr><td>3</td><td class="n">95</td><td class="n">44,8%</td><td class="n">4:22</td><td class="n">8:09</td></tr>
+    <tr><td>4</td><td class="n">70</td><td class="n">33,0%</td><td class="n">6:04</td><td class="n">11:24</td></tr>
+    <tr><td>5</td><td class="n">51</td><td class="n">24,1%</td><td class="n">8:00</td><td class="n">15:08</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="tablebox">
+<table class="drop ord">
+  <thead><tr><th>Кража · № в сессии</th><th class="n">Устройств</th><th class="n">% когорты</th><th class="n">Медиана, мин:с</th><th class="n">Среднее, мин:с</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td class="n">150</td><td class="n">70,8%</td><td class="n">1:33</td><td class="n">3:50</td></tr>
+    <tr><td>2</td><td class="n">112</td><td class="n">52,8%</td><td class="n">3:31</td><td class="n">6:51</td></tr>
+    <tr><td>3</td><td class="n">83</td><td class="n">39,2%</td><td class="n">5:17</td><td class="n">10:45</td></tr>
+    <tr><td>4</td><td class="n">58</td><td class="n">27,4%</td><td class="n">6:50</td><td class="n">16:23</td></tr>
+    <tr><td>5</td><td class="n">41</td><td class="n">19,3%</td><td class="n">8:09</td><td class="n">18:41</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Когорта — 212 устройств с первым событием 01–20.09.2026 (v_players). N-е действие — N-й раз в одной сессии; время — от первого события сессии (часы, включая свёрнутое время). Выборка 10% устройств: число устройств — по выборке (оценка — × 10), доли не пересчитываются.</p>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-old"></i>Версия 1.0.8 (нейтральный .s-old)</span><span><i class="sw s1"></i>Версия 1.1.0</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Сколько матчей начал новый игрок (пример)">
+<line class="grid zero" x1="31.8" x2="706" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="706" y1="183.5" y2="183.5"/>
+<text class="ax" x="23.8" y="187.5" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="706" y1="129" y2="129"/>
+<text class="ax" x="23.8" y="133" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="706" y1="74.5" y2="74.5"/>
+<text class="ax" x="23.8" y="78.5" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">40%</text>
+<g class="hv"><title>0 · Сборка 1.0.8: 16,2%</title><rect class="hit" x="52" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M53 238V152.7A3 3 0 0 1 56 149.7H84A3 3 0 0 1 87 152.7V238Z"/>
+<text class="val" x="70" y="144.7" text-anchor="middle">16,2%</text>
+</g>
+<g class="hv"><title>0 · Сборка 1.1.0: 20,8%</title><rect class="hit" x="88" y="20" width="36" height="218"/>
+<path class="mk s1" d="M89 238V127.6A3 3 0 0 1 92 124.6H120A3 3 0 0 1 123 127.6V238Z"/>
+<text class="val" x="106" y="119.6" text-anchor="middle">20,8%</text>
+</g>
+<g class="hv"><title>1 · Сборка 1.0.8: 32,4%</title><rect class="hit" x="164.4" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M165.4 238V64.4A3 3 0 0 1 168.4 61.4H196.4A3 3 0 0 1 199.4 64.4V238Z"/>
+<text class="val" x="182.4" y="56.4" text-anchor="middle">32,4%</text>
+</g>
+<g class="hv"><title>1 · Сборка 1.1.0: 34,0%</title><rect class="hit" x="200.4" y="20" width="36" height="218"/>
+<path class="mk s1" d="M201.4 238V55.7A3 3 0 0 1 204.4 52.7H232.4A3 3 0 0 1 235.4 55.7V238Z"/>
+<text class="val" x="218.4" y="47.7" text-anchor="middle">34,0%</text>
+</g>
+<g class="hv"><title>2 · Сборка 1.0.8: 13,2%</title><rect class="hit" x="276.7" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M277.7 238V169.1A3 3 0 0 1 280.7 166.1H308.7A3 3 0 0 1 311.7 169.1V238Z"/>
+<text class="val" x="294.7" y="161.1" text-anchor="middle">13,2%</text>
+</g>
+<g class="hv"><title>2 · Сборка 1.1.0: 9,4%</title><rect class="hit" x="312.7" y="20" width="36" height="218"/>
+<path class="mk s1" d="M313.7 238V189.8A3 3 0 0 1 316.7 186.8H344.7A3 3 0 0 1 347.7 189.8V238Z"/>
+<text class="val" x="330.7" y="181.8" text-anchor="middle">9,4%</text>
+</g>
+<g class="hv"><title>3–5 · Сборка 1.0.8: 19,1%</title><rect class="hit" x="389.1" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M390.1 238V136.9A3 3 0 0 1 393.1 133.9H421.1A3 3 0 0 1 424.1 136.9V238Z"/>
+<text class="val" x="407.1" y="128.9" text-anchor="middle">19,1%</text>
+</g>
+<g class="hv"><title>3–5 · Сборка 1.1.0: 20,8%</title><rect class="hit" x="425.1" y="20" width="36" height="218"/>
+<path class="mk s1" d="M426.1 238V127.6A3 3 0 0 1 429.1 124.6H457.1A3 3 0 0 1 460.1 127.6V238Z"/>
+<text class="val" x="443.1" y="119.6" text-anchor="middle">20,8%</text>
+</g>
+<g class="hv"><title>6–10 · Сборка 1.0.8: 13,2%</title><rect class="hit" x="501.5" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M502.5 238V169.1A3 3 0 0 1 505.5 166.1H533.5A3 3 0 0 1 536.5 169.1V238Z"/>
+<text class="val" x="519.5" y="161.1" text-anchor="middle">13,2%</text>
+</g>
+<g class="hv"><title>6–10 · Сборка 1.1.0: 9,4%</title><rect class="hit" x="537.5" y="20" width="36" height="218"/>
+<path class="mk s1" d="M538.5 238V189.8A3 3 0 0 1 541.5 186.8H569.5A3 3 0 0 1 572.5 189.8V238Z"/>
+<text class="val" x="555.5" y="181.8" text-anchor="middle">9,4%</text>
+</g>
+<g class="hv"><title>11+ · Сборка 1.0.8: 5,9%</title><rect class="hit" x="613.8" y="20" width="36" height="218"/>
+<path class="mk s-old" d="M614.8 238V208.8A3 3 0 0 1 617.8 205.8H645.8A3 3 0 0 1 648.8 208.8V238Z"/>
+<text class="val" x="631.8" y="200.8" text-anchor="middle">5,9%</text>
+</g>
+<g class="hv"><title>11+ · Сборка 1.1.0: 5,7%</title><rect class="hit" x="649.8" y="20" width="36" height="218"/>
+<path class="mk s1" d="M650.8 238V209.9A3 3 0 0 1 653.8 206.9H681.8A3 3 0 0 1 684.8 209.9V238Z"/>
+<text class="val" x="667.8" y="201.9" text-anchor="middle">5,7%</text>
+</g>
+<text class="ax" x="88" y="254" text-anchor="middle">0</text>
+<text class="ax" x="200.4" y="254" text-anchor="middle">1</text>
+<text class="ax" x="312.7" y="254" text-anchor="middle">2</text>
+<text class="ax" x="425.1" y="254" text-anchor="middle">3–5</text>
+<text class="ax" x="537.5" y="254" text-anchor="middle">6–10</text>
+<text class="ax" x="649.8" y="254" text-anchor="middle">11+</text>
+<text class="ax" x="31.8" y="276">матчей начато за всё время · доля новых игроков · вымышленные данные</text>
+</svg>
+  </div>
+  <figcaption>grouped_bars: значения над столбиками, если помещаются. Распределения почти совпадают.</figcaption>
+</figure>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Новые игроки</th><th class="n">1.0.8</th><th class="n">1.1.0</th><th class="n">Разница</th></tr></thead>
+  <tbody>
+    <tr><td>Игроков</td><td class="n">118</td><td class="n">94</td><td class="n">−24</td></tr>
+    <tr><td>Доиграли первый матч</td><td class="n">62%</td><td class="n ok">74%</td><td class="n ok">+12 п. п.</td></tr>
+    <tr><td>Начали второй матч</td><td class="n">52%</td><td class="n bad">45%</td><td class="n bad">−7 п. п.</td></tr>
+    <tr><td>Время в игре, медиана</td><td class="n">5,3 мин</td><td class="n">5,4 мин</td><td class="n">+0,1</td></tr>
+    <tr class="total"><td>Всего сессий</td><td class="n">342</td><td class="n">291</td><td class="n">−51</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">.tnote под таблицей: когорты, окно, фильтры. td.n — числа, td.ok / td.bad — оценка, tr.total — итог.</p>
+<p class="interp"><b>Интерпретация.</b> 1.1.0 перенесла потерю с первого матча на переход ко второму. Разница 7 п. п. на 94 игроках — направление, а не доказанный эффект.</p>
+
+<h3 id="product-negative">2.4 Уходы после негативных событий</h3>
+<div class="tablebox">
+<table class="drop">
+  <thead><tr><th>Событие</th><th class="n">Было у устройств</th><th class="n">Свернули за 20 с</th><th class="n">Вернулись за 20 с</th><th class="n">Больше ничего за 20 с</th><th class="n">Не вернулись вовсе</th></tr></thead>
+  <tbody>
+    <tr><td>Украли героя</td><td class="n">120</td><td class="n">46,7%<small>56 устройств</small></td><td class="n">53,6%<small>30 устройств</small></td><td class="n">20,8%<small>25 устройств</small></td><td class="n">5,0%<small>6 устройств</small></td></tr>
+    <tr><td>Получил удар</td><td class="n">150</td><td class="n">40,7%<small>61 устройств</small></td><td class="n">55,7%<small>34 устройств</small></td><td class="n">14,7%<small>22 устройств</small></td><td class="n">1,3%<small>2 устройств</small></td></tr>
+    <tr><td>Старт интерстишала</td><td class="n">131</td><td class="n">64,9%<small>85 устройств</small></td><td class="n">50,6%<small>43 устройств</small></td><td class="n">22,9%<small>30 устройств</small></td><td class="n">0,8%<small>1 устройств</small></td></tr>
+    <tr><td>Покупка героя (нейтральное)</td><td class="n">180</td><td class="n">22,8%<small>41 устройств</small></td><td class="n">73,2%<small>30 устройств</small></td><td class="n">0,0%<small>0 устройств</small></td><td class="n">0,0%<small>0 устройств</small></td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">Когорта — 212 устройств с первым событием 01–20.09.2026 (v_players). Доли — от устройств, у которых событие было хотя бы раз; «свернули» — событие сворачивания (app_pause) в течение 20 с, «вернулись» — от свернувших; «больше ничего» — ни одного другого события за 20 с; «не вернулись вовсе» — после события у устройства нет ни одного события. Выборка 10% устройств: число устройств — по выборке (оценка — × 10), доли не пересчитываются.</p>
+<p class="interp"><b>Интерпретация.</b> После кражи сворачивают 46,7% — вдвое чаще, чем после нейтральной покупки (22,8%).</p>
+<figure>
+  <div class="figbox">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 233" width="100%" role="img" aria-label="Что делает игрок перед уходом (пример)">
+<line class="grid zero" x1="297.2" x2="297.2" y1="6" y2="176"/>
+<text class="ax" x="297.2" y="192" text-anchor="middle">0%</text>
+<line class="grid" x1="375.2" x2="375.2" y1="6" y2="176"/>
+<text class="ax" x="375.2" y="192" text-anchor="middle">5%</text>
+<line class="grid" x1="453.2" x2="453.2" y1="6" y2="176"/>
+<text class="ax" x="453.2" y="192" text-anchor="middle">10%</text>
+<line class="grid" x1="531.1" x2="531.1" y1="6" y2="176"/>
+<text class="ax" x="531.1" y="192" text-anchor="middle">15%</text>
+<line class="grid" x1="609.1" x2="609.1" y1="6" y2="176"/>
+<text class="ax" x="609.1" y="192" text-anchor="middle">20%</text>
+<line class="grid" x1="687.1" x2="687.1" y1="6" y2="176"/>
+<text class="ax" x="687.1" y="192" text-anchor="middle">25%</text>
+<g class="hv"><title>Свернул игру в течение 20 с после кражи: 25%</title><rect class="hit" x="0" y="6" width="720" height="34"/><text class="lab" x="287.2" y="27.5" text-anchor="end">Свернул игру в течение 20 с после кражи</text>
+<path class="mk s-bad" d="M297.2 12.5H684.1A3 3 0 0 1 687.1 15.5V30.5A3 3 0 0 1 684.1 33.5H297.2Z"/>
+<text class="val" x="693.1" y="27">25%</text>
+</g>
+<g class="hv"><title>Вышел в меню посреди матча: 16%</title><rect class="hit" x="0" y="40" width="720" height="34"/><text class="lab" x="287.2" y="61.5" text-anchor="end">Вышел в меню посреди матча</text>
+<path class="mk s1" d="M297.2 46.5H543.7A3 3 0 0 1 546.7 49.5V64.5A3 3 0 0 1 543.7 67.5H297.2Z"/>
+<text class="val" x="552.7" y="61">16%</text>
+</g>
+<g class="hv"><title>Рестарт после поражения в гонке: 9%</title><rect class="hit" x="0" y="74" width="720" height="34"/><text class="lab" x="287.2" y="95.5" text-anchor="end">Рестарт после поражения в гонке</text>
+<path class="mk s1" d="M297.2 80.5H434.6A3 3 0 0 1 437.6 83.5V98.5A3 3 0 0 1 434.6 101.5H297.2Z"/>
+<text class="val" x="443.6" y="95">9%</text>
+</g>
+<g class="hv"><title>Удвоил награду за рекламу и ушёл: 6%</title><rect class="hit" x="0" y="108" width="720" height="34"/><text class="lab" x="287.2" y="129.5" text-anchor="end">Удвоил награду за рекламу и ушёл</text>
+<path class="mk s1" d="M297.2 114.5H387.8A3 3 0 0 1 390.8 117.5V132.5A3 3 0 0 1 387.8 135.5H297.2Z"/>
+<text class="val" x="396.8" y="129">6%</text>
+</g>
+<g class="hv"><title>Ничего не нажал: последнее событие — загрузка уровня, долгая и без прогресс-бара: 3%</title><rect class="hit" x="0" y="142" width="720" height="34"/><text class="lab" x="287.2" y="163.5" text-anchor="end">Ничего не нажал: последнее событие — заг…</text>
+<path class="mk s1" d="M297.2 148.5H341A3 3 0 0 1 344 151.5V166.5A3 3 0 0 1 341 169.5H297.2Z"/>
+<text class="val" x="350" y="163">3%</text>
+</g>
+<text class="ax" x="297.2" y="214">доля ушедших новичков · длинная подпись обрезана, полный текст</text>
+<text class="ax" x="297.2" y="229">во всплывающей подсказке</text>
+</svg>
+  </div>
+  <figcaption>Каждый четвёртый ушедший свернул игру в течение 20 секунд после кражи.</figcaption>
+</figure>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Метрики дохода</h2>
+<p class="lede">Реклама по форматам, плейсментам и сетям; концентрация дохода; закупка.</p>
+
+<h3 id="revenue-ads">3.1 Реклама по плейсментам</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Плейсмент</th><th class="n">Показов в выборке</th><th class="n">Показов, оценка</th><th class="n">На игрока</th><th class="n">eCPM, $</th></tr></thead>
+  <tbody>
+    <tr><td>Интерстишал после матча</td><td class="n">612</td><td class="n est">≈ 6&#8239;120</td><td class="n">2,9</td><td class="n">3,10</td></tr>
+    <tr><td>Ревард: удвоить награду</td><td class="n">118</td><td class="n est">≈ 1&#8239;180</td><td class="n">0,6</td><td class="n ok">6,40</td></tr>
+    <tr><td>Ревард: второй шанс</td><td class="n">31</td><td class="n est">≈ 310</td><td class="n">0,1</td><td class="n">5,90</td></tr>
+    <tr class="total"><td>Всего</td><td class="n">761</td><td class="n est">≈ 7&#8239;610</td><td class="n">3,6</td><td class="n">3,72</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">≈ — оценка из выборки 10% устройств (× 10), курсив .est. Доли и средние на игрока не пересчитываются.</p>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Сеть A</span><span><i class="sw s2"></i>Сеть B</span><span><i class="sw s3"></i>Сеть C</span><span><i class="sw s4"></i>Сеть D</span><span><i class="sw s5"></i>Сеть E</span><span><i class="sw s6"></i>Сеть F</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="100%" role="img" aria-label="Доля дохода по рекламным сетям (пример)">
+<line class="grid zero" x1="31.8" x2="706" y1="218" y2="218"/>
+<text class="ax" x="23.8" y="222" text-anchor="end">0%</text>
+<line class="grid" x1="31.8" x2="706" y1="168.5" y2="168.5"/>
+<text class="ax" x="23.8" y="172.5" text-anchor="end">10%</text>
+<line class="grid" x1="31.8" x2="706" y1="119" y2="119"/>
+<text class="ax" x="23.8" y="123" text-anchor="end">20%</text>
+<line class="grid" x1="31.8" x2="706" y1="69.5" y2="69.5"/>
+<text class="ax" x="23.8" y="73.5" text-anchor="end">30%</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">40%</text>
+<g class="hv"><title>неделя 1 · Сеть A: 34%</title><rect class="hit" x="53.3" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M54.3 218V52.7A3 3 0 0 1 57.3 49.7H79.6A3 3 0 0 1 82.6 52.7V218Z"/>
+<text class="val" x="68.4" y="44.7" text-anchor="middle">34%</text>
+</g>
+<g class="hv"><title>неделя 1 · Сеть B: 22%</title><rect class="hit" x="83.6" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M84.6 218V112.1A3 3 0 0 1 87.6 109.1H109.9A3 3 0 0 1 112.9 112.1V218Z"/>
+<text class="val" x="98.7" y="104.1" text-anchor="middle">22%</text>
+</g>
+<g class="hv"><title>неделя 1 · Сеть C: 15%</title><rect class="hit" x="113.9" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M114.9 218V146.8A3 3 0 0 1 117.9 143.8H140.2A3 3 0 0 1 143.2 146.8V218Z"/>
+<text class="val" x="129" y="138.8" text-anchor="middle">15%</text>
+</g>
+<g class="hv"><title>неделя 1 · Сеть D: 12%</title><rect class="hit" x="144.2" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M145.2 218V161.6A3 3 0 0 1 148.2 158.6H170.5A3 3 0 0 1 173.5 161.6V218Z"/>
+<text class="val" x="159.3" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>неделя 1 · Сеть E: 10%</title><rect class="hit" x="174.5" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M175.5 218V171.5A3 3 0 0 1 178.5 168.5H200.8A3 3 0 0 1 203.8 171.5V218Z"/>
+<text class="val" x="189.6" y="163.5" text-anchor="middle">10%</text>
+</g>
+<g class="hv"><title>неделя 1 · Сеть F: 7%</title><rect class="hit" x="204.8" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M205.8 218V186.3A3 3 0 0 1 208.8 183.3H231.1A3 3 0 0 1 234.1 186.3V218Z"/>
+<text class="val" x="219.9" y="178.3" text-anchor="middle">7%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть A: 31%</title><rect class="hit" x="278" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M279 218V67.5A3 3 0 0 1 282 64.5H304.3A3 3 0 0 1 307.3 67.5V218Z"/>
+<text class="val" x="293.2" y="59.5" text-anchor="middle">31%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть B: 24%</title><rect class="hit" x="308.3" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M309.3 218V102.2A3 3 0 0 1 312.3 99.2H334.6A3 3 0 0 1 337.6 102.2V218Z"/>
+<text class="val" x="323.5" y="94.2" text-anchor="middle">24%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть C: 14%</title><rect class="hit" x="338.6" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M339.6 218V151.7A3 3 0 0 1 342.6 148.7H364.9A3 3 0 0 1 367.9 151.7V218Z"/>
+<text class="val" x="353.8" y="143.7" text-anchor="middle">14%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть D: 13%</title><rect class="hit" x="368.9" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M369.9 218V156.6A3 3 0 0 1 372.9 153.6H395.2A3 3 0 0 1 398.2 156.6V218Z"/>
+<text class="val" x="384" y="148.6" text-anchor="middle">13%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть E: 11%</title><rect class="hit" x="399.2" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M400.2 218V166.6A3 3 0 0 1 403.2 163.6H425.5A3 3 0 0 1 428.5 166.6V218Z"/>
+<text class="val" x="414.3" y="158.6" text-anchor="middle">11%</text>
+</g>
+<g class="hv"><title>неделя 2 · Сеть F: 7%</title><rect class="hit" x="429.5" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M430.5 218V186.3A3 3 0 0 1 433.5 183.3H455.8A3 3 0 0 1 458.8 186.3V218Z"/>
+<text class="val" x="444.6" y="178.3" text-anchor="middle">7%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть A: 29%</title><rect class="hit" x="502.7" y="20" width="30.3" height="198"/>
+<path class="mk s1" d="M503.7 218V77.5A3 3 0 0 1 506.7 74.5H529A3 3 0 0 1 532 77.5V218Z"/>
+<text class="val" x="517.9" y="69.5" text-anchor="middle">29%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть B: 21%</title><rect class="hit" x="533" y="20" width="30.3" height="198"/>
+<path class="mk s2" d="M534 218V117A3 3 0 0 1 537 114H559.3A3 3 0 0 1 562.3 117V218Z"/>
+<text class="val" x="548.2" y="109" text-anchor="middle">21%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть C: 18%</title><rect class="hit" x="563.3" y="20" width="30.3" height="198"/>
+<path class="mk s3" d="M564.3 218V131.9A3 3 0 0 1 567.3 128.9H589.6A3 3 0 0 1 592.6 131.9V218Z"/>
+<text class="val" x="578.5" y="123.9" text-anchor="middle">18%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть D: 12%</title><rect class="hit" x="593.6" y="20" width="30.3" height="198"/>
+<path class="mk s4" d="M594.6 218V161.6A3 3 0 0 1 597.6 158.6H619.9A3 3 0 0 1 622.9 161.6V218Z"/>
+<text class="val" x="608.8" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть E: 12%</title><rect class="hit" x="623.9" y="20" width="30.3" height="198"/>
+<path class="mk s5" d="M624.9 218V161.6A3 3 0 0 1 627.9 158.6H650.2A3 3 0 0 1 653.2 161.6V218Z"/>
+<text class="val" x="639.1" y="153.6" text-anchor="middle">12%</text>
+</g>
+<g class="hv"><title>неделя 3 · Сеть F: 8%</title><rect class="hit" x="654.2" y="20" width="30.3" height="198"/>
+<path class="mk s6" d="M655.2 218V181.4A3 3 0 0 1 658.2 178.4H680.5A3 3 0 0 1 683.5 181.4V218Z"/>
+<text class="val" x="669.4" y="173.4" text-anchor="middle">8%</text>
+</g>
+<text class="ax" x="144.2" y="234" text-anchor="middle">неделя 1</text>
+<text class="ax" x="368.9" y="234" text-anchor="middle">неделя 2</text>
+<text class="ax" x="593.6" y="234" text-anchor="middle">неделя 3</text>
+<text class="ax" x="31.8" y="256">шесть серий: весь категориальный ряд .s1–.s6 по порядку · вымышленные данные</text>
+</svg>
+  </div>
+  <figcaption>Шесть категориальных цветов по порядку. Больше шести серий не бывает: остальное сворачивается в «прочее».</figcaption>
+</figure>
+
+<h3 id="revenue-concentration">3.2 Доход сосредоточен у немногих</h3>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Пятеро лучших</span><span><i class="sw s1"></i>Остальные</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="100%" role="img" aria-label="Доход с каждого игрока по убыванию (пример)">
+<line class="grid zero" x1="45" x2="706" y1="218" y2="218"/>
+<text class="ax" x="37" y="222" text-anchor="end">$0</text>
+<line class="grid" x1="45" x2="706" y1="178.4" y2="178.4"/>
+<text class="ax" x="37" y="182.4" text-anchor="end">$0,25</text>
+<line class="grid" x1="45" x2="706" y1="138.8" y2="138.8"/>
+<text class="ax" x="37" y="142.8" text-anchor="end">$0,50</text>
+<line class="grid" x1="45" x2="706" y1="99.2" y2="99.2"/>
+<text class="ax" x="37" y="103.2" text-anchor="end">$0,75</text>
+<line class="grid" x1="45" x2="706" y1="59.6" y2="59.6"/>
+<text class="ax" x="37" y="63.6" text-anchor="end">$1,00</text>
+<line class="grid" x1="45" x2="706" y1="20" y2="20"/>
+<text class="ax" x="37" y="24" text-anchor="end">$1,25</text>
+<g class="hv"><title>#1 игрок 1: $1,17</title><rect class="hit" x="45" y="20" width="16.9" height="198"/><path class="mk s2" d="M47.4 218V35.7A3 3 0 0 1 50.4 32.7H56.6A3 3 0 0 1 59.6 35.7V218Z"/></g>
+<g class="hv"><title>#2 игрок 2: $0,97</title><rect class="hit" x="61.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M64.3 218V67.4A3 3 0 0 1 67.3 64.4H73.5A3 3 0 0 1 76.5 67.4V218Z"/></g>
+<g class="hv"><title>#3 игрок 3: $0,76</title><rect class="hit" x="78.9" y="20" width="16.9" height="198"/><path class="mk s2" d="M81.3 218V100.6A3 3 0 0 1 84.3 97.6H90.5A3 3 0 0 1 93.5 100.6V218Z"/></g>
+<g class="hv"><title>#4 игрок 4: $0,26</title><rect class="hit" x="95.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M98.2 218V179.8A3 3 0 0 1 101.2 176.8H107.4A3 3 0 0 1 110.4 179.8V218Z"/></g>
+<g class="hv"><title>#5 игрок 5: $0,23</title><rect class="hit" x="112.8" y="20" width="16.9" height="198"/><path class="mk s2" d="M115.2 218V184.6A3 3 0 0 1 118.2 181.6H124.4A3 3 0 0 1 127.4 184.6V218Z"/></g>
+<g class="hv"><title>#6 игрок 6: $0,19</title><rect class="hit" x="129.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M132.1 218V190.9A3 3 0 0 1 135.1 187.9H141.3A3 3 0 0 1 144.3 190.9V218Z"/></g>
+<g class="hv"><title>#7 игрок 7: $0,16</title><rect class="hit" x="146.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M149.1 218V195.7A3 3 0 0 1 152.1 192.7H158.3A3 3 0 0 1 161.3 195.7V218Z"/></g>
+<g class="hv"><title>#8 игрок 8: $0,14</title><rect class="hit" x="163.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M166 218V198.8A3 3 0 0 1 169 195.8H175.2A3 3 0 0 1 178.2 198.8V218Z"/></g>
+<g class="hv"><title>#9 игрок 9: $0,12</title><rect class="hit" x="180.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M183 218V202A3 3 0 0 1 186 199H192.2A3 3 0 0 1 195.2 202V218Z"/></g>
+<g class="hv"><title>#10 игрок 10: $0,11</title><rect class="hit" x="197.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M199.9 218V203.6A3 3 0 0 1 202.9 200.6H209.1A3 3 0 0 1 212.1 203.6V218Z"/></g>
+<g class="hv"><title>#11 игрок 11: $0,10</title><rect class="hit" x="214.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M216.9 218V205.2A3 3 0 0 1 219.9 202.2H226.1A3 3 0 0 1 229.1 205.2V218Z"/></g>
+<g class="hv"><title>#12 игрок 12: $0,09</title><rect class="hit" x="231.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M233.8 218V206.7A3 3 0 0 1 236.8 203.7H243A3 3 0 0 1 246 206.7V218Z"/></g>
+<g class="hv"><title>#13 игрок 13: $0,08</title><rect class="hit" x="248.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M250.8 218V208.3A3 3 0 0 1 253.8 205.3H260A3 3 0 0 1 263 208.3V218Z"/></g>
+<g class="hv"><title>#14 игрок 14: $0,07</title><rect class="hit" x="265.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M267.7 218V209.9A3 3 0 0 1 270.7 206.9H276.9A3 3 0 0 1 279.9 209.9V218Z"/></g>
+<g class="hv"><title>#15 игрок 15: $0,06</title><rect class="hit" x="282.3" y="20" width="16.9" height="198"/><path class="mk s1" d="M284.7 218V211.5A3 3 0 0 1 287.7 208.5H293.9A3 3 0 0 1 296.9 211.5V218Z"/></g>
+<g class="hv"><title>#16 игрок 16: $0,06</title><rect class="hit" x="299.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M301.6 218V211.5A3 3 0 0 1 304.6 208.5H310.8A3 3 0 0 1 313.8 211.5V218Z"/></g>
+<g class="hv"><title>#17 игрок 17: $0,05</title><rect class="hit" x="316.2" y="20" width="16.9" height="198"/><path class="mk s1" d="M318.6 218V213.1A3 3 0 0 1 321.6 210.1H327.8A3 3 0 0 1 330.8 213.1V218Z"/></g>
+<g class="hv"><title>#18 игрок 18: $0,05</title><rect class="hit" x="333.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M335.5 218V213.1A3 3 0 0 1 338.5 210.1H344.7A3 3 0 0 1 347.7 213.1V218Z"/></g>
+<g class="hv"><title>#19 игрок 19: $0,04</title><rect class="hit" x="350.1" y="20" width="16.9" height="198"/><path class="mk s1" d="M352.4 218V214.7A3 3 0 0 1 355.4 211.7H361.7A3 3 0 0 1 364.7 214.7V218Z"/></g>
+<g class="hv"><title>#20 игрок 20: $0,04</title><rect class="hit" x="367" y="20" width="16.9" height="198"/><path class="mk s1" d="M369.4 218V214.7A3 3 0 0 1 372.4 211.7H378.6A3 3 0 0 1 381.6 214.7V218Z"/></g>
+<g class="hv"><title>#21 игрок 21: $0,04</title><rect class="hit" x="384" y="20" width="16.9" height="198"/><path class="mk s1" d="M386.3 218V214.7A3 3 0 0 1 389.3 211.7H395.6A3 3 0 0 1 398.6 214.7V218Z"/></g>
+<g class="hv"><title>#22 игрок 22: $0,04</title><rect class="hit" x="400.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M403.3 218V214.7A3 3 0 0 1 406.3 211.7H412.5A3 3 0 0 1 415.5 214.7V218Z"/></g>
+<g class="hv"><title>#23 игрок 23: $0,03</title><rect class="hit" x="417.9" y="20" width="16.9" height="198"/><path class="mk s1" d="M420.2 218V216.2A3 3 0 0 1 423.2 213.2H429.4A3 3 0 0 1 432.4 216.2V218Z"/></g>
+<g class="hv"><title>#24 игрок 24: $0,03</title><rect class="hit" x="434.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M437.2 218V216.2A3 3 0 0 1 440.2 213.2H446.4A3 3 0 0 1 449.4 216.2V218Z"/></g>
+<g class="hv"><title>#25 игрок 25: $0,03</title><rect class="hit" x="451.8" y="20" width="16.9" height="198"/><path class="mk s1" d="M454.1 218V216.2A3 3 0 0 1 457.1 213.2H463.3A3 3 0 0 1 466.3 216.2V218Z"/></g>
+<g class="hv"><title>#26 игрок 26: $0,02</title><rect class="hit" x="468.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M471.1 218V217.8A3 3 0 0 1 474.1 214.8H480.3A3 3 0 0 1 483.3 217.8V218Z"/></g>
+<g class="hv"><title>#27 игрок 27: $0,02</title><rect class="hit" x="485.7" y="20" width="16.9" height="198"/><path class="mk s1" d="M488 218V217.8A3 3 0 0 1 491 214.8H497.2A3 3 0 0 1 500.2 217.8V218Z"/></g>
+<g class="hv"><title>#28 игрок 28: $0,02</title><rect class="hit" x="502.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M505 218V217.8A3 3 0 0 1 508 214.8H514.2A3 3 0 0 1 517.2 217.8V218Z"/></g>
+<g class="hv"><title>#29 игрок 29: $0,02</title><rect class="hit" x="519.6" y="20" width="16.9" height="198"/><path class="mk s1" d="M521.9 218V217.8A3 3 0 0 1 524.9 214.8H531.1A3 3 0 0 1 534.1 217.8V218Z"/></g>
+<g class="hv"><title>#30 игрок 30: $0,01</title><rect class="hit" x="536.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M538.9 218V218A1.6 1.6 0 0 1 540.5 216.4H549.5A1.6 1.6 0 0 1 551.1 218V218Z"/></g>
+<g class="hv"><title>#31 игрок 31: $0,01</title><rect class="hit" x="553.5" y="20" width="16.9" height="198"/><path class="mk s1" d="M555.8 218V218A1.6 1.6 0 0 1 557.4 216.4H566.5A1.6 1.6 0 0 1 568 218V218Z"/></g>
+<g class="hv"><title>#32 игрок 32: $0,01</title><rect class="hit" x="570.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M572.8 218V218A1.6 1.6 0 0 1 574.4 216.4H583.4A1.6 1.6 0 0 1 585 218V218Z"/></g>
+<g class="hv"><title>#33 игрок 33: $0,01</title><rect class="hit" x="587.4" y="20" width="16.9" height="198"/><path class="mk s1" d="M589.7 218V218A1.6 1.6 0 0 1 591.3 216.4H600.4A1.6 1.6 0 0 1 601.9 218V218Z"/></g>
+<g class="hv"><title>#34 игрок 34: $0,00</title><rect class="hit" x="604.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#35 игрок 35: $0,00</title><rect class="hit" x="621.3" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#36 игрок 36: $0,00</title><rect class="hit" x="638.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#37 игрок 37: $0,00</title><rect class="hit" x="655.2" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#38 игрок 38: $0,00</title><rect class="hit" x="672.1" y="20" width="16.9" height="198"/></g>
+<g class="hv"><title>#39 игрок 39: $0,00</title><rect class="hit" x="689.1" y="20" width="16.9" height="198"/></g>
+<line class="refl" x1="45" x2="706" y1="197.5" y2="197.5"/>
+<text class="ann" x="704" y="191.5" text-anchor="end">среднее $0,13</text>
+<line class="refl alt" x1="45" x2="706" y1="211.7" y2="211.7"/>
+<text class="ann" x="605.6" y="191.5" text-anchor="end">медиана $0,04</text>
+<text class="ann" x="135.7" y="177.9">первые 5 = 67% суммы</text>
+<text class="ax" x="53.5" y="234" text-anchor="middle">1</text>
+<text class="ax" x="121.3" y="234" text-anchor="middle">5</text>
+<text class="ax" x="206" y="234" text-anchor="middle">10</text>
+<text class="ax" x="290.8" y="234" text-anchor="middle">15</text>
+<text class="ax" x="375.5" y="234" text-anchor="middle">20</text>
+<text class="ax" x="460.2" y="234" text-anchor="middle">25</text>
+<text class="ax" x="545" y="234" text-anchor="middle">30</text>
+<text class="ax" x="629.7" y="234" text-anchor="middle">35</text>
+<text class="ax" x="45" y="256">39 вымышленных игроков, доход с рекламы, по убыванию</text>
+</svg>
+  </div>
+  <figcaption>Среднее тянут вверх пятеро игроков; медиана в несколько раз ниже.</figcaption>
+</figure>
+
+<h3 id="revenue-ua">3.3 Закупка</h3>
+<div class="calc">Порог окупаемости по доходу с игрока (пример):
+  цена $0,40, ROAS 100%  →  нужно $0,40 с игрока   (сейчас $0,13, ×3,1)
+  цена $0,40, ROAS 50%   →  нужно $0,20            (×1,5)</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-good"></i>В плюсе (.s-good)</span><span><i class="sw s-bad"></i>В минусе (.s-bad)</span></div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" width="100%" role="img" aria-label="Дневная маржа закупки (пример)">
+<line class="grid" x1="31.8" x2="706" y1="238" y2="238"/>
+<text class="ax" x="23.8" y="242" text-anchor="end">−$4</text>
+<line class="grid" x1="31.8" x2="706" y1="183.5" y2="183.5"/>
+<text class="ax" x="23.8" y="187.5" text-anchor="end">−$2</text>
+<line class="grid zero" x1="31.8" x2="706" y1="129" y2="129"/>
+<text class="ax" x="23.8" y="133" text-anchor="end">$0</text>
+<line class="grid" x1="31.8" x2="706" y1="74.5" y2="74.5"/>
+<text class="ax" x="23.8" y="78.5" text-anchor="end">$2</text>
+<line class="grid" x1="31.8" x2="706" y1="20" y2="20"/>
+<text class="ax" x="23.8" y="24" text-anchor="end">$4</text>
+<g class="hv"><title>12.09: −$3,20</title><rect class="hit" x="31.8" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M51.5 129V213.2A3 3 0 0 0 54.5 216.2H76.5A3 3 0 0 0 79.5 213.2V129Z"/>
+<text class="val" x="65.5" y="229.2" text-anchor="middle">−$3,20</text>
+</g>
+<g class="hv"><title>13.09: −$1,50</title><rect class="hit" x="99.2" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M118.9 129V166.9A3 3 0 0 0 121.9 169.9H143.9A3 3 0 0 0 146.9 166.9V129Z"/>
+<text class="val" x="132.9" y="182.9" text-anchor="middle">−$1,50</text>
+</g>
+<g class="hv"><title>14.09: $0,40</title><rect class="hit" x="166.6" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M186.4 129V121.1A3 3 0 0 1 189.4 118.1H211.4A3 3 0 0 1 214.4 121.1V129Z"/>
+<text class="val" x="200.4" y="113.1" text-anchor="middle">$0,40</text>
+</g>
+<g class="hv"><title>15.09: $2,10</title><rect class="hit" x="234.1" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M253.8 129V74.8A3 3 0 0 1 256.8 71.8H278.8A3 3 0 0 1 281.8 74.8V129Z"/>
+<text class="val" x="267.8" y="66.8" text-anchor="middle">$2,10</text>
+</g>
+<g class="hv"><title>16.09: −$0,80</title><rect class="hit" x="301.5" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M321.2 129V147.8A3 3 0 0 0 324.2 150.8H346.2A3 3 0 0 0 349.2 147.8V129Z"/>
+<text class="val" x="335.2" y="163.8" text-anchor="middle">−$0,80</text>
+</g>
+<g class="hv"><title>17.09: $1,60</title><rect class="hit" x="368.9" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M388.6 129V88.4A3 3 0 0 1 391.6 85.4H413.6A3 3 0 0 1 416.6 88.4V129Z"/>
+<text class="val" x="402.6" y="80.4" text-anchor="middle">$1,60</text>
+</g>
+<g class="hv"><title>18.09: $3,30</title><rect class="hit" x="436.3" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M456 129V42.1A3 3 0 0 1 459 39.1H481A3 3 0 0 1 484 42.1V129Z"/>
+<text class="val" x="470" y="34.1" text-anchor="middle">$3,30</text>
+</g>
+<g class="hv"><title>19.09: −$2,40</title><rect class="hit" x="503.7" y="20" width="67.4" height="218"/>
+<path class="mk s-bad" d="M523.5 129V191.4A3 3 0 0 0 526.5 194.4H548.5A3 3 0 0 0 551.5 191.4V129Z"/>
+<text class="val" x="537.5" y="207.4" text-anchor="middle">−$2,40</text>
+</g>
+<g class="hv"><title>20.09: $0,90</title><rect class="hit" x="571.2" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M590.9 129V107.5A3 3 0 0 1 593.9 104.5H615.9A3 3 0 0 1 618.9 107.5V129Z"/>
+<text class="val" x="604.9" y="99.5" text-anchor="middle">$0,90</text>
+</g>
+<g class="hv"><title>21.09: $1,20</title><rect class="hit" x="638.6" y="20" width="67.4" height="218"/>
+<path class="mk s-good" d="M658.3 129V99.3A3 3 0 0 1 661.3 96.3H683.3A3 3 0 0 1 686.3 99.3V129Z"/>
+<text class="val" x="672.3" y="91.3" text-anchor="middle">$1,20</text>
+</g>
+<text class="ax" x="65.5" y="254" text-anchor="middle">12.09</text>
+<text class="ax" x="132.9" y="254" text-anchor="middle">13.09</text>
+<text class="ax" x="200.4" y="254" text-anchor="middle">14.09</text>
+<text class="ax" x="267.8" y="254" text-anchor="middle">15.09</text>
+<text class="ax" x="335.2" y="254" text-anchor="middle">16.09</text>
+<text class="ax" x="402.6" y="254" text-anchor="middle">17.09</text>
+<text class="ax" x="470" y="254" text-anchor="middle">18.09</text>
+<text class="ax" x="537.5" y="254" text-anchor="middle">19.09</text>
+<text class="ax" x="604.9" y="254" text-anchor="middle">20.09</text>
+<text class="ax" x="672.3" y="254" text-anchor="middle">21.09</text>
+<text class="ax" x="31.8" y="276">доход минус расход за день · вымышленные данные</text>
+</svg>
+  </div>
+  <figcaption>bar с отрицательными значениями: столбик растёт от нуля вниз, скруглён только конец с данными.</figcaption>
+</figure>
+<div class="shot"><p class="tag">Консоль · все страны · 17–20.09</p>
+  <div class="frame"><img alt="Вымышленный скриншот консоли: пять синих столбиков на белой карточке" src="data:image/png;base64,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"></div>
+  <p class="tnote">Что видно на скриншоте и чего на нём нет.</p></div>
+<div class="shots2">
+  <div class="shot"><p class="tag">Консоль · США · 17–20.09</p><div class="frame"><img alt="Вымышленный скриншот: оранжевые столбики" src="data:image/png;base64,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"></div></div>
+  <div class="shot"><p class="tag">Консоль · США · 21.09</p><div class="frame"><img alt="Вымышленный скриншот: зелёные столбики" src="data:image/png;base64,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"></div></div>
+</div>
+</section>
+
+<section class="block" id="tech">
+<h2><span class="bn">4</span>Технические данные</h2>
+<p class="lede">Техпроблемы и ошибки отправки аналитики. .cards: .hot — потеря, .adc — реклама, .okc — хорошо.</p>
+<div class="cards">
+  <div class="card hot" id="tech-duplicates"><div class="cnt">38%<em>событий</em></div><h4>Дубли дохода</h4><p>Одно начисление приходит двумя событиями: суммы по экономике завышены вдвое.</p></div>
+  <div class="card adc" id="tech-timeouts"><div class="cnt">346<em>ошибок</em></div><h4>Ложные таймауты рекламы</h4><p>342 из них — реальные показы в ту же секунду.</p></div>
+  <div class="card okc"><div class="cnt">60<em>FPS</em></div><h4>Производительность в норме</h4><p>Карточка .okc.</p></div>
+  <div class="card"><h4>Мелочи в телеметрии</h4><p>Карточка без числа и без модификатора; <code>AdImpression</code> как код.</p></div>
+</div>
+</section>
+
+<section class="block" id="countries">
+<h2><span class="bn">5</span>Страны</h2>
+<p class="lede">Разрез по странам в одном месте.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Страна</th><th class="n">Игроков</th><th class="n">D1</th><th class="n">Время, медиана</th><th class="n">ARPU, $</th><th class="n">Доля дохода</th></tr></thead>
+  <tbody>
+    <tr><td>США</td><td class="n">81</td><td class="n ok">38,3%</td><td class="n">6,1 мин</td><td class="n ok">0,031</td><td class="n">71%</td></tr>
+    <tr><td>Бразилия</td><td class="n">64</td><td class="n">31,1%</td><td class="n">5,0 мин</td><td class="n">0,004</td><td class="n">9%</td></tr>
+    <tr><td>Индия</td><td class="n">67</td><td class="n bad">27,4%</td><td class="n">4,6 мин</td><td class="n bad">0,002</td><td class="n">5%</td></tr>
+    <tr class="total"><td>Все</td><td class="n">212</td><td class="n">32,8%</td><td class="n">5,3 мин</td><td class="n">0,013</td><td class="n">100%</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Гипотезы</h2>
+<p class="lede">Что, по-нашему, происходит. Каждая гипотеза стоит на числах из блоков 2–5 и говорит, как её проверить.</p>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">уверенность высокая</span></p>
+    <h4>Первая покупка в обучении слишком дорогая</h4>
+    <p class="basis"><b>Опора:</b> на шаге «первая покупка» уходит 21,2% дошедших (<a href="#product-dropoff">2.2</a>).</p>
+    <p class="test"><b>Как проверить:</b> дать стартовые деньги на покупку; гипотеза подтверждена, если потеря на шаге упадёт ниже 10% при n ≥ 150.</p>
+  </article>
+  <article class="hyp" id="h2">
+    <p class="hid">H2 <span class="conf mid">уверенность средняя</span></p>
+    <h4>После первого матча игроку не предлагают следующий шаг</h4>
+    <p class="basis"><b>Опора:</b> второй матч начинают 45% против 52% (<a href="#product-core">2.3</a>); уходят сразу после экрана результатов (<a href="#product-negative">2.4</a>).</p>
+    <p class="test"><b>Как проверить:</b> доля начавших второй матч ≥ 60% в новой сборке на тех же странах.</p>
+  </article>
+  <article class="hyp" id="h3">
+    <p class="hid">H3 <span class="conf low">уверенность низкая</span></p>
+    <h4>Закупка в США может окупиться только через реварды</h4>
+    <p class="basis"><b>Опора:</b> eCPM реварда 6,40 против 3,10 у интерстишала (<a href="#revenue-ads">3.1</a>), игрок стоит $0,40 (<a href="#revenue-ua">3.3</a>).</p>
+    <p class="test"><b>Как проверить:</b> ARPU за 7 дней ≥ $0,40 у закупленной когорты после добавления ревардов.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Рекомендации</h2>
+<p class="lede">По убыванию отдачи. .acts нумерует их сам.</p>
+<div class="acts">
+  <div class="act"><div><h4>Дать стартовые деньги на первую покупку</h4>
+    <p>Начислять сумму первой покупки при входе в обучение.</p>
+    <p class="eff"><b>Ожидаемый эффект:</b> потеря на шаге «первая покупка» с 21% до ~10%, +20 игроков из 212 доходят до игры.</p>
+    <p class="measure"><b>Как мерить:</b> ga.py dropoff по новой сборке через неделю, n ≥ 150.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+  <div class="act"><div><h4>Кнопка «Следующий матч» на экране результатов</h4>
+    <p>Главная кнопка — следующий матч; гараж вторым.</p>
+    <p class="eff"><b>Ожидаемый эффект:</b> начавших второй матч с 45% до 60%.</p>
+    <p class="measure"><b>Как мерить:</b> доля начавших второй матч среди доигравших первый, новые игроки.</p>
+    <p class="why">→ <a href="#h2">H2</a></p></div></div>
+  <div class="act"><div><h4>Закупать ради измерений, а не дохода</h4>
+    <p>Небольшой бюджет на каждую сборку, одна страна.</p>
+    <p class="eff"><b>Ожидаемый эффект:</b> 40 новых игроков на сборку за $16 — сравнение сборок без органического шума.</p>
+    <p class="measure"><b>Как мерить:</b> ключевые метрики блока 1 по версиям.</p>
+    <p class="why">→ <a href="#h3">H3</a></p></div></div>
+</div>
+</section>
+
+<section class="block" id="data">
+<h2>Какие данные нужны</h2>
+<ul class="tight">
+  <li><b>Консоль → Отчёты → По дням:</b> расход и установки за окно отчёта.</li>
+  <li><b>Стор → Статистика страницы:</b> посетители и конверсия страницы по дням.</li>
+</ul>
+</section>
+
+<section class="method" id="method">
+  <h2>Методика</h2>
+  <ul class="tight">
+    <li>Отчёт v001 «Пример 1.0.8 и 1.1.0, 01–20.09: полный разбор», собран 23.09.2026. Окно данных 01–20.09.2026.</li>
+    <li>Источники: вымышленные данные, скриншоты-заглушки. Вопрос: Полный разбор игры за 01–20.09: что изменила 1.1.0, где теряем новичков, окупается ли закупка</li>
+    <li>Таблицы блоков 1 и 2.2 — <code>ga.py keymetrics</code> и <code>ga.py dropoff --format html</code>, графики — <code>gak.report.charts</code>, сборка — <code>py analytics/ga.py report build sample</code>.</li>
+  </ul>
+</section>
+
+</div>
+

@@ -1,7 +1,7 @@
 name: site
 
 # The site: site/ (landing, EN and RU), docs/images/ and the example reports built from
-# docs/examples/sample-report (made-up data), published to GitHub Pages.
+# docs/examples/sample-report (made-up data: en/ under /examples/, ru/ under /ru/examples/).
 on:
   push:
     branches: [main]
@@ -34,8 +34,10 @@ jobs:
           mkdir -p _site/images _site/examples
           cp -r site/. _site/
           cp docs/images/*.png _site/images/
-          cp -r docs/examples/sample-report/analytics/reports/. _site/examples/
-          find _site/examples -type d -name work -prune -exec rm -rf {} +
+          mkdir -p _site/ru/examples
+          cp -r docs/examples/sample-report/en/analytics/reports/. _site/examples/
+          cp -r docs/examples/sample-report/ru/analytics/reports/. _site/ru/examples/
+          find _site -type d -name work -prune -exec rm -rf {} +
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

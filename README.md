@@ -202,7 +202,9 @@ a report whose structure or links are broken.
   starts with "what changed".
 - `report.html` is one self-contained file (only fonts load from the web); light and dark
   themes; readable on a phone.
-- Live examples on made-up numbers: [docs/examples/sample-report/analytics/reports/](docs/examples/sample-report/analytics/reports/)
+- Live examples on made-up numbers: [on the site](https://trafalgardi.github.io/game-analytics-kit/examples/index.html) and in
+  [docs/examples/sample-report/en/analytics/reports/](docs/examples/sample-report/en/analytics/reports/)
+  (the same in Russian: [ru/](docs/examples/sample-report/ru/analytics/reports/))
   (`sample` — a full review in three versions, `sample-question` — a question report). Open
   `index.html` from a clone to browse them.
 

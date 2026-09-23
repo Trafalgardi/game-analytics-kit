@@ -1,0 +1,248 @@
+<!-- Example of a full review: every block of the fixed skeleton and every component. Numbers are made up. -->
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">Full review · Sample · 1.0.8 and 1.1.0 · {{meta:window}}</p>
+  <h1>{{meta:title}}</h1>
+  <p class="standfirst">{{meta:subtitle}}</p>
+</header>
+
+<nav class="toc">
+  <a href="#summary"><b>1</b>Summary</a>
+  <a href="#product"><b>2</b>Product metrics</a>
+  <a href="#revenue"><b>3</b>Revenue metrics</a>
+  <a href="#tech"><b>4</b>Technical data</a>
+  <a href="#countries"><b>5</b>Countries</a>
+  <a href="#hypotheses"><b>6</b>Hypotheses</a>
+  <a href="#actions"><b>7</b>Recommendations</a>
+</nav>
+
+<section class="block" id="summary">
+<h2><span class="bn">1</span>Summary</h2>
+<p class="lede">New players of Sep 1–20 by the build of their first launch. Every number is made up: the example shows what each block looks like.</p>
+
+<h3 id="summary-metrics">Key metrics by version</h3>
+{{html:assets/keymetrics.html}}
+
+<h3 id="summary-answers">Short answers</h3>
+<div class="answers">
+  <div class="ans"><div class="q">What did 1.1.0 change</div>
+    <div><p><b>More players finish the first match, no more reach the second.</b> 74% vs 62%, second match 45% vs 52% (<a href="#product-core">2.3</a>).</p></div></div>
+  <div class="ans"><div class="q">Where do we lose new players</div>
+    <div><p><b>At the first purchase in the tutorial and in the first 30 seconds of play.</b> 21.2% and 11.3% leave (<a href="#product-dropoff">2.2</a>).</p>
+    <p>A second paragraph inside an answer works too.</p></div></div>
+  <div class="ans"><div class="q">Does paid UA pay back</div>
+    <div><p><b>No.</b> A player costs $0.40 and brings $0.13 (<a href="#revenue-ua">3.3</a>).</p></div></div>
+</div>
+</section>
+
+<section class="block" id="product">
+<h2><span class="bn">2</span>Product metrics</h2>
+<p class="lede">Everything about the game except money: installs and retention, drop-off, the first matches, what players do before they leave.</p>
+
+<h3 id="product-retention">2.1 New players and D1 by day</h3>
+<figure id="fig-daily">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Organic</span><span><i class="sw s2"></i>Paid</span><span><i class="sw s-unk"></i>Unattributed</span></div>
+    {{svg:assets/daily.svg}}
+  </div>
+  <figcaption>From Sep 15 organic drops about 2.5×, paid starts on Sep 17. Hover a bar for the split.</figcaption>
+</figure>
+<figure id="fig-retention">
+  <div class="figbox">
+    <div class="legend"><span><i class="sw lk s-old"></i>Build 1.0.8</span><span><i class="sw lk s1"></i>Build 1.1.0</span></div>
+    {{svg:assets/retention.svg}}
+  </div>
+  <figcaption>line: two series with a gap (None), markers, the value at the end of the line, a band and a vertical mark.</figcaption>
+</figure>
+<p class="note"><b>Preliminary.</b> The last seven days are still arriving: D1 for Sep 19–20 can grow. A .note sits next to the number it qualifies.</p>
+
+<h3 id="product-dropoff">2.2 Drop-off by steps and by time</h3>
+{{html:assets/dropoff.html}}
+<figure>
+  <div class="figbox">{{svg:assets/dropoff.svg}}</div>
+  <figcaption>Most players leave in the first 30 seconds of active time; after that the loss is steady, 3–6% per interval.</figcaption>
+</figure>
+<p class="interp"><b>Interpretation.</b> The first purchase in the tutorial needs money a new player does not have yet: 21.2% never get past it. This is a reading of the numbers, not a fact — H1 tests it.</p>
+
+<h3 id="product-core">2.3 The first matches</h3>
+{{html:assets/ordinals.html}}
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-old"></i>Build 1.0.8 (neutral .s-old)</span><span><i class="sw s1"></i>Build 1.1.0</span></div>
+    {{svg:assets/matches.svg}}
+  </div>
+  <figcaption>grouped_bars: values above the bars when they fit. The distributions nearly match.</figcaption>
+</figure>
+<div class="tablebox">
+<table>
+  <thead><tr><th>New players</th><th class="n">1.0.8</th><th class="n">1.1.0</th><th class="n">Difference</th></tr></thead>
+  <tbody>
+    <tr><td>Players</td><td class="n">118</td><td class="n">94</td><td class="n">−24</td></tr>
+    <tr><td>Finished the first match</td><td class="n">62%</td><td class="n ok">74%</td><td class="n ok">+12 pp</td></tr>
+    <tr><td>Started a second match</td><td class="n">52%</td><td class="n bad">45%</td><td class="n bad">−7 pp</td></tr>
+    <tr><td>Playtime, median</td><td class="n">5.3 min</td><td class="n">5.4 min</td><td class="n">+0.1</td></tr>
+    <tr class="total"><td>Sessions in total</td><td class="n">342</td><td class="n">291</td><td class="n">−51</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">.tnote under a table: cohorts, window, filters. td.n numbers, td.ok / td.bad a verdict, tr.total a total.</p>
+<p class="interp"><b>Interpretation.</b> 1.1.0 moved the loss from the first match to the step to the second one. 7 pp on 94 players is a direction, not a proven effect.</p>
+
+<h3 id="product-negative">2.4 Leaving after negative events</h3>
+{{html:assets/leaving.html}}
+<p class="interp"><b>Interpretation.</b> After a theft 46.7% background the game — twice as often as after a neutral purchase (22.8%).</p>
+<figure>
+  <div class="figbox">
+    {{svg:assets/reasons.svg}}
+  </div>
+  <figcaption>Every fourth player who left backgrounded the game within 20 seconds of a theft.</figcaption>
+</figure>
+</section>
+
+<section class="block" id="revenue">
+<h2><span class="bn">3</span>Revenue metrics</h2>
+<p class="lede">Ads by format, placement and network; revenue concentration; paid acquisition.</p>
+
+<h3 id="revenue-ads">3.1 Ads by placement</h3>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Placement</th><th class="n">Impressions in the sample</th><th class="n">Impressions, estimate</th><th class="n">Per player</th><th class="n">eCPM, $</th></tr></thead>
+  <tbody>
+    <tr><td>Interstitial after a match</td><td class="n">612</td><td class="n est">≈ 6,120</td><td class="n">2.9</td><td class="n">3.10</td></tr>
+    <tr><td>Rewarded: double the reward</td><td class="n">118</td><td class="n est">≈ 1,180</td><td class="n">0.6</td><td class="n ok">6.40</td></tr>
+    <tr><td>Rewarded: second chance</td><td class="n">31</td><td class="n est">≈ 310</td><td class="n">0.1</td><td class="n">5.90</td></tr>
+    <tr class="total"><td>Total</td><td class="n">761</td><td class="n est">≈ 7,610</td><td class="n">3.6</td><td class="n">3.72</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">≈ an estimate from a 10% device sample (× 10), italic .est. Shares and per-player values stand as they are.</p>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s1"></i>Network A</span><span><i class="sw s2"></i>Network B</span><span><i class="sw s3"></i>Network C</span><span><i class="sw s4"></i>Network D</span><span><i class="sw s5"></i>Network E</span><span><i class="sw s6"></i>Network F</span></div>
+    {{svg:assets/networks.svg}}
+  </div>
+  <figcaption>Six categorical colours in order. There is never a seventh series: the rest folds into "other".</figcaption>
+</figure>
+
+<h3 id="revenue-concentration">3.2 Revenue sits with a few players</h3>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s2"></i>Top five</span><span><i class="sw s1"></i>Everyone else</span></div>
+    {{svg:assets/revenue.svg}}
+  </div>
+  <figcaption>Five players pull the mean up; the median is several times lower.</figcaption>
+</figure>
+
+<h3 id="revenue-ua">3.3 Paid acquisition</h3>
+<div class="calc">Break-even revenue per player (example):
+  cost $0.40, ROAS 100%  →  need $0.40 per player   (now $0.13, ×3.1)
+  cost $0.40, ROAS 50%   →  need $0.20              (×1.5)</div>
+<figure>
+  <div class="figbox">
+    <div class="legend"><span><i class="sw s-good"></i>In profit (.s-good)</span><span><i class="sw s-bad"></i>At a loss (.s-bad)</span></div>
+    {{svg:assets/margin.svg}}
+  </div>
+  <figcaption>bar with negative values: a bar grows down from zero, only the data end is rounded.</figcaption>
+</figure>
+<div class="shot"><p class="tag">Console · all countries · Sep 17–20</p>
+  <div class="frame"><img alt="A made-up console screenshot: five blue bars on a white card" src="{{img:assets/console.png}}"></div>
+  <p class="tnote">What the screenshot shows and what it does not.</p></div>
+<div class="shots2">
+  <div class="shot"><p class="tag">Console · US · Sep 17–20</p><div class="frame"><img alt="A made-up screenshot: orange bars" src="{{img:assets/console_a.png}}"></div></div>
+  <div class="shot"><p class="tag">Console · US · Sep 21</p><div class="frame"><img alt="A made-up screenshot: green bars" src="{{img:assets/console_b.png}}"></div></div>
+</div>
+</section>
+
+<section class="block" id="tech">
+<h2><span class="bn">4</span>Technical data</h2>
+<p class="lede">Technical problems and analytics defects. .cards: .hot loss, .adc ads, .okc good.</p>
+<div class="cards">
+  <div class="card hot" id="tech-duplicates"><div class="cnt">38%<em>of events</em></div><h4>Duplicated income</h4><p>One payout arrives as two events: economy totals are doubled.</p></div>
+  <div class="card adc" id="tech-timeouts"><div class="cnt">346<em>errors</em></div><h4>False ad timeouts</h4><p>342 of them are real impressions in the same second.</p></div>
+  <div class="card okc"><div class="cnt">60<em>FPS</em></div><h4>Performance is fine</h4><p>An .okc card.</p></div>
+  <div class="card"><h4>Telemetry details</h4><p>A card without a number or a modifier; <code>AdImpression</code> as code.</p></div>
+</div>
+</section>
+
+<section class="block" id="countries">
+<h2><span class="bn">5</span>Countries</h2>
+<p class="lede">The country split in one place.</p>
+<div class="tablebox">
+<table>
+  <thead><tr><th>Country</th><th class="n">Players</th><th class="n">D1</th><th class="n">Playtime, median</th><th class="n">ARPU, $</th><th class="n">Share of revenue</th></tr></thead>
+  <tbody>
+    <tr><td>US</td><td class="n">81</td><td class="n ok">38.3%</td><td class="n">6.1 min</td><td class="n ok">0.031</td><td class="n">71%</td></tr>
+    <tr><td>Brazil</td><td class="n">64</td><td class="n">31.1%</td><td class="n">5.0 min</td><td class="n">0.004</td><td class="n">9%</td></tr>
+    <tr><td>India</td><td class="n">67</td><td class="n bad">27.4%</td><td class="n">4.6 min</td><td class="n bad">0.002</td><td class="n">5%</td></tr>
+    <tr class="total"><td>All</td><td class="n">212</td><td class="n">32.8%</td><td class="n">5.3 min</td><td class="n">0.013</td><td class="n">100%</td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<section class="block" id="hypotheses">
+<h2><span class="bn">6</span>Hypotheses</h2>
+<p class="lede">What we think is going on. Each hypothesis rests on numbers from blocks 2–5 and says how to test it.</p>
+<div class="hyps">
+  <article class="hyp" id="h1">
+    <p class="hid">H1 <span class="conf high">confidence high</span></p>
+    <h4>The first purchase in the tutorial is too expensive</h4>
+    <p class="basis"><b>Rests on:</b> 21.2% of those who reach the "first purchase" step leave there (<a href="#product-dropoff">2.2</a>).</p>
+    <p class="test"><b>How to test:</b> give starting money for the purchase; confirmed if the loss at that step falls below 10% at n ≥ 150.</p>
+  </article>
+  <article class="hyp" id="h2">
+    <p class="hid">H2 <span class="conf mid">confidence medium</span></p>
+    <h4>After the first match the player is not offered a next step</h4>
+    <p class="basis"><b>Rests on:</b> 45% start a second match vs 52% (<a href="#product-core">2.3</a>); players leave right after the results screen (<a href="#product-negative">2.4</a>).</p>
+    <p class="test"><b>How to test:</b> the share starting a second match ≥ 60% in a new build, same countries.</p>
+  </article>
+  <article class="hyp" id="h3">
+    <p class="hid">H3 <span class="conf low">confidence low</span></p>
+    <h4>Paid UA in the US can pay back only through rewarded ads</h4>
+    <p class="basis"><b>Rests on:</b> rewarded eCPM 6.40 vs 3.10 for interstitials (<a href="#revenue-ads">3.1</a>), a player costs $0.40 (<a href="#revenue-ua">3.3</a>).</p>
+    <p class="test"><b>How to test:</b> 7-day ARPU ≥ $0.40 for a paid cohort after rewarded placements are added.</p>
+  </article>
+</div>
+</section>
+
+<section class="block" id="actions">
+<h2><span class="bn">7</span>Recommendations</h2>
+<p class="lede">Ordered by payoff. .acts numbers them itself.</p>
+<div class="acts">
+  <div class="act"><div><h4>Give starting money for the first purchase</h4>
+    <p>Grant the price of the first purchase when the tutorial starts.</p>
+    <p class="eff"><b>Expected effect:</b> the loss at the "first purchase" step from 21% to ~10%, +20 of 212 players reach the game.</p>
+    <p class="measure"><b>How to measure:</b> ga.py dropoff on the new build a week later, n ≥ 150.</p>
+    <p class="why">→ <a href="#h1">H1</a></p></div></div>
+  <div class="act"><div><h4>A "Next match" button on the results screen</h4>
+    <p>The main button starts the next match; the garage comes second.</p>
+    <p class="eff"><b>Expected effect:</b> second-match starts from 45% to 60%.</p>
+    <p class="measure"><b>How to measure:</b> the share starting a second match among those who finished the first, new players.</p>
+    <p class="why">→ <a href="#h2">H2</a></p></div></div>
+  <div class="act"><div><h4>Buy traffic to measure, not to earn</h4>
+    <p>A small budget per build, one country.</p>
+    <p class="eff"><b>Expected effect:</b> 40 new players per build for $16 — builds compared without organic noise.</p>
+    <p class="measure"><b>How to measure:</b> the key metrics of block 1 by version.</p>
+    <p class="why">→ <a href="#h3">H3</a></p></div></div>
+</div>
+</section>
+
+<section class="block" id="data">
+<h2>Data I need</h2>
+<ul class="tight">
+  <li><b>Console → Reports → By day:</b> spend and installs for the report window.</li>
+  <li><b>Store → Listing statistics:</b> visitors and listing conversion by day.</li>
+</ul>
+</section>
+
+<section class="method" id="method">
+  <h2>Method</h2>
+  <ul class="tight">
+    <li>Report {{meta:version_label}} "{{meta:title}}", built {{meta:built_date}}. Data window {{meta:window}}.</li>
+    <li>Sources: {{meta:sources_used}}. Question: {{meta:question}}</li>
+    <li>Tables of blocks 1 and 2 — <code>ga.py keymetrics</code>, <code>dropoff</code>, <code>ordinals</code>, <code>leaving --format html</code>; charts — <code>gak.report.charts</code>; build — <code>py analytics/ga.py report build sample</code>.</li>
+  </ul>
+</section>
+
+</div>

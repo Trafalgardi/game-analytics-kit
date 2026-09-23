@@ -1,0 +1,48 @@
+{
+  "slug": "sample-question",
+  "version": 1,
+  "kind": "question",
+  "title": "Sample: does paid UA pay back in the US",
+  "subtitle": "No: a player costs three times what they bring",
+  "question": "Does paid UA pay back in the US?",
+  "language": "en",
+  "created_at": "2026-09-23T17:10:13+07:00",
+  "built_at": "2026-09-23T17:10:13+07:00",
+  "previous_version": null,
+  "data_window": {
+    "since": "2026-09-17",
+    "until": "2026-09-21"
+  },
+  "sources_used": [
+    "made-up data"
+  ],
+  "kit_version": "0.3.0",
+  "project_git_commit": "042a76c",
+  "db_snapshot": {
+    "path": "data/analytics.db",
+    "tables": {
+      "events": {
+        "rows": 52,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "installations": {
+        "rows": 21,
+        "min_date": "2026-09-01",
+        "max_date": "2026-09-21"
+      },
+      "meta": {
+        "rows": 2,
+        "min_date": null,
+        "max_date": null
+      }
+    },
+    "sample_rate": 0.1
+  },
+  "sizes": {
+    "report.html": 32957,
+    "artifact.html": 32537,
+    "report.src.html": 3238,
+    "assets": 9477
+  }
+}

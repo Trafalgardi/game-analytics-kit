@@ -480,7 +480,7 @@ TEXT = {
         "iap_payers": "Платящих (IAP)", "iap_revenue": "Доход IAP, $", "iap_revenue_est": "Доход IAP, оценка ×{k}, $",
         "metric": "Метрика", "all": "Все игроки", "median": "медиана", "n": "n",
         "by_version": "версия первого события", "by_country": "страна первого события",
-        "km_note": ("Когорта — устройства с первым событием {since} — {until} ({source}); столбцы — {by}. "
+        "km_note": ("Когорта — устройства с первым событием {window} ({source}); столбцы — {by}. "
                     "D1/D3/D7 — событие на 1/3/7-й день после первого, считается только по устройствам, "
                     "чей этот день уже закончился (n под значением). Время в игре — сумма пауз между "
                     "событиями внутри сессии, каждая не больше {cap}; сессия — session_id AppMetrica{life}. "
@@ -491,7 +491,7 @@ TEXT = {
         "reached": "Дошло", "lost": "Ушло", "lost_pct": "Ушло, % от предыдущего",
         "reached_pct": "Дошло, % от когорты", "reached_est": "Дошло, оценка",
         "step_time": "Время шага, с: медиана · p90 · макс",
-        "drop_note": ("Когорта — {n} устройств с первым событием {since} — {until} ({source}{filters}). "
+        "drop_note": ("Когорта — {n} устройств с первым событием {window} ({source}{filters}). "
                       "Шаг засчитан, если устройство дошло до него или дальше. Активное время — сумма пауз "
                       "между событиями внутри сессии, каждая не больше {cap}; {scope}."),
         "scope_all": "все сессии устройства", "scope_first-day": "только первый день",
@@ -513,7 +513,7 @@ TEXT = {
         "iap_payers": "Payers (IAP)", "iap_revenue": "IAP revenue, $", "iap_revenue_est": "IAP revenue, estimate ×{k}, $",
         "metric": "Metric", "all": "All players", "median": "median", "n": "n",
         "by_version": "version of the first event", "by_country": "country of the first event",
-        "km_note": ("Cohort: devices whose first event is in {since} — {until} ({source}); columns: {by}. "
+        "km_note": ("Cohort: devices whose first event is in {window} ({source}); columns: {by}. "
                     "D1/D3/D7: an event on day 1/3/7 after the first, over devices whose day is over "
                     "(n under the value). Active time: gaps between events inside a session, each capped "
                     "at {cap}; a session is an AppMetrica session_id{life}. Ads: ad_revenue_events, "
@@ -524,7 +524,7 @@ TEXT = {
         "reached": "Reached", "lost": "Lost", "lost_pct": "Lost, % of previous",
         "reached_pct": "Reached, % of cohort", "reached_est": "Reached, estimate",
         "step_time": "Step time, s: median · p90 · max",
-        "drop_note": ("Cohort: {n} devices whose first event is in {since} — {until} ({source}{filters}). "
+        "drop_note": ("Cohort: {n} devices whose first event is in {window} ({source}{filters}). "
                       "A step counts when the device reached it or a later one. Active time: gaps between "
                       "events inside a session, each capped at {cap}; {scope}."),
         "scope_all": "every session of the device", "scope_first-day": "the first day only",
@@ -547,9 +547,10 @@ def source_label(source: str, lang: str) -> str:
     return source
 
 
-def _fmt_date(value: str | None, lang: str) -> str:
-    s = value or "…"
-    return f"{s[8:10]}.{s[5:7]}.{s[:4]}" if lang == "ru" and re.match(r"^\d{4}-\d{2}-\d{2}$", s) else s
+def _window(since: str | None, until: str | None, lang: str) -> str:
+    """The data window as people write it (08–21.09.2026 / Sep 8–21, 2026)."""
+    from .report.builder import window_label
+    return window_label(since, until, lang) or f"{since}..{until}"
 
 
 def _k(rate: float) -> str:
@@ -664,8 +665,7 @@ def _km_html(km: KeyMetrics, lang: str) -> str:
     since, until = pop.window
     by = text.get(f"by_{km.by}", text["all"])
     note = text["km_note"].format(
-        since=_fmt_date(since, lang), until=_fmt_date(until, lang), source=html.escape(source_label(pop.source, lang)),
-        by=by,
+        window=_window(since, until, lang), source=html.escape(source_label(pop.source, lang)), by=by,
         cap=text["cap_text"].format(m=km.cap // 60) if km.cap % 60 == 0 else f"{km.cap} s",
         life=text["life"].format(n=km.life_days) if km.life_days else "")
     if pop.rate < 1:
@@ -757,7 +757,7 @@ def _drop_html(result: Dropoff, lang: str) -> str:
     since, until = pop.window
     cap = text["cap_text"].format(m=result.cap // 60) if result.cap % 60 == 0 else f"{result.cap} s"
     note = text["drop_note"].format(
-        n=charts.fmt_num(len(pop.devices), 0, lang), since=_fmt_date(since, lang), until=_fmt_date(until, lang),
+        n=charts.fmt_num(len(pop.devices), 0, lang), window=_window(since, until, lang),
         source=html.escape(source_label(pop.source, lang)),
         filters=("; " + html.escape(", ".join(pop.filters))) if pop.filters else "",
         cap=cap, scope=text[f"scope_{result.scope}"])

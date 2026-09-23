@@ -80,7 +80,8 @@ game-analytics-kit/
     DESIGN.md             this file
     KNOWLEDGE.md          field experience the skills are written from
     TESTING.md / TEST_LOG.md  how the kit is tested end to end, and the runs so far
-    examples/sample-report/   generated example reports (full review + question) on made-up data
+    examples/sample-report/   generated example reports (full review + question) on made-up data,
+                          en/ and ru/ (make_sample.py, texts in sample_text.py)
     images/               screenshots for the README and the site, social-preview.png (+ its .html source)
   tests/                  test helpers for install.py (optional)
 ```

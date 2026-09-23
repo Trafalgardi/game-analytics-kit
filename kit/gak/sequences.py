@@ -28,7 +28,7 @@ import statistics
 from dataclasses import dataclass
 
 from . import GakError, query
-from .metrics import (IDENT_RE, SELECT_RE, Population, _fmt_date, _k, _relation, _share, load_population,
+from .metrics import (IDENT_RE, SELECT_RE, Population, _k, _relation, _share, _window, load_population,
                       source_label)
 
 MAX_N = 15
@@ -258,13 +258,13 @@ TEXT = {
     "ru": {
         "n": "№ в сессии", "devices": "Устройств", "pct": "% когорты", "occ": "Событий",
         "median": "Медиана, мин:с", "mean": "Среднее, мин:с",
-        "ord_note": ("Когорта — {n} устройств с первым событием {since} — {until} ({source}). N-е действие — "
+        "ord_note": ("Когорта — {n} устройств с первым событием {window} ({source}). N-е действие — "
                      "N-й раз в одной сессии; время — {clock}."),
         "clock_start": "от первого события сессии (часы, включая свёрнутое время)",
         "clock_sec": "из поля sec проекта",
         "trigger": "Событие", "had": "Было у устройств", "paused": "Свернули за {w} с",
         "resumed": "Вернулись за {w} с", "stopped": "Больше ничего за {w} с", "never": "Не вернулись вовсе",
-        "leave_note": ("Когорта — {n} устройств с первым событием {since} — {until} ({source}). Доли — от устройств, "
+        "leave_note": ("Когорта — {n} устройств с первым событием {window} ({source}). Доли — от устройств, "
                        "у которых событие было хотя бы раз; «свернули» — событие сворачивания ({pause}) в течение {w} с, "
                        "«вернулись» — от свернувших; «больше ничего» — ни одного другого события за {w} с; "
                        "«не вернулись вовсе» — после события у устройства нет ни одного события."),
@@ -274,13 +274,13 @@ TEXT = {
     "en": {
         "n": "N in session", "devices": "Devices", "pct": "% of cohort", "occ": "Events",
         "median": "Median, m:ss", "mean": "Mean, m:ss",
-        "ord_note": ("Cohort: {n} devices whose first event is in {since} — {until} ({source}). The Nth action is "
+        "ord_note": ("Cohort: {n} devices whose first event is in {window} ({source}). The Nth action is "
                      "the Nth time within one session; time is {clock}."),
         "clock_start": "since the session's first event (wall clock, includes backgrounded time)",
         "clock_sec": "the project's sec field",
         "trigger": "Event", "had": "Devices with it", "paused": "Backgrounded within {w} s",
         "resumed": "Back within {w} s", "stopped": "Nothing else within {w} s", "never": "Never came back",
-        "leave_note": ("Cohort: {n} devices whose first event is in {since} — {until} ({source}). Shares are of "
+        "leave_note": ("Cohort: {n} devices whose first event is in {window} ({source}). Shares are of "
                        "devices that had the event at least once; backgrounded = a pause event ({pause}) within "
                        "{w} s, back = of those backgrounded; nothing else = no other event within {w} s; never "
                        "came back = no event at all after it."),
@@ -329,8 +329,8 @@ def render_ordinals(result: Ordinals, fmt: str, lang: str) -> str:
                          f"  <tbody>\n{body}\n  </tbody>\n</table>\n</div>\n")
         since, until = pop.window
         clock = t["clock_sec"] if result.own_clock else t["clock_start"]
-        note = t["ord_note"].format(n=charts.fmt_num(len(pop.devices), 0, lang), since=_fmt_date(since, lang),
-                                    until=_fmt_date(until, lang), source=html.escape(source_label(pop.source, lang)),
+        note = t["ord_note"].format(n=charts.fmt_num(len(pop.devices), 0, lang), window=_window(since, until, lang),
+                                    source=html.escape(source_label(pop.source, lang)),
                                     clock=clock)
         return "".join(parts) + f'<p class="tnote">{note}{_sample_note(pop, lang)}</p>\n'
     table = query.Result(["action", "n", "devices", "pct_of_cohort", "events", "median_sec", "mean_sec"],
@@ -380,8 +380,8 @@ def render_leaving(result: Leaving, fmt: str, lang: str) -> str:
             + [t["stopped"].format(w=w), t["never"]]
         head = f"<th>{heads[0]}</th>" + "".join(f'<th class="n">{h}</th>' for h in heads[1:])
         since, until = pop.window
-        note = t["leave_note"].format(n=charts.fmt_num(len(pop.devices), 0, lang), since=_fmt_date(since, lang),
-                                      until=_fmt_date(until, lang), source=html.escape(source_label(pop.source, lang)),
+        note = t["leave_note"].format(n=charts.fmt_num(len(pop.devices), 0, lang), window=_window(since, until, lang),
+                                      source=html.escape(source_label(pop.source, lang)),
                                       w=w, pause=html.escape(source_label(", ".join(result.pause_events), lang))
                                       or t["no_pause"])
         return ('<div class="tablebox">\n<table class="drop">\n'

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 233" width="100%" role="img" aria-label="What a player does before leaving (example)">
+<line class="grid zero" x1="298.3" x2="298.3" y1="6" y2="176"/>
+<text class="ax" x="298.3" y="192" text-anchor="middle">0%</text>
+<line class="grid" x1="376" x2="376" y1="6" y2="176"/>
+<text class="ax" x="376" y="192" text-anchor="middle">5%</text>
+<line class="grid" x1="453.8" x2="453.8" y1="6" y2="176"/>
+<text class="ax" x="453.8" y="192" text-anchor="middle">10%</text>
+<line class="grid" x1="531.6" x2="531.6" y1="6" y2="176"/>
+<text class="ax" x="531.6" y="192" text-anchor="middle">15%</text>
+<line class="grid" x1="609.3" x2="609.3" y1="6" y2="176"/>
+<text class="ax" x="609.3" y="192" text-anchor="middle">20%</text>
+<line class="grid" x1="687.1" x2="687.1" y1="6" y2="176"/>
+<text class="ax" x="687.1" y="192" text-anchor="middle">25%</text>
+<g class="hv"><title>Backgrounded the game within 20 s of a theft: 25%</title><rect class="hit" x="0" y="6" width="720" height="34"/><text class="lab" x="288.3" y="27.5" text-anchor="end">Backgrounded the game within 20 s of a th…</text>
+<path class="mk s-bad" d="M298.3 12.5H684.1A3 3 0 0 1 687.1 15.5V30.5A3 3 0 0 1 684.1 33.5H298.3Z"/>
+<text class="val" x="693.1" y="27">25%</text>
+</g>
+<g class="hv"><title>Left to the menu mid-match: 16%</title><rect class="hit" x="0" y="40" width="720" height="34"/><text class="lab" x="288.3" y="61.5" text-anchor="end">Left to the menu mid-match</text>
+<path class="mk s1" d="M298.3 46.5H544.1A3 3 0 0 1 547.1 49.5V64.5A3 3 0 0 1 544.1 67.5H298.3Z"/>
+<text class="val" x="553.1" y="61">16%</text>
+</g>
+<g class="hv"><title>Restarted after losing a race: 9%</title><rect class="hit" x="0" y="74" width="720" height="34"/><text class="lab" x="288.3" y="95.5" text-anchor="end">Restarted after losing a race</text>
+<path class="mk s1" d="M298.3 80.5H435.2A3 3 0 0 1 438.2 83.5V98.5A3 3 0 0 1 435.2 101.5H298.3Z"/>
+<text class="val" x="444.2" y="95">9%</text>
+</g>
+<g class="hv"><title>Doubled a reward with an ad and left: 6%</title><rect class="hit" x="0" y="108" width="720" height="34"/><text class="lab" x="288.3" y="129.5" text-anchor="end">Doubled a reward with an ad and left</text>
+<path class="mk s1" d="M298.3 114.5H388.6A3 3 0 0 1 391.6 117.5V132.5A3 3 0 0 1 388.6 135.5H298.3Z"/>
+<text class="val" x="397.6" y="129">6%</text>
+</g>
+<g class="hv"><title>Pressed nothing: the last event is a level load, long and without a progress bar: 3%</title><rect class="hit" x="0" y="142" width="720" height="34"/><text class="lab" x="288.3" y="163.5" text-anchor="end">Pressed nothing: the last event is a level l…</text>
+<path class="mk s1" d="M298.3 148.5H341.9A3 3 0 0 1 344.9 151.5V166.5A3 3 0 0 1 341.9 169.5H298.3Z"/>
+<text class="val" x="350.9" y="163">3%</text>
+</g>
+<text class="ax" x="298.3" y="214">share of new players who left · a long label is clipped, the</text>
+<text class="ax" x="298.3" y="229">tooltip has the full text</text>
+</svg>
